@@ -1,0 +1,15 @@
+node_modules/
+.next/
+out/
+dist/
+coverage/
+playwright-report/
+test-results/
+.vite/
+*.tsbuildinfo
+.env
+.env.*
+.DS_Store
+.idea/
+.vscode/
+*.local
