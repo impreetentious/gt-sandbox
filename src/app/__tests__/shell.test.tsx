@@ -1,0 +1,26 @@
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+import packageMetadata from "../../../package.json";
+import RootLayout from "../layout";
+import HomePage from "../page";
+
+describe("P0 application shell", () => {
+  it("exposes the primary routes and the package version", () => {
+    const shell = renderToStaticMarkup(
+      <RootLayout>
+        <HomePage />
+      </RootLayout>,
+    );
+
+    expect(shell).toContain('aria-label="Primary"');
+    expect(shell).toContain(`v${packageMetadata.version}`);
+
+    render(<HomePage />);
+    expect(screen.getByRole("link", { name: "Open Play" })).toHaveAttribute(
+      "href",
+      "/play/pd",
+    );
+  });
+});

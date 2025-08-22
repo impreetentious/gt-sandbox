@@ -1,6 +1,6 @@
 # Game Theory Sandbox
 
-**Status: v0.1.1 — plan finalized, build not started.** Live URL: coming with the first build phase.
+**Status: v0.1.2 — plan finalized, build not started.** Live URL: coming with the first build phase.
 
 ## The idea
 
