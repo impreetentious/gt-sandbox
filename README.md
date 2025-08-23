@@ -1,6 +1,6 @@
 # Game Theory Sandbox
 
-**Status: v0.2.1 — P1 catalog and pure-analysis core committed locally.** Live URL: not deployed yet.
+**Status: v0.2.2 — P1 exact core committed locally, awaiting review and push.** Live URL: not deployed yet.
 
 ## The idea
 
@@ -46,5 +46,5 @@ that version in `package.json`, `pnpm-lock.yaml` when it records root metadata,
 and the active version surfaces in the same commit. Historical timestamps are
 owner-directed metadata; do not rewrite pushed history.
 
-- **Base Format Version:** 0.2.1
-- **Portfolio Version:** v0.2.1_2025-08-23_23:31:07 (IST)
+- **Base Format Version:** 0.2.2
+- **Portfolio Version:** v0.2.2_2025-08-24_01:30:46 (IST)
