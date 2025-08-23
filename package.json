@@ -1,6 +1,6 @@
 {
   "name": "game-theory-sandbox",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "packageManager": "pnpm@10.12.4",
   "engines": {
@@ -10,12 +10,20 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "start": "serve -l 4002 --config ../serve.json out",
+    "serve:export": "serve -l 4002 --config ../serve.json out",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "check:invariants": "bash scripts/check-invariants.sh",
+    "test:invariants": "node scripts/test-invariants.mjs",
+    "check:csp": "node scripts/check-csp.mjs",
+    "bundle:check": "node scripts/bundle-budget.mjs",
+    "verify": "pnpm check:invariants && pnpm check:csp && pnpm typecheck && pnpm lint && pnpm test",
+    "verify:full": "pnpm verify && pnpm build && pnpm bundle:check && pnpm test:invariants && pnpm exec playwright test"
   },
   "dependencies": {
     "next": "^15.4.0",
@@ -25,6 +33,8 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@eslint/js": "^9.0.0",
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.53.2",
     "@tailwindcss/postcss": "^4.0.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
@@ -39,6 +49,7 @@
     "fast-check": "^4.0.0",
     "jsdom": "^26.0.0",
     "prettier": "^3.0.0",
+    "serve": "^14.2.0",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.0.0",
     "vitest": "^3.0.0"
