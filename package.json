@@ -1,6 +1,6 @@
 {
   "name": "game-theory-sandbox",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "private": true,
   "packageManager": "pnpm@10.13.1",
   "engines": {
@@ -34,7 +34,7 @@
     "@eslint/eslintrc": "^3",
     "@eslint/js": "^9.0.0",
     "@axe-core/playwright": "^4.10.2",
-    "@playwright/test": "^1.54.0",
+    "@playwright/test": "^1.54.1",
     "@tailwindcss/postcss": "^4.0.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",

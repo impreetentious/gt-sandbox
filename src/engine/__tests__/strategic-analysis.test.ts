@@ -12,10 +12,7 @@ import {
   paretoEfficientProfiles,
   strictlyParetoDominates,
 } from "@/engine/solve/pareto";
-import {
-  bestResponses,
-  isBestResponse,
-} from "@/engine/solve/pure";
+import { bestResponses, isBestResponse } from "@/engine/solve/pure";
 import { analyzeEquilibriumSelection } from "@/engine/solve/riskDominance";
 
 function keys(profiles: readonly { row: number; column: number }[]): string[] {
