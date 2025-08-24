@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { PdPlayExperience } from "@/components/arena/pd-play";
 import { StubPage } from "@/components/stub-page";
 
 const games = [
@@ -34,6 +35,10 @@ export default async function PlayGamePage({
 
   if (!games.includes(game as GameSlug)) {
     notFound();
+  }
+
+  if (game === "pd") {
+    return <PdPlayExperience />;
   }
 
   return (

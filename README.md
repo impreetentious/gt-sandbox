@@ -1,6 +1,6 @@
 # Game Theory Sandbox
 
-**Status: v0.3.0 — P2's deterministic PD session core is committed locally; the playable arena follows in the next local commit. P0/P1 remain unpushed.** Live URL: not deployed yet.
+**Status: v0.3.1 — P2's first playable is committed locally, awaiting review and push; P0/P1 remain unpushed.** Live URL: not deployed yet.
 
 ## The idea
 
@@ -46,5 +46,5 @@ that version in `package.json`, `pnpm-lock.yaml` when it records root metadata,
 and the active version surfaces in the same commit. Historical timestamps are
 owner-directed metadata; do not rewrite pushed history.
 
-- **Base Format Version:** 0.3.0
-- **Portfolio Version:** v0.3.0_2025-08-24_01:38:44 (IST)
+- **Base Format Version:** 0.3.1
+- **Portfolio Version:** v0.3.1_2025-08-25_01:39:36 (IST)

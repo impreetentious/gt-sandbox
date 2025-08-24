@@ -87,6 +87,48 @@ test("the exported game route works as a direct deep link", async ({
   ).toBeVisible();
 });
 
+test("the PD session completes keyboard-only and stays accessible", async ({
+  page,
+}) => {
+  await page.goto("/play/pd/");
+
+  const arena = page.locator(".pd-session");
+  const holdPrice = page.getByRole("button", {
+    name: "Hold price (key 1)",
+  });
+  await holdPrice.focus();
+
+  for (let round = 1; round <= 10; round += 1) {
+    await page.keyboard.press("1");
+    await expect(arena).toHaveAttribute("data-round", String(round));
+
+    if (round < 10) {
+      await expect(holdPrice).toBeFocused();
+    }
+  }
+
+  await expect(page.getByRole("button", { name: "Play again" })).toBeFocused();
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
+});
+
+test("the PD outcome highlight has a static reduced-motion path", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/play/pd/");
+
+  const holdPrice = page.getByRole("button", {
+    name: "Hold price (key 1)",
+  });
+  await holdPrice.focus();
+  await page.keyboard.press("1");
+
+  const outcome = page.getByTestId("matrix-cell-0-0");
+  await expect(outcome).toHaveAttribute("data-highlight", "current");
+  await expect(outcome).toHaveCSS("transition-duration", "0s");
+});
+
 test("unknown game slugs serve the exported not-found page", async ({
   page,
 }) => {
