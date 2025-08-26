@@ -1,0 +1,7 @@
+{
+  "caseCount": 39,
+  "fixture": "gambit-16.3.0.json",
+  "gambitVersion": "16.3.0",
+  "sha256": "2fbd2674d6d8130bddc9e405efa66f4421035ecbff4704000763438e80e6a358",
+  "sourceSeed": "gt-sandbox-p3-gambit-fixtures-v1"
+}

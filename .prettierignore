@@ -5,3 +5,5 @@ coverage/
 playwright-report/
 test-results/
 pnpm-lock.yaml
+# The manifest stores the exact bytes of this generated cross-oracle corpus.
+fixtures/gambit-16.6.0.json
