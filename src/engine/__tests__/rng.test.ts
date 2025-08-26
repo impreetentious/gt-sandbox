@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createRng } from "@/engine/rng";
+import { createEventRng, createRng, deriveRngSeed } from "@/engine/rng";
 
 describe("seeded RNG", () => {
   it("is deterministic by seed and produces values in range", () => {
@@ -25,5 +25,23 @@ describe("seeded RNG", () => {
     expect(() => createRng(1.5)).toThrow(TypeError);
     expect(() => rng.integer(2, 2)).toThrow(RangeError);
     expect(() => rng.integer(0.5, 3)).toThrow(TypeError);
+  });
+
+  it("derives independent event-addressed streams and validates addresses", () => {
+    const address = {
+      masterSeed: 11,
+      matchId: "match-a",
+      purpose: "policy" as const,
+      actor: "row" as const,
+      round: 3,
+    };
+
+    expect(deriveRngSeed(address)).toBe(deriveRngSeed(address));
+    expect(deriveRngSeed({ ...address, actor: "column" })).not.toBe(
+      deriveRngSeed(address),
+    );
+    expect(createEventRng(address).next()).toBe(createEventRng(address).next());
+    expect(() => deriveRngSeed({ ...address, matchId: "" })).toThrow(/matchId/);
+    expect(() => deriveRngSeed({ ...address, round: -1 })).toThrow(/round/);
   });
 });
