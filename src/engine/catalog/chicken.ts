@@ -35,5 +35,7 @@ export const chicken: CatalogGame = {
     classification: "anti-coordination",
     riskDominance: { kind: "tie" },
     payoffDominance: { kind: "tie" },
+    mixedNash: [{ row: ["9/10", "1/10"], column: ["9/10", "1/10"] }],
+    degenerate: false,
   },
 };

@@ -33,5 +33,7 @@ export const ipd: CatalogGame = {
     classification: "dilemma",
     riskDominance: { kind: "not-applicable" },
     payoffDominance: { kind: "not-applicable" },
+    mixedNash: [],
+    degenerate: false,
   },
 };

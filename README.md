@@ -1,6 +1,6 @@
 # Game Theory Sandbox
 
-**Status: v0.4.0 — P3’s exact mixed-equilibrium solver and independent verifier are committed locally; catalog and external-oracle acceptance follow in this release series. All work remains unpushed.** Live URL: not deployed yet.
+**Status: v0.4.1 — P3’s exact solver and catalog mixed-equilibrium oracles are committed locally; external-oracle acceptance follows in this release series. All work remains unpushed.** Live URL: not deployed yet.
 
 ## The idea
 
@@ -46,5 +46,5 @@ that version in `package.json`, `pnpm-lock.yaml` when it records root metadata,
 and the active version surfaces in the same commit. Historical timestamps are
 owner-directed metadata; do not rewrite pushed history.
 
-- **Base Format Version:** 0.4.0
-- **Portfolio Version:** v0.4.0_2025-08-25_02:55:12 (IST)
+- **Base Format Version:** 0.4.1
+- **Portfolio Version:** v0.4.1_2025-08-26_23:10:09 (IST)

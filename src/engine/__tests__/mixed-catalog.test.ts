@@ -1,5 +1,6 @@
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
+import { catalog } from "@/engine/catalog";
 import { createNormalFormGame } from "@/engine/game";
 import { formatRational, ONE, ZERO } from "@/engine/rational";
 import {
@@ -9,6 +10,7 @@ import {
   type MixedNashEquilibrium,
 } from "@/engine/solve/mixed";
 import { twoByTwoMixedEquilibrium } from "@/engine/solve/twoByTwo";
+import { verifyMixedEquilibrium } from "@/engine/verify";
 
 function formatEquilibrium(equilibrium: MixedNashEquilibrium) {
   return {
@@ -17,13 +19,34 @@ function formatEquilibrium(equilibrium: MixedNashEquilibrium) {
   };
 }
 
-function nonPureEquilibria(game: Parameters<typeof mixedNashEquilibria>[0]) {
+function nonPureEquilibria(game: (typeof catalog)[number]["game"]) {
   return mixedNashEquilibria(game).filter(
     (equilibrium) =>
       equilibrium.row.support.length > 1 ||
       equilibrium.column.support.length > 1,
   );
 }
+
+describe("P3 mixed-equilibrium catalog oracles", () => {
+  for (const entry of catalog) {
+    it(`${entry.game.title}: exact mixed equilibria and nondegeneracy`, () => {
+      const equilibria = mixedNashEquilibria(entry.game);
+      const mixed = nonPureEquilibria(entry.game);
+
+      expect(mixed.map(formatEquilibrium)).toEqual(entry.oracle.mixedNash);
+      expect(equilibria).toHaveLength(
+        entry.oracle.pureNash.length + entry.oracle.mixedNash.length,
+      );
+      expect(isDegenerate(entry.game)).toBe(entry.oracle.degenerate);
+      expect(
+        equilibria.every(
+          (equilibrium) =>
+            verifyMixedEquilibrium(entry.game, equilibrium).isNashEquilibrium,
+        ),
+      ).toBe(true);
+    });
+  }
+});
 
 describe("mixed-equilibrium cross-checks", () => {
   it("keeps a non-best-response action below a formal degeneracy witness tie", () => {

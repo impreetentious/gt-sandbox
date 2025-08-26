@@ -34,5 +34,7 @@ export const bos: CatalogGame = {
     classification: "battle",
     riskDominance: { kind: "tie" },
     payoffDominance: { kind: "tie" },
+    mixedNash: [{ row: ["2/3", "1/3"], column: ["1/3", "2/3"] }],
+    degenerate: false,
   },
 };

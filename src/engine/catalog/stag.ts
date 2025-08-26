@@ -31,5 +31,7 @@ export const stag: CatalogGame = {
     classification: "coordination (assurance)",
     riskDominance: { kind: "equilibrium", profile: { row: 1, column: 1 } },
     payoffDominance: { kind: "equilibrium", profile: { row: 0, column: 0 } },
+    mixedNash: [{ row: ["3/4", "1/4"], column: ["3/4", "1/4"] }],
+    degenerate: false,
   },
 };

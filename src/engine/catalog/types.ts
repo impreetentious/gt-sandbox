@@ -1,4 +1,4 @@
-import type { Profile } from "@/engine/game";
+import type { Profile, RationalInput } from "@/engine/game";
 import type { StrategicStructure } from "@/engine/solve/classify";
 import type { NormalFormGame } from "@/engine/game";
 
@@ -14,6 +14,12 @@ export type SelectionOracle =
   | { readonly kind: "tie" }
   | { readonly kind: "equilibrium"; readonly profile: Profile };
 
+/** Hand-derived non-pure equilibrium probabilities. */
+export interface MixedNashOracle {
+  readonly row: readonly RationalInput[];
+  readonly column: readonly RationalInput[];
+}
+
 /** Hand-derived pure-analysis facts. */
 export interface PureGameOracle {
   readonly pureNash: readonly Profile[];
@@ -23,6 +29,8 @@ export interface PureGameOracle {
   readonly classification: StrategicStructure;
   readonly riskDominance: SelectionOracle;
   readonly payoffDominance: SelectionOracle;
+  readonly mixedNash: readonly MixedNashOracle[];
+  readonly degenerate: boolean;
 }
 
 export interface CatalogGame {

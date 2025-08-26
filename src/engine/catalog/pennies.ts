@@ -33,5 +33,7 @@ export const pennies: CatalogGame = {
     classification: "cycle",
     riskDominance: { kind: "not-applicable" },
     payoffDominance: { kind: "not-applicable" },
+    mixedNash: [{ row: ["1/2", "1/2"], column: ["1/2", "1/2"] }],
+    degenerate: false,
   },
 };
