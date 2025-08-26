@@ -129,6 +129,43 @@ test("the PD outcome highlight has a static reduced-motion path", async ({
   await expect(outcome).toHaveCSS("transition-duration", "0s");
 });
 
+test("the PD analysis drawer is keyboard-operable and accessible", async ({
+  page,
+}) => {
+  await page.goto("/play/pd/");
+
+  const holdPrice = page.getByRole("button", {
+    name: "Hold price (key 1)",
+  });
+  await holdPrice.focus();
+
+  for (let round = 0; round < 3; round += 1) {
+    await page.keyboard.press("1");
+    await expect(page.locator(".pd-session")).toHaveAttribute(
+      "data-round",
+      String(round + 1),
+    );
+  }
+
+  const drawer = page.locator(".analysis-drawer");
+  const summary = drawer.locator("summary");
+  await summary.focus();
+  await page.keyboard.press("Enter");
+  await expect(drawer).toHaveAttribute("open", "");
+
+  const firstElimination = page.getByRole("button", {
+    name: "Show elimination 1 of 2",
+  });
+  await firstElimination.focus();
+  await page.keyboard.press("Enter");
+  await expect(
+    page.getByText("Step 1: You: Undercut eliminates Hold price."),
+  ).toBeVisible();
+
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
+});
+
 test("unknown game slugs serve the exported not-found page", async ({
   page,
 }) => {

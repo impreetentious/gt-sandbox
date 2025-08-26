@@ -7,11 +7,12 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
+import { AnalysisDrawer } from "@/components/analysis/analysis-drawer";
 import { pdActionCopy, pdPersonas } from "@/content/pd";
 import { pd } from "@/engine/catalog/pd";
 import { payoffAt, profileKey } from "@/engine/game";
-import { analyzeDominance } from "@/engine/solve/dominance";
-import { pureNashEquilibria } from "@/engine/solve/pure";
+import { paretoEfficientProfiles } from "@/engine/solve/pareto";
+import { bestResponses, pureNashEquilibria } from "@/engine/solve/pure";
 import { formatRational } from "@/engine/rational";
 import {
   createPdSession,
@@ -21,14 +22,8 @@ import {
 } from "@/state/pd-session";
 
 const equilibria = new Set(pureNashEquilibria(pd.game).map(profileKey));
-const dominance = analyzeDominance(pd.game).strict;
-const undercutDominatesForBoth = ["row", "column"].every((player) =>
-  dominance.some(
-    (relation) =>
-      relation.player === player &&
-      relation.dominated === 0 &&
-      relation.dominator === 1,
-  ),
+const paretoEfficient = new Set(
+  paretoEfficientProfiles(pd.game).map(profileKey),
 );
 
 function useReducedMotion(): boolean {
@@ -60,6 +55,7 @@ export function PdPlayExperience() {
   const [state, dispatch] = useReducer(reducePdSession, undefined, () =>
     createPdSession(),
   );
+  const [paretoMode, setParetoMode] = useState(false);
   const reducedMotion = useReducedMotion();
   const firstChoiceRef = useRef<HTMLButtonElement>(null);
   const secondChoiceRef = useRef<HTMLButtonElement>(null);
@@ -312,13 +308,35 @@ export function PdPlayExperience() {
                         highlightedRound?.playerAction === row &&
                         highlightedRound.opponentAction === column;
                       const isEquilibrium = equilibria.has(profileKey(profile));
+                      const isParetoEfficient = paretoEfficient.has(
+                        profileKey(profile),
+                      );
+                      const youBestRespond = bestResponses(
+                        pd.game,
+                        "row",
+                        column,
+                      ).includes(row);
+                      const rivalBestRespond = bestResponses(
+                        pd.game,
+                        "column",
+                        row,
+                      ).includes(column);
 
                       return (
                         <td
-                          className={
-                            isHighlighted
-                              ? "pd-matrix__cell pd-matrix__cell--highlighted"
-                              : "pd-matrix__cell"
+                          className={[
+                            "pd-matrix__cell",
+                            isHighlighted && "pd-matrix__cell--highlighted",
+                            paretoMode &&
+                              !isParetoEfficient &&
+                              "pd-matrix__cell--dominated",
+                          ]
+                            .filter(Boolean)
+                            .join(" ")}
+                          data-pareto={
+                            paretoMode && !isParetoEfficient
+                              ? "dominated"
+                              : undefined
                           }
                           data-highlight={isHighlighted ? "current" : undefined}
                           data-testid={`matrix-cell-${row}-${column}`}
@@ -326,6 +344,10 @@ export function PdPlayExperience() {
                         >
                           <span>
                             {formatRational(you)}, {formatRational(rival)}
+                          </span>
+                          <span className="pd-matrix__best-responses">
+                            {youBestRespond ? <b>You BR</b> : null}
+                            {rivalBestRespond ? <b>Rival BR</b> : null}
                           </span>
                           {isEquilibrium ? <em>NE</em> : null}
                           {isHighlighted ? (
@@ -340,27 +362,22 @@ export function PdPlayExperience() {
             </table>
           </div>
 
-          <details className="pd-reveal">
-            <summary>Analysis / Price war</summary>
-            {state.rounds.length === 0 ? (
-              <p>Play one round to connect the matrix to an outcome.</p>
-            ) : (
-              <>
-                <p>
-                  {undercutDominatesForBoth
-                    ? "The engine finds that undercutting strictly dominates holding price for both firms."
-                    : "The engine found no strict-dominance walkthrough for this matrix."}
-                </p>
-                <p>
-                  The engine marks {equilibria.size} pure Nash equilibrium
-                  {equilibria.size === 1 ? "" : "s"} in the matrix. Your session
-                  so far: {state.rounds.length} round
-                  {state.rounds.length === 1 ? "" : "s"},{" "}
-                  {formatRational(state.playerScore)} total payoff.
-                </p>
-              </>
-            )}
-          </details>
+          <AnalysisDrawer
+            actionLabels={{
+              row: pdActionCopy.map((action) => action.label),
+              column: pdActionCopy.map((action) => action.label),
+            }}
+            game={pd.game}
+            onParetoModeChange={setParetoMode}
+            opponentName={personaName(state.persona)}
+            paretoMode={paretoMode}
+            playerName="You"
+            profiles={state.rounds.map((round) => ({
+              row: round.playerAction,
+              column: round.opponentAction,
+            }))}
+            title="Price war"
+          />
         </section>
       </div>
     </section>
