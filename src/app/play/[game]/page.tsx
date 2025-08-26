@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { IpdPlayExperience } from "@/components/arena/ipd-play";
 import { OneShotPlayExperience } from "@/components/arena/one-shot-play";
 import { PdPlayExperience } from "@/components/arena/pd-play";
 import { StubPage } from "@/components/stub-page";
@@ -40,6 +41,10 @@ export default async function PlayGamePage({
 
   if (game === "pd") {
     return <PdPlayExperience />;
+  }
+
+  if (game === "iterated-pd") {
+    return <IpdPlayExperience />;
   }
 
   const oneShotSlugs = {

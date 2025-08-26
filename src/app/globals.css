@@ -517,6 +517,42 @@ main {
   background: var(--accent-soft);
 }
 
+.ipd-counterfactual {
+  padding: 0.8rem 1rem;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--ink) !important;
+  font-weight: 700;
+}
+
+.ipd-fsm {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.ipd-fsm h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.35rem;
+  font-weight: 400;
+}
+
+.ipd-fsm > p:not(.eyebrow) {
+  margin: 0.7rem 0 0;
+  color: var(--muted);
+}
+
+.ipd-fsm__diagram {
+  display: block;
+  width: 100%;
+  min-width: 16rem;
+  max-width: 100%;
+  margin-top: 1rem;
+  overflow: visible;
+  color: var(--accent);
+}
+
 .pd-history {
   margin-top: 1.5rem;
   padding-top: 1.25rem;
