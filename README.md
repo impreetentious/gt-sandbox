@@ -1,6 +1,6 @@
 # Game Theory Sandbox
 
-**Status: v0.7.1 — P6’s interactive IPD arena, mystery reveal, and counterfactual are committed locally. P0–P5 remain unpushed; browser acceptance is next.** Live URL: not deployed yet.
+**Status: v0.8.0 — P7’s deterministic seeded IPD round-robin engine and frozen matrix fixture are committed locally; the Tournament surface remains in progress. P0–P6 remain unpushed.** Live URL: not deployed yet.
 
 ## The idea
 
@@ -46,5 +46,5 @@ that version in `package.json`, `pnpm-lock.yaml` when it records root metadata,
 and the active version surfaces in the same commit. Historical timestamps are
 owner-directed metadata; do not rewrite pushed history.
 
-- **Base Format Version:** 0.7.1
-- **Portfolio Version:** v0.7.1_2025-08-27_03:46:02 (IST)
+- **Base Format Version:** 0.8.0
+- **Portfolio Version:** v0.8.0_2025-08-27_03:59:22 (IST)

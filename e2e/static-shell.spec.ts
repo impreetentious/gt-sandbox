@@ -205,6 +205,45 @@ test("each P5 one-shot game completes by keyboard and remains accessible", async
   }
 });
 
+test("the IPD mystery flow reveals its strategy and seeded counterfactual", async ({
+  page,
+}) => {
+  await page.goto("/play/iterated-pd/");
+  await page.getByLabel("Choose IPD rival").selectOption("mystery");
+  await expect(
+    page.getByText(
+      "Identity stays hidden until the reveal. The seeded environment is already fixed.",
+    ),
+  ).toBeVisible();
+
+  const session = page.locator(".ipd-session");
+  const cooperate = page.getByRole("button", { name: "Cooperate (key 1)" });
+  await cooperate.focus();
+
+  for (let round = 0; round < 100; round += 1) {
+    if (
+      await page
+        .getByRole("button", { name: "Play again" })
+        .isVisible()
+        .catch(() => false)
+    ) {
+      break;
+    }
+
+    const before = await session.getAttribute("data-round");
+    await page.keyboard.press("1");
+    await expect(session).not.toHaveAttribute("data-round", before ?? "");
+  }
+
+  await expect(page.getByRole("button", { name: "Play again" })).toBeFocused();
+  await expect(
+    page.getByText(/Tit for Tat in your seat would have scored/),
+  ).toBeVisible();
+  await expect(page.getByLabel(/state diagram/)).toBeVisible();
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
+});
+
 test("unknown game slugs serve the exported not-found page", async ({
   page,
 }) => {
