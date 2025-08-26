@@ -2,7 +2,12 @@
 
 import { useId, useState } from "react";
 import { GlossaryTerm } from "@/components/ui/glossary-term";
-import type { NormalFormGame, Player, Profile } from "@/engine/game";
+import {
+  isZeroSum,
+  type NormalFormGame,
+  type Player,
+  type Profile,
+} from "@/engine/game";
 import {
   formatRational,
   multiply,
@@ -404,6 +409,12 @@ function StructurePanel({ game }: { readonly game: NormalFormGame }) {
       <p>
         The engine classifies this 2×2 game as <strong>{structure}</strong>.
       </p>
+      {isZeroSum(game) ? (
+        <p>
+          This is a <GlossaryTerm term="zero-sum" /> game: every gain for one
+          player is a loss for the other.
+        </p>
+      ) : null}
       {selection.riskDominance.kind === "equilibrium" ? (
         <p>
           <GlossaryTerm term="risk-dominant" /> outcome:{" "}

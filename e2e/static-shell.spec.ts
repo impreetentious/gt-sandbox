@@ -166,6 +166,45 @@ test("the PD analysis drawer is keyboard-operable and accessible", async ({
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
+test("each P5 one-shot game completes by keyboard and remains accessible", async ({
+  page,
+}) => {
+  const games = [
+    { route: "/play/stag-hunt/", button: "Stag (key 1)", rounds: 10 },
+    {
+      route: "/play/battle-of-the-sexes/",
+      button: "Yours (key 1)",
+      rounds: 10,
+    },
+    { route: "/play/chicken/", button: "Swerve (key 1)", rounds: 10 },
+    {
+      route: "/play/matching-pennies/",
+      button: "Heads (key 1)",
+      rounds: 20,
+    },
+  ];
+
+  for (const game of games) {
+    await page.goto(game.route);
+    const choice = page.getByRole("button", { name: game.button });
+    await choice.focus();
+
+    for (let round = 1; round <= game.rounds; round += 1) {
+      await page.keyboard.press("1");
+      await expect(page.locator(".one-shot-session")).toHaveAttribute(
+        "data-round",
+        String(round),
+      );
+    }
+
+    await expect(
+      page.getByRole("button", { name: "Play again" }),
+    ).toBeFocused();
+    const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+    expect(accessibilityScanResults.violations).toEqual([]);
+  }
+});
+
 test("unknown game slugs serve the exported not-found page", async ({
   page,
 }) => {

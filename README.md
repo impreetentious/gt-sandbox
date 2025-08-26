@@ -1,6 +1,6 @@
 # Game Theory Sandbox
 
-**Status: v0.6.0 — P5’s deterministic one-shot policy and session core are committed locally. P0–P4 remain unpushed; P5’s arena and P6 remain in progress.** Live URL: not deployed yet.
+**Status: v0.6.1 — P5’s complete one-shot roster and exported-browser acceptance are committed locally. P0–P4 remain unpushed; P6 remains in progress.** Live URL: not deployed yet.
 
 ## The idea
 
@@ -46,5 +46,5 @@ that version in `package.json`, `pnpm-lock.yaml` when it records root metadata,
 and the active version surfaces in the same commit. Historical timestamps are
 owner-directed metadata; do not rewrite pushed history.
 
-- **Base Format Version:** 0.6.0
-- **Portfolio Version:** v0.6.0_2025-08-27_02:26:18 (IST)
+- **Base Format Version:** 0.6.1
+- **Portfolio Version:** v0.6.1_2025-08-27_02:56:07 (IST)

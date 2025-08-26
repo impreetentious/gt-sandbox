@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { OneShotPlayExperience } from "@/components/arena/one-shot-play";
 import { PdPlayExperience } from "@/components/arena/pd-play";
 import { StubPage } from "@/components/stub-page";
 
@@ -39,6 +40,21 @@ export default async function PlayGamePage({
 
   if (game === "pd") {
     return <PdPlayExperience />;
+  }
+
+  const oneShotSlugs = {
+    "stag-hunt": "stag",
+    "battle-of-the-sexes": "bos",
+    chicken: "chicken",
+    "matching-pennies": "pennies",
+  } as const;
+
+  if (game in oneShotSlugs) {
+    return (
+      <OneShotPlayExperience
+        slug={oneShotSlugs[game as keyof typeof oneShotSlugs]}
+      />
+    );
   }
 
   return (
