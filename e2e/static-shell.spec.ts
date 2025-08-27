@@ -56,7 +56,10 @@ test("every static route is same-origin, CSP-protected, and accessible", async (
 test("the primary routes can be opened with the keyboard", async ({ page }) => {
   const routes = [
     { name: "Play", heading: "Prisoner's Dilemma" },
-    { name: "Evolve", heading: "Watch a strategy population change." },
+    {
+      name: "Evolve",
+      heading: "A finite tournament of repeatable strategies.",
+    },
     { name: "Build", heading: "Shape the incentives." },
     { name: "Methods", heading: "Correctness is the product." },
   ];
@@ -240,6 +243,34 @@ test("the IPD mystery flow reveals its strategy and seeded counterfactual", asyn
     page.getByText(/Tit for Tat in your seat would have scored/),
   ).toBeVisible();
   await expect(page.getByLabel(/state diagram/)).toBeVisible();
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
+});
+
+test("the tournament heatmap can be filtered and exposes its table fallback", async ({
+  page,
+}) => {
+  await page.goto("/evolve/");
+
+  await expect(
+    page.getByRole("heading", {
+      name: "A finite tournament of repeatable strategies.",
+    }),
+  ).toBeVisible();
+  await page.getByRole("checkbox", { name: "Always Cooperate" }).click();
+  await expect(
+    page.getByRole("status", { name: "Tournament changes" }),
+  ).toHaveText(
+    "Always Cooperate removed from the tournament. 7 strategies selected.",
+  );
+
+  await page.getByText("View as an accessible data table").click();
+  await expect(
+    page.getByRole("table", {
+      name: "Exact mean per-round payoff for each row strategy against each column strategy.",
+    }),
+  ).toBeVisible();
+
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
 });

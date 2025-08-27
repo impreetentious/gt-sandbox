@@ -1,6 +1,6 @@
 # Game Theory Sandbox
 
-**Status: v0.8.1 — P7’s interactive Tournament surface, roster picker, ranking, and accessible exact-table fallback are committed locally; exported-browser acceptance and handoff remain. P0–P6 remain unpushed.** Live URL: not deployed yet.
+**Status: v0.9.0 — P8’s seeded IPD replicator engine is committed locally; its calibration fixtures, URL state, Evolution surface, and browser acceptance remain uncommitted. P0–P7 remain unpushed.** Live URL: not deployed yet.
 
 ## The idea
 
@@ -46,5 +46,5 @@ that version in `package.json`, `pnpm-lock.yaml` when it records root metadata,
 and the active version surfaces in the same commit. Historical timestamps are
 owner-directed metadata; do not rewrite pushed history.
 
-- **Base Format Version:** 0.8.1
-- **Portfolio Version:** v0.8.1_2025-08-27_19:17:35 (IST)
+- **Base Format Version:** 0.9.0
+- **Portfolio Version:** v0.9.0_2025-08-27_22:38:38 (IST)
