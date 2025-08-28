@@ -13,4 +13,12 @@ python3 scripts/gen_fixtures.py
 
 The generated output is an external cross-oracle, not a replacement for the engine's own hand-authored catalog oracles and independent verifier.
 
+## Evolution presets
+
+`evolution-presets.json` is P8's reviewed calibration record. Each preset
+pins the complete seeded match environment, its estimated per-round payoff
+matrix, final population shares after 100 discrete replicator generations, and
+a named threshold predicate. Tests rerun every configuration and require an
+exact matrix/endpoint match before the associated product copy can ship.
+
 The build pins the Debian base and its package snapshot to inputs available by 15 July 2025, and verifies the upstream Gambit source archive checksum. The explicit source-date build argument fixes image timestamps for reproducible builds; a rebuild can be performed later.

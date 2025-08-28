@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+  defaultEvolutionPreset,
+  evolutionPresets,
+  predicateHolds,
+} from "@/content/evolution-presets";
+import {
   runIpdEvolution,
   runReplicatorDynamics,
 } from "@/engine/repeated/replicator";
@@ -14,6 +19,18 @@ const baseEvolutionConfig = {
   roundCap: 500,
   generations: 100,
 };
+
+function finalShares(
+  result: ReturnType<typeof runIpdEvolution>,
+): readonly number[] {
+  const final = result.result.generations.at(-1);
+
+  if (!final) {
+    throw new Error("Expected at least the initial generation.");
+  }
+
+  return final.shares;
+}
 
 describe("P8 replicator dynamics", () => {
   it("follows the known monotone AllC/AllD path from an equal population", () => {
@@ -86,6 +103,30 @@ describe("P8 replicator dynamics", () => {
     expect(() => runReplicatorDynamics([[1]], [0], 1)).toThrow(/positive/);
     expect(() => runReplicatorDynamics([[-1]], [1], 1)).toThrow(/nonnegative/);
     expect(() => runReplicatorDynamics([[1]], [1], 501)).toThrow(/0 to 500/);
+  });
+
+  it("reproduces every reviewed seeded preset, matrix, endpoint, and predicate", () => {
+    for (const preset of evolutionPresets) {
+      const run = runIpdEvolution(preset.config);
+
+      expect(run.result.status, preset.id).toBe("complete");
+      expect(run.payoffMatrix, preset.id).toEqual(preset.payoffMatrix);
+      expect(finalShares(run), preset.id).toEqual(preset.finalShares);
+      expect(
+        predicateHolds(
+          finalShares(run),
+          run.config.strategies,
+          preset.metricPredicate,
+        ),
+        preset.id,
+      ).toBe(true);
+    }
+  });
+
+  it("keeps the documented 50/50 exploitation condition as the default preset", () => {
+    expect(defaultEvolutionPreset.id).toBe("exploitation");
+    expect(defaultEvolutionPreset.config.initialShares).toEqual([0.5, 0.5]);
+    expect(defaultEvolutionPreset.config.strategies).toEqual(["allc", "alld"]);
   });
 
   it("rejects invalid IPD evolution configuration before simulating", () => {

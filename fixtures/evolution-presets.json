@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "presets": [
+    {
+      "id": "exploitation",
+      "config": {
+        "strategies": ["allc", "alld"],
+        "initialShares": [0.5, 0.5],
+        "masterSeed": 940416,
+        "repetitions": 20,
+        "continuationProbability": 0.95,
+        "noise": 0,
+        "roundCap": 500,
+        "generations": 100
+      },
+      "payoffMatrix": [
+        [3, 0],
+        [5, 1]
+      ],
+      "finalShares": [0, 1],
+      "metricPredicate": {
+        "strategy": "alld",
+        "comparison": ">",
+        "threshold": 0.999
+      }
+    },
+    {
+      "id": "lone-invasion",
+      "config": {
+        "strategies": ["alld", "tft"],
+        "initialShares": [0.99, 0.01],
+        "masterSeed": 940417,
+        "repetitions": 20,
+        "continuationProbability": 0.95,
+        "noise": 0,
+        "roundCap": 500,
+        "generations": 100
+      },
+      "payoffMatrix": [
+        [1, 1.4479435011641535],
+        [0.8865935331338206, 3]
+      ],
+      "finalShares": [0.999999928000936, 7.199906405394122e-8],
+      "metricPredicate": {
+        "strategy": "tft",
+        "comparison": "<",
+        "threshold": 0.000001
+      }
+    },
+    {
+      "id": "reciprocity",
+      "config": {
+        "strategies": ["allc", "alld", "tft", "grim"],
+        "initialShares": [0.25, 0.25, 0.25, 0.25],
+        "masterSeed": 940418,
+        "repetitions": 20,
+        "continuationProbability": 0.95,
+        "noise": 0,
+        "roundCap": 500,
+        "generations": 100
+      },
+      "payoffMatrix": [
+        [3, 0, 3, 3],
+        [5, 1, 1.7150266209825034, 1.723108481989287],
+        [3, 0.8873686161140046, 3, 3],
+        [3, 0.8671328839247795, 3, 3]
+      ],
+      "finalShares": [
+        0.178157954392851, 6.165154821287245e-12, 0.41475623608080714,
+        0.4070858095201766
+      ],
+      "metricPredicate": {
+        "strategy": "alld",
+        "comparison": "<",
+        "threshold": 0.001
+      }
+    },
+    {
+      "id": "noise",
+      "config": {
+        "strategies": ["alld", "tft", "gtft", "pavlov"],
+        "initialShares": [0.25, 0.25, 0.25, 0.25],
+        "masterSeed": 940419,
+        "repetitions": 20,
+        "continuationProbability": 0.95,
+        "noise": 0.03,
+        "roundCap": 500,
+        "generations": 100
+      },
+      "payoffMatrix": [
+        [
+          1.088943701015834, 1.5602248984544735, 2.6671540553386386,
+          3.202539520357357
+        ],
+        [
+          0.8820183449235118, 2.8318462020435704, 3.0688013013013014,
+          2.5940184670049566
+        ],
+        [
+          0.6379204825526608, 2.905292864799814, 2.892145734312451,
+          2.8330102305102307
+        ],
+        [
+          0.553403263259664, 2.710191409897292, 2.9344158987836373,
+          3.015425575985636
+        ]
+      ],
+      "finalShares": [
+        0.0014458566964252512, 0.004700916365180649, 0.08511182959998538,
+        0.9087413973384088
+      ],
+      "metricPredicate": {
+        "strategy": "pavlov",
+        "comparison": ">",
+        "threshold": 0.65
+      }
+    },
+    {
+      "id": "shadow-of-the-future",
+      "config": {
+        "strategies": ["alld", "tft"],
+        "initialShares": [0.5, 0.5],
+        "masterSeed": 940420,
+        "repetitions": 20,
+        "continuationProbability": 0.5,
+        "noise": 0,
+        "roundCap": 500,
+        "generations": 100
+      },
+      "payoffMatrix": [
+        [1, 4.066666666666666],
+        [0.4025, 3]
+      ],
+      "finalShares": [1, 3.4816235425396794e-39],
+      "metricPredicate": {
+        "strategy": "alld",
+        "comparison": ">",
+        "threshold": 0.999
+      }
+    }
+  ]
+}
