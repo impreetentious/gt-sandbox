@@ -41,6 +41,8 @@ interface AnalysisDrawerProps {
   readonly title: string;
   readonly paretoMode: boolean;
   readonly onParetoModeChange: (enabled: boolean) => void;
+  readonly defaultOpen?: boolean;
+  readonly showAllPanels?: boolean;
 }
 
 function otherPlayer(player: Player): Player {
@@ -448,6 +450,8 @@ export function AnalysisDrawer({
   title,
   paretoMode,
   onParetoModeChange,
+  defaultOpen = false,
+  showAllPanels = false,
 }: AnalysisDrawerProps) {
   const displayGame: NormalFormGame = actionLabels
     ? {
@@ -459,7 +463,7 @@ export function AnalysisDrawer({
   const equilibria = analyzeMixedEquilibria(displayGame).equilibria;
 
   return (
-    <details className="analysis-drawer">
+    <details className="analysis-drawer" open={defaultOpen || undefined}>
       <summary>Analysis / {title}</summary>
       <div className="analysis-drawer__content">
         {profiles.length === 0 ? (
@@ -470,7 +474,7 @@ export function AnalysisDrawer({
             in the matrix, not a scripted verdict.
           </p>
         )}
-        {profiles.length >= 3 ? (
+        {showAllPanels || profiles.length >= 3 ? (
           <div className="analysis-drawer__panels">
             <BestResponsePanel game={displayGame} />
             <DominancePanel game={displayGame} />
