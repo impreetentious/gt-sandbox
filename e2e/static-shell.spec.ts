@@ -275,6 +275,67 @@ test("the tournament heatmap can be filtered and exposes its table fallback", as
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
+test("the evolution trajectory is keyboard-operable, reduced-motion safe, and narrow-screen accessible", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 320, height: 760 });
+  await page.goto("/evolve/");
+
+  await page.getByRole("tab", { name: "Evolution" }).click();
+  await expect(
+    page.getByRole("heading", {
+      name: "Population shares under a fixed environment",
+    }),
+  ).toBeVisible();
+
+  const scrubber = page.getByRole("slider", { name: "Generation scrubber" });
+  await expect(scrubber).toHaveValue("0");
+  await scrubber.focus();
+  await page.keyboard.press("End");
+  await expect(scrubber).toHaveValue("100");
+  await expect(
+    page.locator('[aria-label="Population at generation 100"]'),
+  ).toBeVisible();
+
+  await page
+    .getByText("View each generation as an accessible data table")
+    .click();
+  await expect(
+    page.getByRole("table", {
+      name: "Population share at every generation for this seeded evolution run.",
+    }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
+});
+
+test("a bounded evolution URL restores its complete seeded configuration", async ({
+  page,
+}) => {
+  await page.goto(
+    "/evolve/?ev=1&s=alld%2Ctft&x=0.2%2C0.8&d=0.9&n=0.05&r=10&seed=42&cap=400&g=80",
+  );
+  await page.getByRole("tab", { name: "Evolution" }).click();
+
+  await expect(
+    page.getByRole("slider", { name: "Continuation probability" }),
+  ).toHaveValue("0.9");
+  await expect(page.getByRole("slider", { name: "Action noise" })).toHaveValue(
+    "0.05",
+  );
+  await expect(page.getByLabel("Evolution seed")).toHaveValue("42");
+  await expect(
+    page.getByRole("slider", { name: "Generation scrubber" }),
+  ).toHaveAttribute("max", "80");
+});
+
 test("unknown game slugs serve the exported not-found page", async ({
   page,
 }) => {

@@ -1,6 +1,6 @@
 # Game Theory Sandbox
 
-**Status: v0.9.2 — P8’s evolution engine, calibration corpus, reproducible URL state, and accessible Evolution surface are committed locally; browser acceptance and final handoff remain uncommitted. P0–P7 remain unpushed.** Live URL: not deployed yet.
+**Status: v0.10.0 — P9 begins with a bounded, versioned custom-game URL codec and property coverage. P0–P8 remain committed locally and unpushed.** Live URL: not deployed yet.
 
 ## The idea
 
@@ -14,16 +14,16 @@ Built for strategy-curious professionals and students who want to _feel_ how inc
 
 - **Play** — six canonical games (Prisoner's Dilemma, Stag Hunt, Battle of the Sexes, Chicken, Matching Pennies, and the Iterated Prisoner's Dilemma) against precisely specified opponents, each game framed by a real business scenario, each ending in a full analytical reveal.
 - **Evolve** — the Axelrod tournament and evolutionary dynamics over classic strategies: watch cooperation emerge, collapse under noise, and hinge on the shadow of the future.
-- **Build** — edit any payoff, or build your own game up to 4×4. The engine re-solves live, tells you which strategic species your game just became, and gives you a link that reproduces it exactly.
+- **Build** — a versioned share-state codec for bounded 2×2–4×4 games is now in place; the live editor and surface integration follow in this phase.
 
 ## The v1 correctness commitment
 
 This is the part that can't be faked, so the v1 implementation will be held to these targets:
 
-- The solver will use **exact rational arithmetic** (no floating point in any correctness path) and find **all** equilibria of nondegenerate games up to 4×4 — pure and mixed, reported as exact fractions.
-- Every game-theoretic claim shown on screen will be **computed by the engine and covered by tests** against hand-derived results _and_ independently generated oracles (Gambit / nashpy).
-- Every simulation will be **seeded and exactly reproducible** — share a URL, get the same run, bit for bit.
-- Degenerate games will be disclosed as degenerate rather than silently mishandled, and the analysis will not call a move a mistake when it was the best response to the opponent you actually faced.
+- The solver uses **exact rational arithmetic** (no floating point in any correctness path) and finds **all** equilibria of nondegenerate games up to 4×4 — pure and mixed, reported as exact fractions.
+- Every game-theoretic claim shown on screen is **computed by the engine and covered by tests** against hand-derived results _and_ independently generated oracles (Gambit / nashpy).
+- Every simulation is **seeded and exactly reproducible** — share a URL, get the same run, bit for bit.
+- Degenerate games are disclosed as degenerate rather than silently mishandled, and the analysis never calls a move a mistake when it was the best response to the opponent you actually faced.
 
 ## Principles
 
@@ -46,5 +46,5 @@ that version in `package.json`, `pnpm-lock.yaml` when it records root metadata,
 and the active version surfaces in the same commit. Historical timestamps are
 owner-directed metadata; do not rewrite pushed history.
 
-- **Base Format Version:** 0.9.2
-- **Portfolio Version:** v0.9.2_2025-08-29_22:11:40 (IST)
+- **Base Format Version:** 0.10.0
+- **Portfolio Version:** v0.10.0_2025-08-31_21:20:35 (IST)
