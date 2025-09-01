@@ -1,11 +1,12 @@
-import { StubPage } from "@/components/stub-page";
+import type { Metadata } from "next";
+import { GameWorkbench } from "@/components/build/game-workbench";
+
+export const metadata: Metadata = {
+  title: "Build a Game",
+  description:
+    "Create a bounded normal-form game, solve it exactly, and share its complete state in a reproducible URL.",
+};
 
 export default function BuildPage() {
-  return (
-    <StubPage
-      eyebrow="Build / Static route"
-      title="Shape the incentives."
-      summary="A bounded editor and reproducible share links will build on the same analytical engine."
-    />
-  );
+  return <GameWorkbench />;
 }

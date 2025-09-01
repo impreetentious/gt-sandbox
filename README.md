@@ -1,6 +1,6 @@
 # Game Theory Sandbox
 
-**Status: v0.10.1 — P9's bounded editable Game Workbench and exact live analysis are committed locally. P0–P8 remain unpushed.** Live URL: not deployed yet.
+**Status: v0.10.2 — P9's Build surface and reusable exact Analysis drawer are committed locally. P0–P8 remain unpushed.** Live URL: not deployed yet.
 
 ## The idea
 
@@ -14,7 +14,7 @@ Built for strategy-curious professionals and students who want to _feel_ how inc
 
 - **Play** — six canonical games (Prisoner's Dilemma, Stag Hunt, Battle of the Sexes, Chicken, Matching Pennies, and the Iterated Prisoner's Dilemma) against precisely specified opponents, each game framed by a real business scenario, each ending in a full analytical reveal.
 - **Evolve** — the Axelrod tournament and evolutionary dynamics over classic strategies: watch cooperation emerge, collapse under noise, and hinge on the shadow of the future.
-- **Build** — a bounded 2×2–4×4 Game Workbench now edits labels and exact payoffs, preserves the last valid analysis, and produces reproducible links; surface integration follows in this phase.
+- **Build** — the bounded 2×2–4×4 Game Workbench now has its own surface, exact Analysis drawer, responsive payoff matrix, and reproducible links; Play-route integration follows in this phase.
 
 ## The v1 correctness commitment
 
@@ -46,5 +46,5 @@ that version in `package.json`, `pnpm-lock.yaml` when it records root metadata,
 and the active version surfaces in the same commit. Historical timestamps are
 owner-directed metadata; do not rewrite pushed history.
 
-- **Base Format Version:** 0.10.1
-- **Portfolio Version:** v0.10.1_2025-08-31_22:10:30 (IST)
+- **Base Format Version:** 0.10.2
+- **Portfolio Version:** v0.10.2_2025-09-02_02:43:09 (IST)

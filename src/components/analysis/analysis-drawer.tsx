@@ -80,6 +80,7 @@ function equilibriumPayoff(
 }
 
 function BestResponsePanel({ game }: { readonly game: NormalFormGame }) {
+  const titleId = useId();
   const renderResponses = (player: Player) => {
     const opponent = otherPlayer(player);
     const opponentActions =
@@ -101,8 +102,8 @@ function BestResponsePanel({ game }: { readonly game: NormalFormGame }) {
   };
 
   return (
-    <section aria-labelledby="best-response-title" className="analysis-panel">
-      <h3 id="best-response-title">
+    <section aria-labelledby={titleId} className="analysis-panel">
+      <h3 id={titleId}>
         <GlossaryTerm term="best-response" /> map
       </h3>
       <ul className="analysis-list">
@@ -127,13 +128,14 @@ function describeElimination(
 function DominancePanel({ game }: { readonly game: NormalFormGame }) {
   const analysis = analyzeDominance(game);
   const [visibleSteps, setVisibleSteps] = useState(0);
+  const titleId = useId();
   const stepsId = useId();
   const trace = analysis.strictTrace;
   const nextStep = trace.steps[visibleSteps];
 
   return (
-    <section aria-labelledby="dominance-title" className="analysis-panel">
-      <h3 id="dominance-title">
+    <section aria-labelledby={titleId} className="analysis-panel">
+      <h3 id={titleId}>
         <GlossaryTerm term="dominant-strategy" /> walkthrough
       </h3>
       {trace.steps.length === 0 ? (
@@ -192,6 +194,7 @@ function strategyLabel(
 }
 
 function EquilibriaPanel({ game }: { readonly game: NormalFormGame }) {
+  const titleId = useId();
   const pure = pureNashEquilibria(game);
   const mixed = analyzeMixedEquilibria(game);
   const genuinelyMixed = mixed.equilibria.filter(
@@ -201,8 +204,8 @@ function EquilibriaPanel({ game }: { readonly game: NormalFormGame }) {
   );
 
   return (
-    <section aria-labelledby="equilibria-title" className="analysis-panel">
-      <h3 id="equilibria-title">
+    <section aria-labelledby={titleId} className="analysis-panel">
+      <h3 id={titleId}>
         <GlossaryTerm term="nash-equilibrium" />
       </h3>
       {mixed.degeneracyWitness ? (
@@ -249,10 +252,11 @@ function EfficiencyPanel({
   readonly onChange: (enabled: boolean) => void;
 }) {
   const efficient = paretoEfficientProfiles(game);
+  const titleId = useId();
 
   return (
-    <section aria-labelledby="efficiency-title" className="analysis-panel">
-      <h3 id="efficiency-title">
+    <section aria-labelledby={titleId} className="analysis-panel">
+      <h3 id={titleId}>
         <GlossaryTerm term="pareto-efficient" /> outcomes
       </h3>
       <p>
@@ -330,12 +334,13 @@ function YourPlayPanel({
   readonly opponentName: string;
   readonly equilibrium: MixedNashEquilibrium | undefined;
 }) {
-  const hindsight = fixedActionHindsight(game, player, profiles);
+  const titleId = useId();
 
-  if (!equilibrium) {
+  if (!equilibrium || profiles.length === 0) {
     return null;
   }
 
+  const hindsight = fixedActionHindsight(game, player, profiles);
   const comparison = mixVersusNash(game, player, profiles, equilibrium);
   const opponentComparison = mixVersusNash(
     game,
@@ -353,8 +358,8 @@ function YourPlayPanel({
     .join(" or ");
 
   return (
-    <section aria-labelledby="your-play-title" className="analysis-panel">
-      <h3 id="your-play-title">Your play</h3>
+    <section aria-labelledby={titleId} className="analysis-panel">
+      <h3 id={titleId}>Your play</h3>
       <p>
         Your realized payoff:{" "}
         <strong>{formatRational(hindsight.actualPayoff)}</strong>. The best
@@ -398,6 +403,8 @@ function YourPlayPanel({
 }
 
 function StructurePanel({ game }: { readonly game: NormalFormGame }) {
+  const titleId = useId();
+
   if (game.rowActions.length !== 2 || game.columnActions.length !== 2) {
     return null;
   }
@@ -406,8 +413,8 @@ function StructurePanel({ game }: { readonly game: NormalFormGame }) {
   const selection = analyzeEquilibriumSelection(game);
 
   return (
-    <section aria-labelledby="structure-title" className="analysis-panel">
-      <h3 id="structure-title">Structure</h3>
+    <section aria-labelledby={titleId} className="analysis-panel">
+      <h3 id={titleId}>Structure</h3>
       <p>
         The engine classifies this 2×2 game as <strong>{structure}</strong>.
       </p>
