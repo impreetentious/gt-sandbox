@@ -825,6 +825,17 @@ main {
   font-weight: 700;
 }
 
+.game-workbench {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 38rem) {
+  body {
+    min-width: 0;
+    contain: paint;
+  }
+}
+
 .analysis-drawer {
   margin-top: 1.25rem;
   border-top: 1px solid var(--line);

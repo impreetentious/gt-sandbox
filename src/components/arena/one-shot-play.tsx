@@ -8,6 +8,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import { AnalysisDrawer } from "@/components/analysis/analysis-drawer";
+import { GameWorkbench } from "@/components/build/game-workbench";
 import {
   oneShotGameContent,
   sharkPredictionAccuracy,
@@ -135,289 +136,300 @@ export function OneShotPlayExperience({
     state.persona === "markov2" ? sharkPredictionAccuracy(state.rounds) : 0;
 
   return (
-    <section
-      aria-labelledby={`${slug}-title`}
-      className="one-shot-session"
-      data-round={state.rounds.length}
-      data-testid={`${slug}-session`}
-      onKeyDown={handleShortcut}
-    >
-      <header className="one-shot-session__header">
-        <p className="eyebrow">{content.eyebrow}</p>
-        <h1 className="display" id={`${slug}-title`}>
-          {game.title}
-        </h1>
-        <p className="lede">{content.framing}</p>
-      </header>
+    <>
+      <section
+        aria-labelledby={`${slug}-title`}
+        className="one-shot-session"
+        data-round={state.rounds.length}
+        data-testid={`${slug}-session`}
+        onKeyDown={handleShortcut}
+      >
+        <header className="one-shot-session__header">
+          <p className="eyebrow">{content.eyebrow}</p>
+          <h1 className="display" id={`${slug}-title`}>
+            {game.title}
+          </h1>
+          <p className="lede">{content.framing}</p>
+        </header>
 
-      <div className="one-shot-scoreboard" aria-label="Session score">
-        <p>
-          <span>You</span>
-          <strong>{formatRational(state.playerScore)}</strong>
-        </p>
-        <p>
-          <span>{personaName(slug, state.persona)}</span>
-          <strong>{formatRational(state.opponentScore)}</strong>
-        </p>
-        <p>
-          <span>Round</span>
-          <strong>
-            {Math.min(state.rounds.length + 1, content.roundLimit)} /{" "}
-            {content.roundLimit}
-          </strong>
-        </p>
-      </div>
-
-      <div className="one-shot-layout">
-        <section
-          aria-labelledby={`${slug}-arena-title`}
-          className="one-shot-arena"
-        >
-          <div className="one-shot-arena__heading">
-            <div>
-              <p className="eyebrow">Act</p>
-              <h2 id={`${slug}-arena-title`}>
-                {state.status === "complete"
-                  ? "Session complete"
-                  : "Choose your move."}
-              </h2>
-            </div>
-            <label className="one-shot-persona">
-              <span>Rival</span>
-              <select
-                aria-label="Choose rival"
-                disabled={
-                  state.rounds.length > 0 || state.status === "resolving"
-                }
-                onChange={(event) =>
-                  dispatch({
-                    type: "select-persona",
-                    persona: event.target.value as typeof state.persona,
-                  })
-                }
-                value={state.persona}
-              >
-                {content.personas.map((persona) => (
-                  <option key={persona.id} value={persona.id}>
-                    {persona.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <p className="one-shot-persona__description">
-            {
-              content.personas.find((persona) => persona.id === state.persona)
-                ?.description
-            }
+        <div className="one-shot-scoreboard" aria-label="Session score">
+          <p>
+            <span>You</span>
+            <strong>{formatRational(state.playerScore)}</strong>
           </p>
-
-          <div className="one-shot-choices" aria-label="Choose your move">
-            {game.rowActions.map((action, index) => (
-              <button
-                aria-keyshortcuts={String(index + 1)}
-                aria-label={`${action} (key ${index + 1})`}
-                className="one-shot-choice"
-                disabled={state.status !== "playing"}
-                key={action}
-                onClick={() =>
-                  dispatch({ type: "submit-choice", action: index as 0 | 1 })
-                }
-                ref={index === 0 ? firstChoiceRef : secondChoiceRef}
-                type="button"
-              >
-                <span>{action}</span>
-                <kbd aria-hidden="true">{index + 1}</kbd>
-              </button>
-            ))}
-          </div>
-
-          <p
-            className="one-shot-observation"
-            data-resolving={state.status === "resolving"}
-          >
-            {state.status === "resolving"
-              ? `${personaName(slug, state.persona)} is deciding…`
-              : state.status === "complete"
-                ? "The session is complete. Open the analysis, then try another rival."
-                : "Choose an action. The outcome commits before the next round begins."}
+          <p>
+            <span>{personaName(slug, state.persona)}</span>
+            <strong>{formatRational(state.opponentScore)}</strong>
           </p>
-          <p aria-live="polite" className="sr-only" role="status">
-            {narration}
+          <p>
+            <span>Round</span>
+            <strong>
+              {Math.min(state.rounds.length + 1, content.roundLimit)} /{" "}
+              {content.roundLimit}
+            </strong>
           </p>
+        </div>
 
-          {insight ? (
-            <p className="one-shot-insight" role="status">
-              {insight.message}
-            </p>
-          ) : null}
-          {state.persona === "markov2" && state.rounds.length >= 2 ? (
-            <p
-              className="one-shot-prediction"
-              data-testid="shark-prediction-accuracy"
-            >
-              Shark prediction accuracy: {(sharkAccuracy * 100).toFixed(0)}%.
-            </p>
-          ) : null}
-
+        <div className="one-shot-layout">
           <section
-            aria-labelledby={`${slug}-history-title`}
-            className="one-shot-history"
+            aria-labelledby={`${slug}-arena-title`}
+            className="one-shot-arena"
           >
-            <div className="one-shot-history__heading">
-              <p className="eyebrow">Observe</p>
-              <h3 id={`${slug}-history-title`}>History</h3>
+            <div className="one-shot-arena__heading">
+              <div>
+                <p className="eyebrow">Act</p>
+                <h2 id={`${slug}-arena-title`}>
+                  {state.status === "complete"
+                    ? "Session complete"
+                    : "Choose your move."}
+                </h2>
+              </div>
+              <label className="one-shot-persona">
+                <span>Rival</span>
+                <select
+                  aria-label="Choose rival"
+                  disabled={
+                    state.rounds.length > 0 || state.status === "resolving"
+                  }
+                  onChange={(event) =>
+                    dispatch({
+                      type: "select-persona",
+                      persona: event.target.value as typeof state.persona,
+                    })
+                  }
+                  value={state.persona}
+                >
+                  {content.personas.map((persona) => (
+                    <option key={persona.id} value={persona.id}>
+                      {persona.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
-            {state.rounds.length === 0 ? (
-              <p className="one-shot-history__empty">No outcomes yet.</p>
-            ) : (
-              <ol aria-label="Completed rounds" tabIndex={0}>
-                {state.rounds.map((round) => (
-                  <li key={round.number}>
-                    <span>Round {round.number}</span>
-                    <span>
-                      You {game.rowActions[round.playerAction]};{" "}
-                      {personaName(slug, state.persona)}{" "}
-                      {game.columnActions[round.opponentAction]}
-                    </span>
-                    <strong>
-                      {formatRational(round.playerPayoff)} —{" "}
-                      {formatRational(round.opponentPayoff)}
-                    </strong>
-                  </li>
-                ))}
-              </ol>
-            )}
+
+            <p className="one-shot-persona__description">
+              {
+                content.personas.find((persona) => persona.id === state.persona)
+                  ?.description
+              }
+            </p>
+
+            <div className="one-shot-choices" aria-label="Choose your move">
+              {game.rowActions.map((action, index) => (
+                <button
+                  aria-keyshortcuts={String(index + 1)}
+                  aria-label={`${action} (key ${index + 1})`}
+                  className="one-shot-choice"
+                  disabled={state.status !== "playing"}
+                  key={action}
+                  onClick={() =>
+                    dispatch({ type: "submit-choice", action: index as 0 | 1 })
+                  }
+                  ref={index === 0 ? firstChoiceRef : secondChoiceRef}
+                  type="button"
+                >
+                  <span>{action}</span>
+                  <kbd aria-hidden="true">{index + 1}</kbd>
+                </button>
+              ))}
+            </div>
+
+            <p
+              className="one-shot-observation"
+              data-resolving={state.status === "resolving"}
+            >
+              {state.status === "resolving"
+                ? `${personaName(slug, state.persona)} is deciding…`
+                : state.status === "complete"
+                  ? "The session is complete. Open the analysis, then try another rival."
+                  : "Choose an action. The outcome commits before the next round begins."}
+            </p>
+            <p aria-live="polite" className="sr-only" role="status">
+              {narration}
+            </p>
+
+            {insight ? (
+              <p className="one-shot-insight" role="status">
+                {insight.message}
+              </p>
+            ) : null}
+            {state.persona === "markov2" && state.rounds.length >= 2 ? (
+              <p
+                className="one-shot-prediction"
+                data-testid="shark-prediction-accuracy"
+              >
+                Shark prediction accuracy: {(sharkAccuracy * 100).toFixed(0)}%.
+              </p>
+            ) : null}
+
+            <section
+              aria-labelledby={`${slug}-history-title`}
+              className="one-shot-history"
+            >
+              <div className="one-shot-history__heading">
+                <p className="eyebrow">Observe</p>
+                <h3 id={`${slug}-history-title`}>History</h3>
+              </div>
+              {state.rounds.length === 0 ? (
+                <p className="one-shot-history__empty">No outcomes yet.</p>
+              ) : (
+                <ol aria-label="Completed rounds" tabIndex={0}>
+                  {state.rounds.map((round) => (
+                    <li key={round.number}>
+                      <span>Round {round.number}</span>
+                      <span>
+                        You {game.rowActions[round.playerAction]};{" "}
+                        {personaName(slug, state.persona)}{" "}
+                        {game.columnActions[round.opponentAction]}
+                      </span>
+                      <strong>
+                        {formatRational(round.playerPayoff)} —{" "}
+                        {formatRational(round.opponentPayoff)}
+                      </strong>
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </section>
+
+            {state.status === "complete" ? (
+              <div className="one-shot-post-session" id="post-session-controls">
+                <p>
+                  Final score: {formatRational(state.playerScore)} for you,{" "}
+                  {formatRational(state.opponentScore)} for{" "}
+                  {personaName(slug, state.persona)}.
+                </p>
+                <button
+                  className="one-shot-play-again"
+                  onClick={() => dispatch({ type: "play-again" })}
+                  ref={playAgainRef}
+                  type="button"
+                >
+                  Play again
+                </button>
+              </div>
+            ) : null}
           </section>
 
-          {state.status === "complete" ? (
-            <div className="one-shot-post-session" id="post-session-controls">
-              <p>
-                Final score: {formatRational(state.playerScore)} for you,{" "}
-                {formatRational(state.opponentScore)} for{" "}
-                {personaName(slug, state.persona)}.
-              </p>
-              <button
-                className="one-shot-play-again"
-                onClick={() => dispatch({ type: "play-again" })}
-                ref={playAgainRef}
-                type="button"
-              >
-                Play again
-              </button>
-            </div>
-          ) : null}
-        </section>
-
-        <section
-          aria-labelledby={`${slug}-matrix-title`}
-          className="one-shot-analysis"
-        >
-          <div className="one-shot-analysis__heading">
-            <p className="eyebrow">Matrix</p>
-            <h2 id={`${slug}-matrix-title`}>The incentives on the table</h2>
-          </div>
-          <div
-            aria-label={`Scrollable ${game.title} payoff matrix`}
-            className="one-shot-matrix-scroll"
-            tabIndex={0}
+          <section
+            aria-labelledby={`${slug}-matrix-title`}
+            className="one-shot-analysis"
           >
-            <table className="one-shot-matrix">
-              <caption>
-                {game.title} payoff matrix. Each cell reads your payoff, then
-                your rival&apos;s.
-              </caption>
-              <thead>
-                <tr>
-                  <th scope="col">You / Rival</th>
-                  {game.columnActions.map((action) => (
-                    <th key={action} scope="col">
-                      {action}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {game.rowActions.map((rowAction, row) => (
-                  <tr key={rowAction}>
-                    <th scope="row">{rowAction}</th>
-                    {game.columnActions.map((_, column) => {
-                      const profile = { row, column };
-                      const [you, rival] = payoffAt(game, profile);
-                      const isHighlighted =
-                        highlightedRound?.playerAction === row &&
-                        highlightedRound.opponentAction === column;
-                      const isEquilibrium = equilibria.has(profileKey(profile));
-                      const isParetoEfficient = paretoEfficient.has(
-                        profileKey(profile),
-                      );
-                      const youBestRespond = bestResponses(
-                        game,
-                        "row",
-                        column,
-                      ).includes(row);
-                      const rivalBestRespond = bestResponses(
-                        game,
-                        "column",
-                        row,
-                      ).includes(column);
-
-                      return (
-                        <td
-                          className={[
-                            "one-shot-matrix__cell",
-                            isHighlighted &&
-                              "one-shot-matrix__cell--highlighted",
-                            paretoMode &&
-                              !isParetoEfficient &&
-                              "one-shot-matrix__cell--dominated",
-                          ]
-                            .filter(Boolean)
-                            .join(" ")}
-                          data-highlight={isHighlighted ? "current" : undefined}
-                          data-pareto={
-                            paretoMode && !isParetoEfficient
-                              ? "dominated"
-                              : undefined
-                          }
-                          data-testid={`${slug}-matrix-cell-${row}-${column}`}
-                          key={`${row}-${column}`}
-                        >
-                          <span>
-                            {formatRational(you)}, {formatRational(rival)}
-                          </span>
-                          <span className="one-shot-matrix__best-responses">
-                            {youBestRespond ? <b>You BR</b> : null}
-                            {rivalBestRespond ? <b>Rival BR</b> : null}
-                          </span>
-                          {isEquilibrium ? <em>NE</em> : null}
-                          {isHighlighted ? (
-                            <span className="sr-only">Latest outcome.</span>
-                          ) : null}
-                        </td>
-                      );
-                    })}
+            <div className="one-shot-analysis__heading">
+              <p className="eyebrow">Matrix</p>
+              <h2 id={`${slug}-matrix-title`}>The incentives on the table</h2>
+            </div>
+            <div
+              aria-label={`Scrollable ${game.title} payoff matrix`}
+              className="one-shot-matrix-scroll"
+              tabIndex={0}
+            >
+              <table className="one-shot-matrix">
+                <caption>
+                  {game.title} payoff matrix. Each cell reads your payoff, then
+                  your rival&apos;s.
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">You / Rival</th>
+                    {game.columnActions.map((action) => (
+                      <th key={action} scope="col">
+                        {action}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {game.rowActions.map((rowAction, row) => (
+                    <tr key={rowAction}>
+                      <th scope="row">{rowAction}</th>
+                      {game.columnActions.map((_, column) => {
+                        const profile = { row, column };
+                        const [you, rival] = payoffAt(game, profile);
+                        const isHighlighted =
+                          highlightedRound?.playerAction === row &&
+                          highlightedRound.opponentAction === column;
+                        const isEquilibrium = equilibria.has(
+                          profileKey(profile),
+                        );
+                        const isParetoEfficient = paretoEfficient.has(
+                          profileKey(profile),
+                        );
+                        const youBestRespond = bestResponses(
+                          game,
+                          "row",
+                          column,
+                        ).includes(row);
+                        const rivalBestRespond = bestResponses(
+                          game,
+                          "column",
+                          row,
+                        ).includes(column);
 
-          <AnalysisDrawer
-            game={game}
-            onParetoModeChange={setParetoMode}
-            opponentName={personaName(slug, state.persona)}
-            paretoMode={paretoMode}
-            playerName="You"
-            profiles={state.rounds.map((round) => ({
-              row: round.playerAction,
-              column: round.opponentAction,
-            }))}
-            title={game.title}
-          />
-        </section>
-      </div>
-    </section>
+                        return (
+                          <td
+                            className={[
+                              "one-shot-matrix__cell",
+                              isHighlighted &&
+                                "one-shot-matrix__cell--highlighted",
+                              paretoMode &&
+                                !isParetoEfficient &&
+                                "one-shot-matrix__cell--dominated",
+                            ]
+                              .filter(Boolean)
+                              .join(" ")}
+                            data-highlight={
+                              isHighlighted ? "current" : undefined
+                            }
+                            data-pareto={
+                              paretoMode && !isParetoEfficient
+                                ? "dominated"
+                                : undefined
+                            }
+                            data-testid={`${slug}-matrix-cell-${row}-${column}`}
+                            key={`${row}-${column}`}
+                          >
+                            <span>
+                              {formatRational(you)}, {formatRational(rival)}
+                            </span>
+                            <span className="one-shot-matrix__best-responses">
+                              {youBestRespond ? <b>You BR</b> : null}
+                              {rivalBestRespond ? <b>Rival BR</b> : null}
+                            </span>
+                            {isEquilibrium ? <em>NE</em> : null}
+                            {isHighlighted ? (
+                              <span className="sr-only">Latest outcome.</span>
+                            ) : null}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <AnalysisDrawer
+              game={game}
+              onParetoModeChange={setParetoMode}
+              opponentName={personaName(slug, state.persona)}
+              paretoMode={paretoMode}
+              playerName="You"
+              profiles={state.rounds.map((round) => ({
+                row: round.playerAction,
+                column: round.opponentAction,
+              }))}
+              title={game.title}
+            />
+          </section>
+        </div>
+      </section>
+      <GameWorkbench
+        defaultGame={game}
+        extras={{ persona: state.persona, seed: state.seed }}
+        variant="embedded"
+      />
+    </>
   );
 }

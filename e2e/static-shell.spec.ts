@@ -336,6 +336,62 @@ test("a bounded evolution URL restores its complete seeded configuration", async
   ).toHaveAttribute("max", "80");
 });
 
+test("a canonical payoff edit changes the game structure and survives a direct link", async ({
+  page,
+}) => {
+  await page.goto("/play/pd/");
+  const workbench = page.getByTestId("game-workbench");
+
+  await workbench.getByLabel("Your payoff for row 2, column 1").fill("2");
+  await workbench.getByLabel("Rival payoff for row 1, column 2").fill("2");
+  await expect(
+    workbench.getByRole("heading", {
+      name: "This is a coordination (assurance) game.",
+    }),
+  ).toBeVisible();
+  await expect(workbench.locator(".game-workbench__badges em")).toHaveCount(2);
+  await expect(page).toHaveURL(/\?v=1&/);
+
+  const sharedUrl = page.url();
+  await page.goto(sharedUrl);
+  await expect(
+    page.getByTestId("game-workbench").getByRole("heading", {
+      name: "This is a coordination (assurance) game.",
+    }),
+  ).toBeVisible();
+});
+
+test("the 4×4 editor contains wide labels at narrow width and 200% zoom", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 760 });
+  await page.goto("/build/");
+  await page.getByLabel("Number of row actions").selectOption("4");
+  await page.getByLabel("Number of column actions").selectOption("4");
+  await page.getByLabel("Row action 4").fill("R".repeat(40));
+  await page.getByLabel("Column action 4").fill("C".repeat(40));
+  await expect(
+    page.getByLabel("Rival payoff for row 4, column 4"),
+  ).toBeVisible();
+
+  await page.evaluate(() => {
+    document.body.style.zoom = "2";
+  });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  expect(
+    await page
+      .locator(".game-workbench__matrix-scroll")
+      .evaluate((element) => element.scrollWidth > element.clientWidth),
+  ).toBe(true);
+
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
+});
+
 test("unknown game slugs serve the exported not-found page", async ({
   page,
 }) => {
