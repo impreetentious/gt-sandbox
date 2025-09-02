@@ -1,50 +1,153 @@
-const routes = [
+import type { Metadata } from "next";
+import Link from "next/link";
+import { OnboardingHint } from "@/components/onboarding-hint";
+
+export const metadata: Metadata = {
+  title: { absolute: "Game Theory Sandbox | Feel the Incentives Move" },
+  description:
+    "Play canonical games, inspect exact equilibria, evolve repeated strategies, and build shareable payoff matrices.",
+};
+
+const path = [
   {
     href: "/play/pd/",
-    title: "Play",
-    description: "Make choices first; inspect the theory after the outcome.",
+    title: "Prisoner’s Dilemma",
+    concept: "Dominance",
+    description:
+      "A price war where individually sensible choices destroy shared value.",
+  },
+  {
+    href: "/play/stag-hunt/",
+    title: "Stag Hunt",
+    concept: "Trust and safety",
+    description:
+      "A standards bet with one ambitious equilibrium and one dependable refuge.",
+  },
+  {
+    href: "/play/battle-of-the-sexes/",
+    title: "Battle of the Sexes",
+    concept: "Commitment",
+    description:
+      "A merger needs one platform, but each side prefers a different winner.",
+  },
+  {
+    href: "/play/chicken/",
+    title: "Chicken",
+    concept: "Brinkmanship",
+    description:
+      "A capacity war where somebody must back down and nobody can safely volunteer.",
+  },
+  {
+    href: "/play/matching-pennies/",
+    title: "Matching Pennies",
+    concept: "Unpredictability",
+    description:
+      "An exploiter turns a visible pattern into evidence for mixed strategy.",
+  },
+  {
+    href: "/play/iterated-pd/",
+    title: "Iterated Prisoner’s Dilemma",
+    concept: "The future",
+    description:
+      "A seeded match where today’s move changes what a rival does tomorrow.",
   },
   {
     href: "/evolve/",
-    title: "Evolve",
-    description: "Tournament and population dynamics arrive in later phases.",
+    title: "Tournament and Evolution",
+    concept: "Population dynamics",
+    description:
+      "Compare eight repeatable strategies, then move through a frozen evolutionary run.",
   },
   {
     href: "/build/",
-    title: "Build",
-    description: "Edit a game and let the analysis respond live.",
-  },
-  {
-    href: "/methods/",
-    title: "Methods",
+    title: "Build a Game",
+    concept: "Structure",
     description:
-      "The correctness and reproducibility contract for the project.",
+      "Edit a bounded matrix and watch exact equilibria and the game’s strategic species change.",
   },
-];
+] as const;
 
 export default function HomePage() {
   return (
     <>
-      <section aria-labelledby="home-title">
-        <p className="eyebrow">P0 / Walking skeleton</p>
+      <section aria-labelledby="home-title" className="home-hero">
+        <p className="eyebrow">Act. Observe. Reveal.</p>
         <h1 className="display" id="home-title">
           Learn strategy by feeling the incentives move.
         </h1>
         <p className="lede">
-          Game Theory Sandbox is becoming a private, static space to play,
-          observe, and then unpack strategic choices.
+          Make a choice with something at stake. Watch the outcome land. Then
+          let an exact analytical engine explain what just happened.
         </p>
+        <div className="home-hero__actions">
+          <Link className="home-primary-link" href="/play/pd/">
+            Start with the price war
+          </Link>
+          <Link href="/methods/">Read how the answers are verified</Link>
+        </div>
       </section>
-      <section aria-label="Product routes" className="route-grid">
-        {routes.map((route) => (
-          <article className="route-card" key={route.href}>
-            <h2>{route.title}</h2>
-            <p>{route.description}</p>
-            <Link href={route.href}>Open {route.title}</Link>
-          </article>
-        ))}
+
+      <OnboardingHint />
+
+      <section aria-labelledby="loop-title" className="home-loop">
+        <div className="home-section-heading">
+          <p className="eyebrow">The learning loop</p>
+          <h2 id="loop-title">Theory arrives after the evidence.</h2>
+        </div>
+        <ol>
+          <li>
+            <span>01</span>
+            <strong>Act</strong>
+            <p>Choose before a definition tells you what to notice.</p>
+          </li>
+          <li>
+            <span>02</span>
+            <strong>Observe</strong>
+            <p>See scores, patterns, and counterfactuals accumulate.</p>
+          </li>
+          <li>
+            <span>03</span>
+            <strong>Reveal</strong>
+            <p>Open the analysis to inspect best responses and equilibria.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section aria-labelledby="path-title" className="home-path">
+        <div className="home-section-heading">
+          <p className="eyebrow">Suggested path</p>
+          <h2 id="path-title">Eight stops. No gates.</h2>
+          <p>Follow the arc or enter wherever the incentives look familiar.</p>
+        </div>
+        <ol className="home-path__grid">
+          {path.map((stop, index) => (
+            <li key={stop.href}>
+              <article>
+                <span aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <p>{stop.concept}</p>
+                <h3>{stop.title}</h3>
+                <p>{stop.description}</p>
+                <Link href={stop.href}>Open {stop.title}</Link>
+              </article>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section aria-labelledby="proof-title" className="home-proof">
+        <p className="eyebrow">The proof underneath</p>
+        <h2 id="proof-title">
+          Exact where correctness matters. Seeded where simulation begins.
+        </h2>
+        <p>
+          Payoffs and equilibrium probabilities use rational arithmetic. Random
+          opponents, tournaments, and population runs use explicit seeds. A
+          shared link is enough to reproduce a bounded custom game.
+        </p>
+        <Link href="/methods/">Inspect the verification layers</Link>
       </section>
     </>
   );
 }
-import Link from "next/link";
