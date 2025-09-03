@@ -44,13 +44,15 @@ test("every static route is same-origin, CSP-protected, and accessible", async (
       "default-src 'self'",
     );
     await expect(page.getByRole("main")).toBeVisible();
+    const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+    expect(
+      accessibilityScanResults.violations,
+      `axe violations on ${route}`,
+    ).toEqual([]);
   }
 
   expect(offOriginRequests).toEqual([]);
   expect(cspErrors).toEqual([]);
-
-  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
-  expect(accessibilityScanResults.violations).toEqual([]);
 });
 
 test("the primary routes can be opened with the keyboard", async ({ page }) => {
@@ -390,6 +392,38 @@ test("the 4×4 editor contains wide labels at narrow width and 200% zoom", async
 
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
+});
+
+test("the launch home remembers its single onboarding preference", async ({ page }) => {
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", { name: "Choose first. Open Analysis second." }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Got it" }).click();
+  await page.reload();
+  await expect(
+    page.getByRole("heading", { name: "Choose first. Open Analysis second." }),
+  ).toHaveCount(0);
+  expect(await page.evaluate(() => Object.keys(window.localStorage))).toEqual([
+    "seenOnboarding",
+  ]);
+});
+
+test("key launch surfaces retain visible state in forced colors", async ({
+  page,
+}) => {
+  await page.emulateMedia({ forcedColors: "active" });
+  await page.goto("/play/pd/");
+  const holdPrice = page.getByRole("button", { name: "Hold price (key 1)" });
+  await holdPrice.click();
+  await expect(page.getByTestId("matrix-cell-0-0")).toHaveAttribute(
+    "data-highlight",
+    "current",
+  );
+  await expect(page.getByTestId("matrix-cell-0-0")).toHaveCSS(
+    "outline-style",
+    "solid",
+  );
 });
 
 test("unknown game slugs serve the exported not-found page", async ({

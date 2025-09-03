@@ -2143,6 +2143,17 @@ main {
   .evolution__controls--sliders {
     grid-template-columns: 1fr;
   }
+
+  .game-workbench__header,
+  .game-workbench__controls {
+    grid-template-columns: 1fr;
+  }
+
+  .methods__scope,
+  .methods__split,
+  .methods__privacy {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 38rem) {
@@ -2189,6 +2200,44 @@ main {
 
   .evolve-tabs button {
     padding-inline: 0.65rem;
+  }
+
+  .game-workbench__share {
+    grid-template-columns: 1fr;
+  }
+
+  .game-workbench__share .analysis-button {
+    justify-self: start;
+  }
+
+  .onboarding-hint,
+  .home-loop ol,
+  .home-path__grid,
+  .methods__layers,
+  .methods__reference-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .onboarding-hint button {
+    justify-self: start;
+  }
+}
+
+@media (forced-colors: active) {
+  .home-primary-link,
+  .analysis-button,
+  .game-workbench__badges em,
+  .evolution-chart__bands button,
+  .onboarding-hint button {
+    border: 2px solid ButtonText;
+  }
+
+  .pd-matrix__cell--highlighted,
+  .one-shot-matrix__cell--highlighted,
+  .game-workbench__verdict,
+  .home-proof {
+    outline: 3px solid Highlight;
+    outline-offset: -3px;
   }
 }
 
