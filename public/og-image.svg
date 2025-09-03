@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Game Theory Sandbox</title>
+  <desc id="description">Act, observe, and reveal strategic incentives.</desc>
+  <rect width="1200" height="630" fill="#f7f5ef"/>
+  <path d="M0 0h18v630H0z" fill="#155e75"/>
+  <g fill="none" stroke="#d5d0c5" stroke-width="2">
+    <rect x="790" y="118" width="292" height="292"/>
+    <path d="M936 118v292M790 264h292"/>
+  </g>
+  <g fill="#155e75" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700">
+    <text x="72" y="92" letter-spacing="5">ACT · OBSERVE · REVEAL</text>
+  </g>
+  <g fill="#171717" font-family="Georgia, 'Times New Roman', serif">
+    <text x="72" y="218" font-size="78">Game Theory</text>
+    <text x="72" y="302" font-size="78">Sandbox</text>
+  </g>
+  <text x="76" y="380" fill="#69665f" font-family="Arial, Helvetica, sans-serif" font-size="29">Feel the incentives move.</text>
+  <g fill="#171717" font-family="Georgia, 'Times New Roman', serif" font-size="34" text-anchor="middle">
+    <text x="863" y="206">3, 3</text>
+    <text x="1009" y="206">0, 5</text>
+    <text x="863" y="352">5, 0</text>
+    <text x="1009" y="352">1, 1</text>
+  </g>
+  <rect x="963" y="305" width="92" height="58" fill="none" stroke="#155e75" stroke-width="5"/>
+  <text x="1009" y="390" fill="#155e75" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" text-anchor="middle">NASH</text>
+  <path d="M72 482h1010" stroke="#171717" stroke-width="2"/>
+  <text x="72" y="538" fill="#171717" font-family="Arial, Helvetica, sans-serif" font-size="24">Exact equilibria · Seeded simulations · Shareable games</text>
+</svg>
