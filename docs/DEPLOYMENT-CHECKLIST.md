@@ -5,10 +5,11 @@ The repository is a static Next.js export. Deployment is intentionally an owner 
 ## Before connecting Vercel
 
 1. Review the local commit series.
-2. Run `CI=true pnpm verify:full` on Node 24 with pnpm 10.
+2. Run `CI=true pnpm verify:full` on Node 24 with pnpm 10 in an environment that permits the local exported-site server.
 3. Confirm `out/` serves through `pnpm serve:export` and that a direct `/play/pd/` request plus `/play/unknown/` behave correctly.
 4. Complete the manual matrix in [ACCESSIBILITY-AUDIT.md](ACCESSIBILITY-AUDIT.md).
-5. Choose the release version and update every active version surface only in the owner-authorized commit.
+5. Capture the final README screenshots/GIF from the reviewed production candidate and run Lighthouse; record scores of at least 95 in every category.
+6. Choose the release version and update every active version surface only in the owner-authorized commit.
 
 ## Vercel project
 

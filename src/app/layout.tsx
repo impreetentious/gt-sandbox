@@ -28,7 +28,7 @@ export const metadata: Metadata = {
       "Act, observe, and reveal the game theory underneath strategic choices.",
     images: [
       {
-        url: "/og-image.svg",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Game Theory Sandbox — act, observe, reveal",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     title: "Game Theory Sandbox",
     description:
       "Act, observe, and reveal the game theory underneath strategic choices.",
-    images: ["/og-image.svg"],
+    images: ["/og-image.png"],
   },
   robots: { index: true, follow: true },
 };

@@ -1,17 +1,17 @@
 # Accessibility audit
 
-This is the v1 audit ledger. Automated checks are part of `pnpm verify:full`; assistive-technology checks remain explicit human release work and must not be inferred from axe.
+This is the v1 audit ledger. Automated checks are part of `pnpm verify:full`; assistive-technology checks remain explicit human release work and must not be inferred from axe. The S22 component/unit suite passes, but the managed local environment cannot bind the exported-site server port, so the authored browser scenarios still need an unrestricted release run.
 
 ## Automated acceptance
 
 | Check          | Coverage                                                                                                                | Status                                              |
 | -------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| axe            | Every exported route; Play, Evolve, and Build interaction states                                                        | Run in the final local verification pass |
-| Keyboard       | Primary navigation, full Play sessions, Analysis disclosure/stepper, Evolve tabs/scrubber/table, Build controls         | Run in the final local verification pass |
-| Reduced motion | Outcome highlighting and Evolution scrubber path                                                                        | Run in the final local verification pass |
-| Reflow         | Evolution and bounded 4×4 Build at 320px; wide data remains inside labelled scroll regions                              | Run in the final local verification pass |
-| Forced colors  | Selected game outcome and core control outlines                                                                         | Run in the final local verification pass |
-| Semantics      | Real tables and headers for payoff matrices/data; live regions for outcomes, validation, and settled generation changes | Unit and browser covered |
+| axe            | Every exported route; Play, Evolve, and Build interaction states                                                        | Scenario authored; unrestricted browser run pending |
+| Keyboard       | Primary navigation, full Play sessions, Analysis disclosure/stepper, Evolve tabs/scrubber/table, Build controls         | Scenario authored; unrestricted browser run pending |
+| Reduced motion | Outcome highlighting and Evolution scrubber path                                                                        | Scenario authored; unrestricted browser run pending |
+| Reflow         | Evolution and bounded 4×4 Build at 320px; wide data remains inside labelled scroll regions                              | Scenario authored; unrestricted browser run pending |
+| Forced colors  | Selected game outcome and core control outlines                                                                         | Scenario authored; unrestricted browser run pending |
+| Semantics      | Real tables and headers for payoff matrices/data; live regions for outcomes, validation, and settled generation changes | Component suite passes; browser scan pending        |
 
 ## Manual release matrix
 

@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { IpdPlayExperience } from "@/components/arena/ipd-play";
 import { OneShotPlayExperience } from "@/components/arena/one-shot-play";
 import { PdPlayExperience } from "@/components/arena/pd-play";
-import { StubPage } from "@/components/stub-page";
 
 const games = [
   "pd",
@@ -91,11 +90,5 @@ export default async function PlayGamePage({
     );
   }
 
-  return (
-    <StubPage
-      eyebrow="Play / Static route"
-      title={labels[game as GameSlug]}
-      summary="This game route has been prerendered and is ready for the play loop built in the next phases."
-    />
-  );
+  notFound();
 }
