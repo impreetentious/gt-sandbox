@@ -237,6 +237,10 @@ function parseOptionalNumber(
   return value;
 }
 
+function hasSupportedDecimalPrecision(value: number): boolean {
+  return /^(?:0|[1-9]\d*)(?:\.\d{1,6})?$/.test(String(value));
+}
+
 function validateExtras(extras: GameShareExtras): void {
   if (extras.persona !== undefined) {
     const error = validateLabel(extras.persona, "persona");
@@ -256,7 +260,9 @@ function validateExtras(extras: GameShareExtras): void {
 
   if (
     extras.continuationProbability !== undefined &&
-    (extras.continuationProbability < 0.5 ||
+    (!Number.isFinite(extras.continuationProbability) ||
+      !hasSupportedDecimalPrecision(extras.continuationProbability) ||
+      extras.continuationProbability < 0.5 ||
       extras.continuationProbability > 0.995)
   ) {
     throw new RangeError(
@@ -264,7 +270,13 @@ function validateExtras(extras: GameShareExtras): void {
     );
   }
 
-  if (extras.noise !== undefined && (extras.noise < 0 || extras.noise > 0.1)) {
+  if (
+    extras.noise !== undefined &&
+    (!Number.isFinite(extras.noise) ||
+      !hasSupportedDecimalPrecision(extras.noise) ||
+      extras.noise < 0 ||
+      extras.noise > 0.1)
+  ) {
     throw new RangeError("Noise must be between 0 and 0.1.");
   }
 }
@@ -318,7 +330,7 @@ export function encodeGameSearch(state: GameShareState): string {
 
 export function decodeGameSearch(search: string): DecodeGameUrlResult {
   const query = search.startsWith("?") ? search.slice(1) : search;
-  if (query === "" || !new URLSearchParams(query).has("v")) {
+  if (query === "") {
     return { kind: "empty" };
   }
 
@@ -332,6 +344,10 @@ export function decodeGameSearch(search: string): DecodeGameUrlResult {
 
   try {
     const params = new URLSearchParams(query);
+    if (!params.has("v")) {
+      return { kind: "empty" };
+    }
+
     if (params.get("v") !== GAME_URL_VERSION) {
       throw new RangeError("This game-link version is not supported.");
     }

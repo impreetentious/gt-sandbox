@@ -88,6 +88,9 @@ describe("bounded custom-game URL state", () => {
     expect(
       decodeGameSearch(`?v=1&junk=${"x".repeat(MAX_GAME_URL_BYTES)}`),
     ).toMatchObject({ kind: "invalid" });
+    expect(
+      decodeGameSearch(`?junk=${"x".repeat(MAX_GAME_URL_BYTES)}`),
+    ).toMatchObject({ kind: "invalid" });
     expect(() => parseBoundedRational("9".repeat(20_000))).toThrow(
       /integer, a fraction, or a finite decimal/,
     );
@@ -95,6 +98,41 @@ describe("bounded custom-game URL state", () => {
     expect(() => parseBoundedRational("1.1234567")).toThrow(
       /at most 6 decimal places/,
     );
+  });
+
+  it("rejects non-finite simulation metadata before encoding", () => {
+    const game = createNormalFormGame({
+      id: "metadata",
+      title: "Metadata",
+      rowActions: ["A", "B"],
+      columnActions: ["L", "R"],
+      payoffs: [
+        [
+          [0, 0],
+          [0, 0],
+        ],
+        [
+          [0, 0],
+          [0, 0],
+        ],
+      ],
+    });
+
+    expect(() =>
+      encodeGameSearch({
+        game,
+        extras: { continuationProbability: Number.NaN },
+      }),
+    ).toThrow(/Continuation probability/);
+    expect(() =>
+      encodeGameSearch({ game, extras: { noise: Number.POSITIVE_INFINITY } }),
+    ).toThrow(/Noise/);
+    expect(() =>
+      encodeGameSearch({
+        game,
+        extras: { continuationProbability: 0.9000000000000001 },
+      }),
+    ).toThrow(/Continuation probability/);
   });
 
   it("keeps a draft invalid until every label and payoff satisfies the bounds", () => {

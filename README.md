@@ -1,6 +1,6 @@
 # Game Theory Sandbox
 
-**Status: v0.11.2 — P9 and P10 are committed locally; the audit lineup remains next. Nothing has been pushed or deployed.**
+**Status: v0.12.0 — P9/P10 are committed locally and the audit’s URL-validation hardening is committed locally. Nothing has been pushed or deployed.**
 
 Game theory is usually taught statically: a payoff matrix in a PDF, an equilibrium circled, a definition memorized. Intuition forms in a loop instead—**act, observe, and only then reveal the theory underneath the outcome.**
 
@@ -81,5 +81,5 @@ that version in `package.json`, `pnpm-lock.yaml` when it records root metadata,
 and the active version surfaces in the same commit. Historical timestamps are
 owner-directed metadata; do not rewrite pushed history.
 
-- **Base Format Version:** 0.11.2
-- **Portfolio Version:** v0.11.2_2025-09-04_01:51:22 (IST)
+- **Base Format Version:** 0.12.0
+- **Portfolio Version:** v0.12.0_2025-09-04_01:51:48 (IST)

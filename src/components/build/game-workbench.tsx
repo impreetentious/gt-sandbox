@@ -346,13 +346,15 @@ export function GameWorkbench({
         ) : null}
       </div>
 
-      <p
-        aria-live="assertive"
-        className={notice ? "game-workbench__notice" : "sr-only"}
-        role="alert"
-      >
-        {notice ?? "Inputs are valid."}
-      </p>
+      {notice ? (
+        <p
+          aria-live="assertive"
+          className="game-workbench__notice"
+          role="alert"
+        >
+          {notice}
+        </p>
+      ) : null}
       <p aria-live="polite" className="sr-only">
         {announcement}
       </p>
