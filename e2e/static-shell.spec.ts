@@ -394,7 +394,9 @@ test("the 4×4 editor contains wide labels at narrow width and 200% zoom", async
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("the launch home remembers its single onboarding preference", async ({ page }) => {
+test("the launch home remembers its single onboarding preference", async ({
+  page,
+}) => {
   await page.goto("/");
   await expect(
     page.getByRole("heading", { name: "Choose first. Open Analysis second." }),

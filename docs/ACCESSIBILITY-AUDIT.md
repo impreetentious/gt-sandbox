@@ -1,6 +1,6 @@
 # Accessibility audit
 
-This is the v1 audit ledger. Automated checks are part of `pnpm verify:full`; assistive-technology checks remain explicit human release work and must not be inferred from axe. The S22 component/unit suite passes, but the managed local environment cannot bind the exported-site server port, so the authored browser scenarios still need an unrestricted release run.
+This is the v1 audit ledger. Automated checks are part of `pnpm verify:full`; assistive-technology checks remain explicit human release work and must not be inferred from axe. The current component/unit suite passes, but the managed local environment cannot bind the exported-site server port, so the authored browser scenarios still need an unrestricted release run.
 
 ## Automated acceptance
 
