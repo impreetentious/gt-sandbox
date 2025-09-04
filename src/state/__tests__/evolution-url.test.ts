@@ -49,4 +49,16 @@ describe("P8 evolution URL state", () => {
       expect(decoded.notice).toBeDefined();
     }
   });
+
+  it("rejects repetitions above 20 and round caps above 1000", () => {
+    for (const search of [
+      "?ev=1&s=alld%2Ctft&x=0.5%2C0.5&d=0.9&n=0&r=21&seed=1&cap=500&g=80",
+      "?ev=1&s=alld%2Ctft&x=0.5%2C0.5&d=0.9&n=0&r=10&seed=1&cap=1001&g=80",
+    ]) {
+      const decoded = decodeEvolutionSearch(search);
+
+      expect(decoded.config).toEqual(defaultEvolutionPreset.config);
+      expect(decoded.notice).toBeDefined();
+    }
+  });
 });

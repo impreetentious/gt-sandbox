@@ -40,9 +40,27 @@ const chartColors = [
 
 type PresetSelection = EvolutionPresetId | "custom";
 
+function sameEvolutionConfig(
+  a: IpdEvolutionConfig,
+  b: IpdEvolutionConfig,
+): boolean {
+  return (
+    a.masterSeed === b.masterSeed &&
+    a.continuationProbability === b.continuationProbability &&
+    a.noise === b.noise &&
+    a.repetitions === b.repetitions &&
+    a.roundCap === b.roundCap &&
+    a.generations === b.generations &&
+    a.strategies.length === b.strategies.length &&
+    a.strategies.every((s, i) => s === b.strategies[i]) &&
+    a.initialShares.length === b.initialShares.length &&
+    a.initialShares.every((x, i) => x === b.initialShares[i])
+  );
+}
+
 function presetForConfig(config: IpdEvolutionConfig): PresetSelection {
-  const matchingPreset = evolutionPresets.find(
-    (preset) => JSON.stringify(preset.config) === JSON.stringify(config),
+  const matchingPreset = evolutionPresets.find((preset) =>
+    sameEvolutionConfig(preset.config, config),
   );
 
   return matchingPreset?.id ?? "custom";

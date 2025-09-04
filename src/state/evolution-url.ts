@@ -165,13 +165,13 @@ export function decodeEvolutionSearch(search: string): EvolutionUrlState {
     const repetitions = inRange(
       parseInteger(params.get("r"), "Repetitions"),
       1,
-      100,
+      20,
       "Repetitions",
     );
     const roundCap = inRange(
       parseInteger(params.get("cap"), "Round cap"),
       1,
-      5000,
+      1000,
       "Round cap",
     );
     const generations = inRange(
