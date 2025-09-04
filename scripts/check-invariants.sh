@@ -2,14 +2,25 @@
 
 set -euo pipefail
 
+if ! command -v rg >/dev/null 2>&1; then
+  echo 'Invariant checks require ripgrep (rg) on PATH.' >&2
+  exit 1
+fi
+
 failed=0
 
 report_violation() {
   local description="$1"
   shift
+  local status=0
 
-  if "$@"; then
+  "$@" || status=$?
+
+  if [[ "$status" -eq 0 ]]; then
     echo "Invariant violation: ${description}" >&2
+    failed=1
+  elif [[ "$status" -ne 1 ]]; then
+    echo "Invariant tooling error (exit ${status}): ${description}" >&2
     failed=1
   fi
 }
@@ -24,15 +35,15 @@ if [[ -d src/engine ]]; then
   report_violation \
     'src/engine must not import React or Next.' \
     has_matches "from[[:space:]]+['\"](react|next)(/[^'\"]*)?['\"]" src/engine
-
-  report_violation \
-    'Math.random is permitted only in src/engine/rng.ts.' \
-    rg --quiet --glob '*.{ts,tsx}' --glob '!rng.ts' 'Math\.random\(' src/engine
 fi
 
 report_violation \
-  'Date.now() and zero-argument new Date() are allowed only in src/state/seed.ts.' \
-  rg --quiet --glob '*.{ts,tsx}' --glob '!state/seed.ts' 'Date\.now\(\)|new[[:space:]]+Date\(\)' src
+  'Math.random is permitted only in src/engine/rng.ts.' \
+  rg --quiet --glob '*.{ts,tsx}' --glob '!rng.ts' 'Math\.random\(' src
+
+report_violation \
+  'Date.now() and zero-argument new Date() are forbidden under src/.' \
+  rg --quiet --glob '*.{ts,tsx}' 'Date\.now\(\)|new[[:space:]]+Date\(\)' src
 
 report_violation \
   'runtime API requests are forbidden under src/.' \

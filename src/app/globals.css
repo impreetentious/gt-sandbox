@@ -1140,15 +1140,9 @@ main {
   font-weight: 700;
 }
 
+.analysis-drawer,
 .game-workbench {
   overflow-wrap: anywhere;
-}
-
-@media (max-width: 38rem) {
-  body {
-    min-width: 0;
-    contain: paint;
-  }
 }
 
 .analysis-drawer {
@@ -1170,6 +1164,7 @@ main {
 .analysis-drawer__panels {
   display: grid;
   gap: 0.85rem;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .analysis-panel {
@@ -2157,6 +2152,11 @@ main {
 }
 
 @media (max-width: 38rem) {
+  body {
+    min-width: 0;
+    contain: paint;
+  }
+
   .shell {
     width: min(100% - 1.25rem, 72rem);
   }
