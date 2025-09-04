@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { GlossaryTerm } from "@/components/ui/glossary-term";
 import {
   isZeroSum,
@@ -193,10 +193,15 @@ function strategyLabel(
     .join("; ");
 }
 
-function EquilibriaPanel({ game }: { readonly game: NormalFormGame }) {
+function EquilibriaPanel({
+  game,
+  mixed,
+}: {
+  readonly game: NormalFormGame;
+  readonly mixed: ReturnType<typeof analyzeMixedEquilibria>;
+}) {
   const titleId = useId();
   const pure = pureNashEquilibria(game);
-  const mixed = analyzeMixedEquilibria(game);
   const genuinelyMixed = mixed.equilibria.filter(
     (equilibrium) =>
       equilibrium.row.support.length > 1 ||
@@ -223,9 +228,18 @@ function EquilibriaPanel({ game }: { readonly game: NormalFormGame }) {
         .
       </p>
       {genuinelyMixed.length === 0 ? (
-        <p>
-          No additional mixed equilibrium is needed beyond those pure outcomes.
-        </p>
+        mixed.degeneracyWitness ? (
+          <p>
+            Equal-size support enumeration found no further mixed sample here. A
+            degenerate game can still hold entire families of equilibria beyond
+            the pure outcomes listed above.
+          </p>
+        ) : (
+          <p>
+            No additional mixed equilibrium is needed beyond those pure
+            outcomes.
+          </p>
+        )
       ) : (
         <ul className="analysis-list">
           {genuinelyMixed.map((equilibrium, index) => (
@@ -460,14 +474,21 @@ export function AnalysisDrawer({
   defaultOpen = false,
   showAllPanels = false,
 }: AnalysisDrawerProps) {
-  const displayGame: NormalFormGame = actionLabels
-    ? {
-        ...game,
-        rowActions: actionLabels.row,
-        columnActions: actionLabels.column,
-      }
-    : game;
-  const equilibria = analyzeMixedEquilibria(displayGame).equilibria;
+  const displayGame: NormalFormGame = useMemo(
+    () =>
+      actionLabels
+        ? {
+            ...game,
+            rowActions: actionLabels.row,
+            columnActions: actionLabels.column,
+          }
+        : game,
+    [game, actionLabels],
+  );
+  const mixed = useMemo(
+    () => analyzeMixedEquilibria(displayGame),
+    [displayGame],
+  );
 
   return (
     <details className="analysis-drawer" open={defaultOpen || undefined}>
@@ -485,14 +506,14 @@ export function AnalysisDrawer({
           <div className="analysis-drawer__panels">
             <BestResponsePanel game={displayGame} />
             <DominancePanel game={displayGame} />
-            <EquilibriaPanel game={displayGame} />
+            <EquilibriaPanel game={displayGame} mixed={mixed} />
             <EfficiencyPanel
               enabled={paretoMode}
               game={displayGame}
               onChange={onParetoModeChange}
             />
             <YourPlayPanel
-              equilibrium={equilibria[0]}
+              equilibrium={mixed.equilibria[0]}
               game={displayGame}
               opponentName={opponentName}
               player={player}

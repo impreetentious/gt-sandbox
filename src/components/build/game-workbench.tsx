@@ -506,9 +506,9 @@ export function GameWorkbench({
           {structureSentence(structureFor(game))}
         </h2>
         <p>
-          {pureNashEquilibria(game).length} pure equilibrium
-          {pureNashEquilibria(game).length === 1 ? "" : "s"};{" "}
-          {analysis.equilibria.length} exact equilibrium profile
+          {pureNashEquilibria(game).length} pure{" "}
+          {pureNashEquilibria(game).length === 1 ? "equilibrium" : "equilibria"}
+          ; {analysis.equilibria.length} exact equilibrium profile
           {analysis.equilibria.length === 1 ? "" : "s"} enumerated.
         </p>
         {analysis.degeneracyWitness ? (

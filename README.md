@@ -1,6 +1,6 @@
 # Game Theory Sandbox
 
-**Status: v0.13.1 — second commit of the triage-fix series. Play-route share links now hydrate persona/seed (and IPD δ/ε) on mount, fulfilling §2.2 reproducibility for Play sessions; a new Playwright test covers the PD persona restore. Local checks green; nothing has been pushed or deployed.**
+**Status: v0.13.2 — third commit of the triage-fix series. The Analysis drawer now discloses degeneracy honestly instead of asserting completeness, memoizes its engine calls per §3.4, and picks up copy and JSDoc polish. Local checks green; nothing has been pushed or deployed.**
 
 Game theory is usually taught statically: a payoff matrix in a PDF, an equilibrium circled, a definition memorized. Intuition forms in a loop instead—**act, observe, and only then reveal the theory underneath the outcome.**
 
@@ -81,5 +81,5 @@ that version in `package.json`, `pnpm-lock.yaml` when it records root metadata,
 and the active version surfaces in the same commit. Historical timestamps are
 owner-directed metadata; do not rewrite pushed history.
 
-- **Base Format Version:** 0.13.1
-- **Portfolio Version:** v0.13.1_2025-09-04_23:04:46 (IST)
+- **Base Format Version:** 0.13.2
+- **Portfolio Version:** v0.13.2_2025-09-05_00:26:10 (IST)

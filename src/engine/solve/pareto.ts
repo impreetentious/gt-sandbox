@@ -7,6 +7,10 @@ import {
   type Profile,
 } from "@/engine/game";
 
+/**
+ * Returns true when `alternative` weakly Pareto-dominates `candidate`
+ * (note the argument order: the SECOND profile is the dominator).
+ */
 export function paretoDominates(
   game: NormalFormGame,
   candidate: Profile,
@@ -23,6 +27,10 @@ export function paretoDominates(
   );
 }
 
+/**
+ * Returns true when `alternative` strictly Pareto-dominates `candidate`
+ * (note the argument order: the SECOND profile is the dominator).
+ */
 export function strictlyParetoDominates(
   game: NormalFormGame,
   candidate: Profile,
