@@ -39,6 +39,11 @@ export interface OneShotSessionState {
 
 export type OneShotSessionAction =
   | { readonly type: "select-persona"; readonly persona: OneShotOpponentPolicy }
+  | {
+      readonly type: "hydrate";
+      readonly persona?: OneShotOpponentPolicy;
+      readonly seed?: number;
+    }
   | { readonly type: "submit-choice"; readonly action: BinaryAction }
   | { readonly type: "commit-outcome" }
   | { readonly type: "play-again" };
@@ -65,7 +70,7 @@ export function nextOneShotSessionSeed(seed: number): number {
   return (seed + 0x9e37_79b9) >>> 0;
 }
 
-function isPersonaForGame(
+export function isPersonaForGame(
   slug: OneShotPlayableSlug,
   persona: OneShotOpponentPolicy,
 ): boolean {
@@ -117,6 +122,22 @@ export function reduceOneShotSession(
       }
 
       return { ...state, persona: action.persona };
+
+    case "hydrate": {
+      if (state.status !== "playing" || state.rounds.length !== 0) {
+        return state;
+      }
+      const persona =
+        action.persona !== undefined &&
+        isPersonaForGame(state.slug, action.persona)
+          ? action.persona
+          : state.persona;
+      const seed = action.seed ?? state.seed;
+      if (persona === state.persona && seed === state.seed) {
+        return state;
+      }
+      return createOneShotSession(state.slug, persona, seed);
+    }
 
     case "submit-choice":
       if (state.status !== "playing") {

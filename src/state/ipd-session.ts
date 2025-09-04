@@ -35,9 +35,25 @@ export interface IpdSessionState {
 
 export type IpdSessionAction =
   | { readonly type: "select-opponent"; readonly opponent: IpdOpponentChoice }
+  | {
+      readonly type: "hydrate";
+      readonly opponent?: IpdOpponentChoice;
+      readonly seed?: number;
+      readonly continuationProbability?: number;
+      readonly noise?: number;
+    }
   | { readonly type: "submit-choice"; readonly action: BinaryAction }
   | { readonly type: "commit-outcome" }
   | { readonly type: "play-again" };
+
+const IPD_OPPONENT_IDS: readonly IpdOpponentChoice[] = [
+  ...ipdStrategies.map((strategy) => strategy.id),
+  "mystery",
+];
+
+export function isIpdOpponentChoice(value: string): value is IpdOpponentChoice {
+  return (IPD_OPPONENT_IDS as readonly string[]).includes(value);
+}
 
 function mysteryStrategyForSeed(seed: number): IpdStrategyId {
   return ipdStrategies[(seed >>> 0) % ipdStrategies.length].id;
@@ -46,6 +62,8 @@ function mysteryStrategyForSeed(seed: number): IpdStrategyId {
 function createConfig(
   opponent: IpdOpponentChoice,
   seed: number,
+  continuationProbability = 0.95,
+  noise = 0,
 ): Readonly<IpdMatchConfig> {
   const opponentStrategy =
     opponent === "mystery" ? mysteryStrategyForSeed(seed) : opponent;
@@ -55,16 +73,18 @@ function createConfig(
     columnStrategy: opponentStrategy,
     masterSeed: seed,
     matchId: IPD_MATCH_ID,
-    continuationProbability: 0.95,
-    noise: 0,
+    continuationProbability,
+    noise,
   };
 }
 
 export function createIpdSession(
   opponent: IpdOpponentChoice = "tft",
   seed = DEFAULT_IPD_SESSION_SEED,
+  continuationProbability = 0.95,
+  noise = 0,
 ): IpdSessionState {
-  const config = createConfig(opponent, seed);
+  const config = createConfig(opponent, seed, continuationProbability, noise);
   const length = sampleIpdMatchLength(config);
 
   return {
@@ -104,7 +124,32 @@ export function reduceIpdSession(
         return state;
       }
 
-      return createIpdSession(action.opponent, state.config.masterSeed);
+      return createIpdSession(
+        action.opponent,
+        state.config.masterSeed,
+        state.config.continuationProbability,
+        state.config.noise,
+      );
+
+    case "hydrate": {
+      if (state.status !== "playing" || state.rounds.length !== 0) {
+        return state;
+      }
+      const opponent = action.opponent ?? state.selectedOpponent;
+      const seed = action.seed ?? state.config.masterSeed;
+      const continuationProbability =
+        action.continuationProbability ?? state.config.continuationProbability;
+      const noise = action.noise ?? state.config.noise;
+      if (
+        opponent === state.selectedOpponent &&
+        seed === state.config.masterSeed &&
+        continuationProbability === state.config.continuationProbability &&
+        noise === state.config.noise
+      ) {
+        return state;
+      }
+      return createIpdSession(opponent, seed, continuationProbability, noise);
+    }
 
     case "submit-choice":
       if (state.status !== "playing") {
@@ -148,6 +193,8 @@ export function reduceIpdSession(
         ? createIpdSession(
             state.selectedOpponent,
             nextIpdSessionSeed(state.config.masterSeed),
+            state.config.continuationProbability,
+            state.config.noise,
           )
         : state;
   }

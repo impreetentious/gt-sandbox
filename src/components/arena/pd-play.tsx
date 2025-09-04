@@ -15,8 +15,10 @@ import { payoffAt, profileKey } from "@/engine/game";
 import { paretoEfficientProfiles } from "@/engine/solve/pareto";
 import { bestResponses, pureNashEquilibria } from "@/engine/solve/pure";
 import { formatRational } from "@/engine/rational";
+import { decodeGameSearch } from "@/state/game-url";
 import {
   createPdSession,
+  isPdPersonaId,
   PD_SESSION_ROUNDS,
   reducePdSession,
   type PdAction,
@@ -64,6 +66,23 @@ export function PdPlayExperience() {
   const priorStateRef = useRef({ seed: state.seed, status: state.status });
   const latestRound = state.rounds.at(-1);
   const highlightedRound = state.pendingRound ?? latestRound;
+
+  useEffect(() => {
+    const decoded = decodeGameSearch(window.location.search);
+    if (decoded.kind !== "valid") {
+      return;
+    }
+    const rawPersona = decoded.state.extras.persona;
+    const persona =
+      rawPersona !== undefined && isPdPersonaId(rawPersona)
+        ? rawPersona
+        : undefined;
+    const seed = decoded.state.extras.seed;
+    if (persona === undefined && seed === undefined) {
+      return;
+    }
+    dispatch({ type: "hydrate", persona, seed });
+  }, []);
 
   useEffect(() => {
     if (state.status !== "resolving") {

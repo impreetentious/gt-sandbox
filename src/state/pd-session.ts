@@ -37,9 +37,20 @@ export interface PdSessionState {
 
 export type PdSessionAction =
   | { readonly type: "select-persona"; readonly persona: PdPersonaId }
+  | {
+      readonly type: "hydrate";
+      readonly persona?: PdPersonaId;
+      readonly seed?: number;
+    }
   | { readonly type: "submit-choice"; readonly action: PdAction }
   | { readonly type: "commit-outcome" }
   | { readonly type: "play-again" };
+
+const PD_PERSONA_IDS: readonly PdPersonaId[] = ["always:C", "always:D", "tft"];
+
+export function isPdPersonaId(value: string): value is PdPersonaId {
+  return (PD_PERSONA_IDS as readonly string[]).includes(value);
+}
 
 export function createPdSession(
   persona: PdPersonaId = "tft",
@@ -94,6 +105,18 @@ export function reducePdSession(
       }
 
       return { ...state, persona: action.persona };
+
+    case "hydrate": {
+      if (state.status !== "playing" || state.rounds.length !== 0) {
+        return state;
+      }
+      const persona = action.persona ?? state.persona;
+      const seed = action.seed ?? state.seed;
+      if (persona === state.persona && seed === state.seed) {
+        return state;
+      }
+      return createPdSession(persona, seed);
+    }
 
     case "submit-choice":
       if (state.status !== "playing") {

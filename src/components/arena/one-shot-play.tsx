@@ -16,11 +16,14 @@ import {
 } from "@/content/one-shot-games";
 import { catalogBySlug } from "@/engine/catalog";
 import { payoffAt, profileKey } from "@/engine/game";
+import type { OneShotOpponentPolicy } from "@/engine/repeated/policies";
 import { formatRational } from "@/engine/rational";
 import { paretoEfficientProfiles } from "@/engine/solve/pareto";
 import { bestResponses, pureNashEquilibria } from "@/engine/solve/pure";
+import { decodeGameSearch } from "@/state/game-url";
 import {
   createOneShotSession,
+  isPersonaForGame,
   reduceOneShotSession,
   type OneShotSessionState,
 } from "@/state/one-shot-session";
@@ -83,6 +86,24 @@ export function OneShotPlayExperience({
   const paretoEfficient = new Set(
     paretoEfficientProfiles(game).map(profileKey),
   );
+
+  useEffect(() => {
+    const decoded = decodeGameSearch(window.location.search);
+    if (decoded.kind !== "valid") {
+      return;
+    }
+    const rawPersona = decoded.state.extras.persona;
+    const persona =
+      rawPersona !== undefined &&
+      isPersonaForGame(slug, rawPersona as OneShotOpponentPolicy)
+        ? (rawPersona as OneShotOpponentPolicy)
+        : undefined;
+    const seed = decoded.state.extras.seed;
+    if (persona === undefined && seed === undefined) {
+      return;
+    }
+    dispatch({ type: "hydrate", persona, seed });
+  }, [slug]);
 
   useEffect(() => {
     if (state.status !== "resolving") {

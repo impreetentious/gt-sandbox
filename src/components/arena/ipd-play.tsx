@@ -21,8 +21,10 @@ import {
 } from "@/engine/repeated/strategies";
 import { paretoEfficientProfiles } from "@/engine/solve/pareto";
 import { bestResponses, pureNashEquilibria } from "@/engine/solve/pure";
+import { decodeGameSearch } from "@/state/game-url";
 import {
   createIpdSession,
+  isIpdOpponentChoice,
   reduceIpdSession,
   type IpdOpponentChoice,
 } from "@/state/ipd-session";
@@ -148,6 +150,37 @@ export function IpdPlayExperience() {
   const paretoEfficient = new Set(
     paretoEfficientProfiles(ipd.game).map(profileKey),
   );
+
+  useEffect(() => {
+    const decoded = decodeGameSearch(window.location.search);
+    if (decoded.kind !== "valid") {
+      return;
+    }
+    const rawPersona = decoded.state.extras.persona;
+    const opponent =
+      rawPersona !== undefined && isIpdOpponentChoice(rawPersona)
+        ? rawPersona
+        : undefined;
+    const seed = decoded.state.extras.seed;
+    const continuationProbability =
+      decoded.state.extras.continuationProbability;
+    const noise = decoded.state.extras.noise;
+    if (
+      opponent === undefined &&
+      seed === undefined &&
+      continuationProbability === undefined &&
+      noise === undefined
+    ) {
+      return;
+    }
+    dispatch({
+      type: "hydrate",
+      opponent,
+      seed,
+      continuationProbability,
+      noise,
+    });
+  }, []);
 
   useEffect(() => {
     if (state.status !== "resolving") {

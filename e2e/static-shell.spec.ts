@@ -338,6 +338,18 @@ test("a bounded evolution URL restores its complete seeded configuration", async
   ).toHaveAttribute("max", "80");
 });
 
+test("a PD play share link restores the encoded persona and seed", async ({
+  page,
+}) => {
+  const search =
+    "?v=1&title=Prisoner%27s+Dilemma&row=Cooperate&row=Defect&col=Cooperate&col=Defect&p=3%2C3%3B0%2C5%3B5%2C0%3B1%2C1&persona=always%3AD&seed=1234567";
+  await page.goto(`/play/pd/${search}`);
+
+  const rivalSelect = page.getByLabel("Choose rival");
+  await expect(rivalSelect).toHaveValue("always:D");
+  await expect(page.getByText(/Cynic/).first()).toBeVisible();
+});
+
 test("a canonical payoff edit changes the game structure and survives a direct link", async ({
   page,
 }) => {
