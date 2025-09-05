@@ -1,6 +1,6 @@
 # Game Theory Sandbox
 
-**Status: v0.14.7 — nav + home discoverability (`/14-F5-O8`). App not yet deployed.**
+**Status: v0.14.8 — additional features series complete: glossary, styles, and browser acceptance (`/15-F5-O8`). `CI=true pnpm verify:full` green on the working tree prior to commit (161 tests, 98.02% engine coverage, 22 pages, 207.5 KiB gzip, Playwright 22/22). App not yet deployed.**
 
 Game theory is usually taught statically: a payoff matrix in a PDF, an equilibrium circled, a definition memorized. Intuition forms in a loop instead—**act, observe, and only then reveal the theory underneath the outcome.**
 
@@ -81,5 +81,5 @@ that version in `package.json`, `pnpm-lock.yaml` when it records root metadata,
 and the active version surfaces in the same commit. Historical timestamps are
 owner-directed metadata; do not rewrite pushed history.
 
-- **Base Format Version:** 0.14.7
-- **Portfolio Version:** v0.14.7_2025-09-05_21:39:07 (IST)
+- **Base Format Version:** 0.14.8
+- **Portfolio Version:** v0.14.8_2025-09-05_21:40:01 (IST)

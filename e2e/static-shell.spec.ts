@@ -9,6 +9,16 @@ const routes = [
   "/play/chicken/",
   "/play/matching-pennies/",
   "/play/iterated-pd/",
+  "/hot-seat/pd/",
+  "/hot-seat/stag-hunt/",
+  "/hot-seat/battle-of-the-sexes/",
+  "/hot-seat/chicken/",
+  "/hot-seat/matching-pennies/",
+  "/repeat/",
+  "/auctions/first-price/",
+  "/auctions/second-price/",
+  "/auctions/common-value/",
+  "/classroom/",
   "/evolve/",
   "/build/",
   "/methods/",
@@ -245,6 +255,138 @@ test("the IPD mystery flow reveals its strategy and seeded counterfactual", asyn
     page.getByText(/Tit for Tat in your seat would have scored/),
   ).toBeVisible();
   await expect(page.getByLabel(/state diagram/)).toBeVisible();
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
+});
+
+test("the hot-seat game conceals Player 1's move and completes by keyboard", async ({
+  page,
+}) => {
+  await page.goto("/hot-seat/pd/");
+  await expect(
+    page.getByRole("heading", { name: "Prisoner's Dilemma" }),
+  ).toBeVisible();
+
+  const session = page.locator(".hot-seat-session");
+
+  for (let round = 1; round <= 10; round += 1) {
+    const p1Undercut = page.getByRole("button", {
+      name: "Player 1: Undercut (key 2)",
+    });
+    await p1Undercut.focus();
+    await page.keyboard.press("2");
+
+    const handover = page.getByTestId("hot-seat-handover");
+    await expect(handover).toBeVisible();
+    await expect(handover).not.toContainText("Undercut");
+    await page.getByRole("button", { name: "Player 2 is ready" }).click();
+
+    await page
+      .getByRole("button", { name: "Player 2: Undercut (key 2)" })
+      .click();
+    await expect(session).toHaveAttribute("data-round", String(round));
+    await page
+      .getByRole("button", { name: /Next round|See the analysis/ })
+      .click();
+  }
+
+  await expect(session).toHaveAttribute("data-phase", "complete");
+  await expect(page.getByRole("button", { name: "Play again" })).toBeFocused();
+
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
+});
+
+test("the classroom builds an assignment link and aggregates a session file", async ({
+  page,
+}) => {
+  await page.goto("/classroom/");
+  await expect(
+    page.getByRole("heading", { name: "Run it with a class." }),
+  ).toBeVisible();
+
+  const link = page.getByLabel("Assignment link", { exact: true });
+  await expect(link).toHaveValue(/\/play\/pd\/\?/);
+
+  const session = JSON.stringify({
+    schema: "gt-sandbox/session",
+    version: 1,
+    kind: "hot-seat",
+    game: "pd",
+    title: "Prisoner's Dilemma",
+    rowLabel: "Player 1",
+    columnLabel: "Player 2",
+    rounds: [
+      {
+        round: 1,
+        rowAction: "a",
+        columnAction: "b",
+        rowPayoff: "4",
+        columnPayoff: "4",
+      },
+    ],
+    rowTotal: "4",
+    columnTotal: "4",
+  });
+  await page.getByLabel("Add session files").setInputFiles({
+    name: "student.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(session),
+  });
+  await expect(page.getByTestId("classroom-aggregate")).toBeVisible();
+  await expect(page.getByText(/1 session loaded/)).toBeVisible();
+
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
+});
+
+test("the second-price auction proves truthfulness and completes a session", async ({
+  page,
+}) => {
+  await page.goto("/auctions/second-price/");
+  await expect(
+    page.getByRole("heading", { name: "Second-price sealed bid" }),
+  ).toBeVisible();
+  await expect(page.getByText(/weakly dominant/)).toBeVisible();
+
+  for (let round = 1; round <= 8; round += 1) {
+    await page.getByRole("button", { name: "Submit bid" }).click();
+    await expect(page.getByTestId("auction-result")).toBeVisible();
+    await page
+      .getByRole("button", { name: /Next round|Finish session/ })
+      .click();
+  }
+
+  await expect(page.getByRole("button", { name: "Play again" })).toBeFocused();
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
+});
+
+test("the common-value auction surfaces the winner's curse", async ({
+  page,
+}) => {
+  await page.goto("/auctions/common-value/");
+  await expect(
+    page.getByText(/Bidding your own signal loses money/),
+  ).toBeVisible();
+});
+
+test("the repeat surface shows the folk-theorem threshold and switches games", async ({
+  page,
+}) => {
+  await page.goto("/repeat/");
+  await expect(
+    page.getByRole("heading", { name: "Iterate any game." }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/continuation probability is at least 1\/2/),
+  ).toBeVisible();
+
+  await page.getByLabel("Stage game").selectOption("pennies");
+  await expect(
+    page.getByText(/Cooperation cannot be sustained here/),
+  ).toBeVisible();
+
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
 });
