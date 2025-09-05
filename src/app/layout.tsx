@@ -50,6 +50,9 @@ const navigation = [
   { href: "/evolve/", label: "Evolve" },
   { href: "/build/", label: "Build" },
   { href: "/methods/", label: "Methods" },
+  { href: "/repeat/", label: "Repeat" },
+  { href: "/auctions/second-price/", label: "Auctions" },
+  { href: "/classroom/", label: "Classroom" },
 ];
 
 export default function RootLayout({

@@ -1,11 +1,11 @@
 {
   "name": "game-theory-sandbox",
-  "version": "0.14.6",
+  "version": "0.14.7",
   "private": true,
-  "packageManager": "pnpm@10.13.1",
+  "packageManager": "pnpm@10.14.0",
   "engines": {
     "node": ">=24 <25",
-    "pnpm": ">=10.13.1"
+    "pnpm": ">=10.14.0"
   },
   "scripts": {
     "dev": "next dev",

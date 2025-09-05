@@ -65,6 +65,34 @@ const path = [
     description:
       "Edit a bounded matrix and watch exact equilibria and the game’s strategic species change.",
   },
+  {
+    href: "/repeat/",
+    title: "Repeat Any Game",
+    concept: "The folk theorem",
+    description:
+      "Iterate a 2×2 with the full roster and read the exact discount threshold that sustains cooperation.",
+  },
+  {
+    href: "/hot-seat/pd/",
+    title: "Hot-seat",
+    concept: "Two humans",
+    description:
+      "Pass one device between two people with commit-and-conceal simultaneity — no backend needed.",
+  },
+  {
+    href: "/auctions/second-price/",
+    title: "Auctions",
+    concept: "Incomplete information",
+    description:
+      "Bid under private values and noisy signals: shading, truthful dominance, and the winner’s curse.",
+  },
+  {
+    href: "/classroom/",
+    title: "Classroom Kit",
+    concept: "Teach with it",
+    description:
+      "Pin an exercise as a share link, then aggregate the sessions students download — all on-device.",
+  },
 ] as const;
 
 export default function HomePage() {
@@ -116,7 +144,7 @@ export default function HomePage() {
       <section aria-labelledby="path-title" className="home-path">
         <div className="home-section-heading">
           <p className="eyebrow">Suggested path</p>
-          <h2 id="path-title">Eight stops. No gates.</h2>
+          <h2 id="path-title">Twelve stops. No gates.</h2>
           <p>Follow the arc or enter wherever the incentives look familiar.</p>
         </div>
         <ol className="home-path__grid">
