@@ -1,6 +1,6 @@
 # Game Theory Sandbox
 
-**Status: v0.14.5 — auction session + content (`/9-F5-O8`). App not yet deployed.**
+**Status: v0.14.6 — classroom experience + state tests (`/12-F5-O8`). App not yet deployed.**
 
 Game theory is usually taught statically: a payoff matrix in a PDF, an equilibrium circled, a definition memorized. Intuition forms in a loop instead—**act, observe, and only then reveal the theory underneath the outcome.**
 
@@ -81,5 +81,5 @@ that version in `package.json`, `pnpm-lock.yaml` when it records root metadata,
 and the active version surfaces in the same commit. Historical timestamps are
 owner-directed metadata; do not rewrite pushed history.
 
-- **Base Format Version:** 0.14.5
-- **Portfolio Version:** v0.14.5_2025-09-05_21:27:14 (IST)
+- **Base Format Version:** 0.14.6
+- **Portfolio Version:** v0.14.6_2025-09-05_21:35:29 (IST)
