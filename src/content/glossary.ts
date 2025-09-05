@@ -4,11 +4,13 @@ export type GlossaryTermId =
   | "degenerate"
   | "dominant-strategy"
   | "focal-point"
+  | "individually-rational"
   | "mixed-strategy"
   | "nash-equilibrium"
   | "pareto-efficient"
   | "replicator-dynamics"
   | "risk-dominant"
+  | "winners-curse"
   | "zero-sum";
 
 export interface GlossaryTermDefinition {
@@ -45,6 +47,11 @@ export const glossary: Readonly<
     definition:
       "A solution people tend to select because it is especially salient, even without communication.",
   },
+  "individually-rational": {
+    label: "individually rational",
+    definition:
+      "A payoff at or above a player's minimax value — the most the opponent can hold them below by playing adversarially.",
+  },
   "mixed-strategy": {
     label: "mixed strategy",
     definition: "A probability distribution over a player's available actions.",
@@ -68,6 +75,11 @@ export const glossary: Readonly<
     label: "risk dominant",
     definition:
       "Among competing equilibria, the one with the larger product of players' losses from unilateral deviation.",
+  },
+  "winners-curse": {
+    label: "winner's curse",
+    definition:
+      "In a common-value auction, the tendency for the winning bidder to have overestimated the item's value, since winning means bidding more than everyone else.",
   },
   "zero-sum": {
     label: "zero-sum",
