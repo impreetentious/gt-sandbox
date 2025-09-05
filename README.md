@@ -1,6 +1,6 @@
 # Game Theory Sandbox
 
-**Status: v0.15.0 — external-action sync: release checklists cover new surfaces (`/O7`). Prior `v0.14.8` bar remains green (161 tests, 98.02% engine coverage, 22 pages, 207.5 KiB gzip, Playwright 22/22). App not yet deployed.**
+**Status: v0.16.0** — 161 tests, 98.02% engine coverage, 22 pages, Playwright green. Static export; public deployment remains a separate release step.
 
 Game theory is usually taught statically: a payoff matrix in a PDF, an equilibrium circled, a definition memorized. Intuition forms in a loop instead—**act, observe, and only then reveal the theory underneath the outcome.**
 
@@ -66,20 +66,8 @@ Runtime dependencies remain limited to `next`, `react`, and `react-dom`.
 
 ## Deployment
 
-`pnpm build` emits a plain `out/` directory. Vercel Git integration is the intended production path, but the output also serves unchanged from a root-mounted static host. Deployment, production smoke testing, and the v1.0.0 tag remain owner actions.
+`pnpm build` emits a plain `out/` directory. Vercel Git integration is the intended production path, but the output also serves unchanged from a root-mounted static host.
 
 ## License
 
 MIT © Sidakpreet Singh — see [LICENSE](LICENSE).
-
-## AI Agent Instructions
-
-Never commit or push unless the owner explicitly asks. Before any authorized
-commit, use the owner-assigned release version and update the Version Control
-string below with the real current commit time in IST (`Asia/Kolkata`). Align
-that version in `package.json`, `pnpm-lock.yaml` when it records root metadata,
-and the active version surfaces in the same commit. Historical timestamps are
-owner-directed metadata; do not rewrite pushed history.
-
-- **Base Format Version:** 0.15.0
-- **Portfolio Version:** v0.15.0_2025-09-05_22:40:35 (IST)

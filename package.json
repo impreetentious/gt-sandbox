@@ -1,6 +1,6 @@
 {
   "name": "game-theory-sandbox",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "private": true,
   "packageManager": "pnpm@10.14.0",
   "engines": {
@@ -53,5 +53,16 @@
     "tailwindcss": "^4.0.0",
     "typescript": "^5.0.0",
     "vitest": "^3.0.0"
-  }
+  },
+  "license": "MIT",
+  "author": "Sidakpreet Singh",
+  "description": "Static interactive game-theory sandbox with exact analytical engines.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ItsMonarch04/gt-sandbox.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ItsMonarch04/gt-sandbox/issues"
+  },
+  "homepage": "https://github.com/ItsMonarch04/gt-sandbox#"
 }
