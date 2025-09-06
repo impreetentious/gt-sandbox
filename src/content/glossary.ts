@@ -1,6 +1,8 @@
 export type GlossaryTermId =
+  | "backward-induction"
   | "best-response"
   | "continuation-probability"
+  | "credible-threat"
   | "degenerate"
   | "dominant-strategy"
   | "focal-point"
@@ -12,6 +14,7 @@ export type GlossaryTermId =
   | "pareto-efficient"
   | "replicator-dynamics"
   | "risk-dominant"
+  | "subgame-perfect-equilibrium"
   | "winners-curse"
   | "zero-sum";
 
@@ -24,6 +27,11 @@ export interface GlossaryTermDefinition {
 export const glossary: Readonly<
   Record<GlossaryTermId, GlossaryTermDefinition>
 > = {
+  "backward-induction": {
+    label: "backward induction",
+    definition:
+      "Solving a perfect-information sequential game by starting from the last decision and working back to the first, choosing the payoff-maximizing action at each step.",
+  },
   "best-response": {
     label: "best response",
     definition:
@@ -33,6 +41,11 @@ export const glossary: Readonly<
     label: "continuation probability",
     definition:
       "The probability that an iterated interaction continues for one more round.",
+  },
+  "credible-threat": {
+    label: "credible threat",
+    definition:
+      "A threatened action that the threatener would actually want to carry out if the moment came — one that survives subgame perfection.",
   },
   degenerate: {
     label: "degenerate",
@@ -87,6 +100,11 @@ export const glossary: Readonly<
     label: "risk dominant",
     definition:
       "Among competing equilibria, the one with the larger product of players' losses from unilateral deviation.",
+  },
+  "subgame-perfect-equilibrium": {
+    label: "subgame-perfect equilibrium",
+    definition:
+      "A Nash equilibrium that remains a Nash equilibrium in every subgame — the refinement that rules out non-credible threats.",
   },
   "winners-curse": {
     label: "winner's curse",
