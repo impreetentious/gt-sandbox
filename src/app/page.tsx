@@ -93,6 +93,13 @@ const path = [
     description:
       "Pin an exercise as a share link, then aggregate the sessions students download — all on-device.",
   },
+  {
+    href: "/extensive/entry-deterrence/",
+    title: "Entry Deterrence",
+    concept: "Sequential moves",
+    description:
+      "Enter the market or stay out, watch the incumbent's response, and see backward induction extract the subgame-perfect equilibrium.",
+  },
 ] as const;
 
 export default function HomePage() {
@@ -144,7 +151,7 @@ export default function HomePage() {
       <section aria-labelledby="path-title" className="home-path">
         <div className="home-section-heading">
           <p className="eyebrow">Suggested path</p>
-          <h2 id="path-title">Twelve stops. No gates.</h2>
+          <h2 id="path-title">Thirteen stops. No gates.</h2>
           <p>Follow the arc or enter wherever the incentives look familiar.</p>
         </div>
         <ol className="home-path__grid">

@@ -22,6 +22,7 @@ const routes = [
   "/evolve/",
   "/build/",
   "/methods/",
+  "/extensive/entry-deterrence/",
 ];
 
 test("every static route is same-origin, CSP-protected, and accessible", async ({
@@ -590,4 +591,38 @@ test("unknown game slugs serve the exported not-found page", async ({
   await expect(
     page.getByRole("heading", { name: "This payoff does not exist." }),
   ).toBeVisible();
+});
+
+test("entry deterrence plays through both incumbent policies and reveals SPNE", async ({
+  page,
+}) => {
+  await page.goto("/extensive/entry-deterrence/");
+  await expect(
+    page.getByRole("heading", { name: "Entry Deterrence" }),
+  ).toBeVisible();
+
+  const session = page.locator(".extensive-session");
+  // Rational Incumbent → In should land on the accommodate terminal, payoffs (1, 1).
+  await page.getByRole("button", { name: "In", exact: true }).click();
+  await expect(session).toHaveAttribute("data-round", "1");
+  await expect(page.getByText(/Outcome: Entrant 1, Incumbent 1/)).toBeVisible();
+
+  // Open analysis; SPNE headline is present.
+  const drawer = page.locator(".analysis-drawer");
+  await drawer.locator("summary").click();
+  await expect(drawer).toHaveAttribute("open", "");
+  await expect(
+    page.getByText(/Backward induction predicts entry/),
+  ).toBeVisible();
+
+  // Reset; switch to Committed Incumbent; enter and get punished.
+  await page.getByRole("button", { name: "Play again" }).click();
+  await page.getByRole("radio", { name: /Committed Incumbent/ }).check();
+  await page.getByRole("button", { name: "In", exact: true }).click();
+  await expect(
+    page.getByText(/Outcome: Entrant -1, Incumbent -1/),
+  ).toBeVisible();
+
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
 });
