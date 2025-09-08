@@ -2827,6 +2827,22 @@ main {
   max-width: 42rem;
 }
 
+.extensive-session__legend {
+  margin: 0.6rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.extensive-session__legend strong {
+  color: var(--ink);
+  margin-right: 0.35rem;
+}
+
+.extensive-session__tree-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
 .extensive-session__layout {
   display: grid;
   gap: 1.5rem;

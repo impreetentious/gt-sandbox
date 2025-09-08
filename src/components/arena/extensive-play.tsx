@@ -11,6 +11,7 @@ import {
   backwardInduction,
   type DecisionNode,
   type GameNode,
+  type TerminalNode,
 } from "@/engine/extensive";
 import { formatRational, type Rational } from "@/engine/rational";
 
@@ -38,7 +39,6 @@ function layoutTree(root: GameNode): {
   width: number;
   height: number;
 } {
-  // Two-pass layout: compute subtree widths, then assign x coordinates.
   const widthCache = new Map<string, number>();
   const width = (node: GameNode): number => {
     if (widthCache.has(node.id)) return widthCache.get(node.id)!;
@@ -99,24 +99,45 @@ function isDecision(node: GameNode): node is DecisionNode {
   return node.kind === "decision";
 }
 
-function playAgainstRival(
+function isTerminal(node: GameNode): node is TerminalNode {
+  return node.kind === "terminal";
+}
+
+interface WalkResult {
+  readonly path: readonly string[];
+  readonly awaitingNode: DecisionNode | null;
+  readonly terminal: TerminalNode | null;
+}
+
+function walkGame(
   root: GameNode,
-  entrantChoice: number,
+  userPlayer: string,
+  userChoices: ReadonlyMap<string, number>,
   rivalStrategy: ReadonlyMap<string, number>,
-): { path: string[]; terminal: GameNode } {
+): WalkResult {
   const path: string[] = [];
   let current: GameNode = root;
-  let entrantMoved = false;
-  while (current.kind !== "terminal") {
+  while (true) {
     path.push(current.id);
-    const chosen = entrantMoved
-      ? (rivalStrategy.get(current.id) ?? 0)
-      : entrantChoice;
-    entrantMoved = true;
+    if (isTerminal(current)) {
+      return { path, awaitingNode: null, terminal: current };
+    }
+    let chosen: number | undefined;
+    if (current.player === userPlayer) {
+      chosen = userChoices.get(current.id);
+      if (chosen === undefined) {
+        return { path, awaitingNode: current, terminal: null };
+      }
+    } else {
+      chosen = rivalStrategy.get(current.id) ?? 0;
+    }
     current = current.children[chosen];
   }
-  path.push(current.id);
-  return { path, terminal: current };
+}
+
+/** Ordered short labels (1-based) — always unique even when player names share a first letter. */
+function playerShortLabels(players: readonly string[]): readonly string[] {
+  return players.map((_, index) => String(index + 1));
 }
 
 export function ExtensivePlayExperience({ slug }: Props) {
@@ -125,45 +146,76 @@ export function ExtensivePlayExperience({ slug }: Props) {
   const game = entry.game;
 
   const [rivalId, setRivalId] = useState(content.rivals[0].id);
-  const [entrantChoice, setEntrantChoice] = useState<number | null>(null);
+  const [userChoices, setUserChoices] = useState<ReadonlyMap<string, number>>(
+    () => new Map(),
+  );
 
   const rival =
     content.rivals.find((r) => r.id === rivalId) ?? content.rivals[0];
 
   const layout = useMemo(() => layoutTree(game.root), [game.root]);
   const spne = useMemo(() => backwardInduction(game), [game]);
-  const entrantNode = game.root as DecisionNode;
+  const shortLabels = useMemo(
+    () => playerShortLabels(game.players),
+    [game.players],
+  );
 
-  const outcome =
-    entrantChoice === null
-      ? null
-      : playAgainstRival(game.root, entrantChoice, rival.strategy);
-  const spnePath = new Set(spne.path);
-  const currentPath = new Set(outcome?.path ?? []);
-  const terminalPayoffs =
-    outcome && outcome.terminal.kind === "terminal"
-      ? outcome.terminal.payoffs
-      : null;
+  const walk = walkGame(
+    game.root,
+    content.userPlayer,
+    userChoices,
+    rival.strategy,
+  );
+  const isComplete = walk.terminal !== null;
+  const spnePath = useMemo(() => new Set(spne.path), [spne.path]);
+  const currentPath = new Set(walk.path);
+  const terminalPayoffs = walk.terminal?.payoffs ?? null;
+  const roundCount = userChoices.size;
 
   const unitWidth = Math.max(layout.width, 1);
   const unitHeight = Math.max(layout.height, 1);
-  const svgWidth = 320;
-  const svgHeight = 220;
+  const svgWidth = Math.max(320, unitWidth * 34);
+  const svgHeight = Math.max(220, unitHeight * 60 + 40);
   const px = (units: number) => 16 + (units / unitWidth) * (svgWidth - 32);
   const py = (units: number) => 24 + (units / unitHeight) * (svgHeight - 48);
 
-  function handleEntrantChoice(index: number) {
-    setEntrantChoice(index);
+  function handleChoice(nodeId: string, index: number) {
+    setUserChoices((prev) => {
+      const next = new Map(prev);
+      next.set(nodeId, index);
+      return next;
+    });
   }
   function reset() {
-    setEntrantChoice(null);
+    setUserChoices(new Map());
   }
+
+  const outcomeSentence = terminalPayoffs
+    ? `Outcome: ${game.players
+        .map(
+          (name, index) => `${name} ${formatRational(terminalPayoffs[index])}`,
+        )
+        .join(", ")}.`
+    : null;
+  const promptSentence =
+    walk.awaitingNode === null
+      ? content.initialPrompt
+      : roundCount === 0
+        ? content.initialPrompt
+        : `Your turn: choose ${walk.awaitingNode.actions.join(" or ")}.`;
+
+  const dataPhase = isComplete
+    ? "complete"
+    : walk.awaitingNode
+      ? "awaiting-user"
+      : "in-progress";
 
   return (
     <section
       aria-labelledby="extensive-title"
       className="extensive-session"
-      data-round={entrantChoice === null ? 0 : 1}
+      data-phase={dataPhase}
+      data-round={roundCount}
       data-slug={slug}
     >
       <header className="extensive-session__header">
@@ -172,6 +224,10 @@ export function ExtensivePlayExperience({ slug }: Props) {
           {game.title}
         </h1>
         <p className="lede">{content.framing}</p>
+        <p className="extensive-session__legend">
+          <strong>{content.playerLegend.user}</strong>{" "}
+          {content.playerLegend.rival}
+        </p>
       </header>
 
       <div className="extensive-session__layout">
@@ -183,57 +239,85 @@ export function ExtensivePlayExperience({ slug }: Props) {
             <h2 id="extensive-tree-title">The game tree</h2>
             <p>
               Every path from the root to a terminal is a possible play. The
-              pair at each terminal is (Entrant, Incumbent).
+              pair at each terminal is {content.payoffPairLabel}.
             </p>
           </div>
-          <svg
-            aria-label={`Game tree for ${game.title} — decision nodes are circles labelled with the player who chooses; terminals are squares with the payoff pair.`}
-            className="extensive-tree"
-            role="img"
-            viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-          >
-            {layout.edges.map((edge) => {
-              const highlighted =
-                currentPath.has(edge.from.node.id) &&
-                currentPath.has(edge.to.node.id);
-              const spneEdge =
-                spnePath.has(edge.from.node.id) &&
-                spnePath.has(edge.to.node.id);
-              const midX = (px(edge.from.x) + px(edge.to.x)) / 2;
-              const midY = (py(edge.from.y) + py(edge.to.y)) / 2;
-              return (
-                <g
-                  key={`${edge.from.node.id}-${edge.to.node.id}`}
-                  data-highlight={
-                    highlighted ? "current" : spneEdge ? "spne" : "none"
-                  }
-                >
-                  <line
-                    className="extensive-tree__edge"
-                    x1={px(edge.from.x)}
-                    x2={px(edge.to.x)}
-                    y1={py(edge.from.y)}
-                    y2={py(edge.to.y)}
-                  />
-                  <text
-                    className="extensive-tree__edge-label"
-                    dominantBaseline="middle"
-                    textAnchor="middle"
-                    x={midX}
-                    y={midY - 4}
+          <div className="extensive-session__tree-scroll">
+            <svg
+              aria-label={`Game tree for ${game.title} — decision nodes are circles labelled with the player number who chooses; terminals are squares with the payoff pair.`}
+              className="extensive-tree"
+              role="img"
+              viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+            >
+              {layout.edges.map((edge) => {
+                const highlighted =
+                  currentPath.has(edge.from.node.id) &&
+                  currentPath.has(edge.to.node.id);
+                const spneEdge =
+                  spnePath.has(edge.from.node.id) &&
+                  spnePath.has(edge.to.node.id);
+                const midX = (px(edge.from.x) + px(edge.to.x)) / 2;
+                const midY = (py(edge.from.y) + py(edge.to.y)) / 2;
+                return (
+                  <g
+                    key={`${edge.from.node.id}-${edge.to.node.id}`}
+                    data-highlight={
+                      highlighted ? "current" : spneEdge ? "spne" : "none"
+                    }
                   >
-                    {edge.label}
-                  </text>
-                </g>
-              );
-            })}
-            {layout.nodes.map((layoutNode) => {
-              const { node } = layoutNode;
-              const highlighted = currentPath.has(node.id);
-              const onSpne = spnePath.has(node.id);
-              const cx = px(layoutNode.x);
-              const cy = py(layoutNode.y);
-              if (isDecision(node)) {
+                    <line
+                      className="extensive-tree__edge"
+                      x1={px(edge.from.x)}
+                      x2={px(edge.to.x)}
+                      y1={py(edge.from.y)}
+                      y2={py(edge.to.y)}
+                    />
+                    <text
+                      className="extensive-tree__edge-label"
+                      dominantBaseline="middle"
+                      textAnchor="middle"
+                      x={midX}
+                      y={midY - 4}
+                    >
+                      {edge.label}
+                    </text>
+                  </g>
+                );
+              })}
+              {layout.nodes.map((layoutNode) => {
+                const { node } = layoutNode;
+                const highlighted = currentPath.has(node.id);
+                const onSpne = spnePath.has(node.id);
+                const cx = px(layoutNode.x);
+                const cy = py(layoutNode.y);
+                if (isDecision(node)) {
+                  const playerIndex = game.players.indexOf(node.player);
+                  return (
+                    <g
+                      data-highlight={
+                        highlighted ? "current" : onSpne ? "spne" : "none"
+                      }
+                      data-testid={`tree-node-${node.id}`}
+                      key={node.id}
+                    >
+                      <circle
+                        className="extensive-tree__decision"
+                        cx={cx}
+                        cy={cy}
+                        r={11}
+                      />
+                      <text
+                        className="extensive-tree__decision-label"
+                        dominantBaseline="middle"
+                        textAnchor="middle"
+                        x={cx}
+                        y={cy}
+                      >
+                        {shortLabels[playerIndex]}
+                      </text>
+                    </g>
+                  );
+                }
                 return (
                   <g
                     data-highlight={
@@ -242,53 +326,28 @@ export function ExtensivePlayExperience({ slug }: Props) {
                     data-testid={`tree-node-${node.id}`}
                     key={node.id}
                   >
-                    <circle
-                      className="extensive-tree__decision"
-                      cx={cx}
-                      cy={cy}
-                      r={11}
+                    <rect
+                      className="extensive-tree__terminal"
+                      height={16}
+                      rx={2}
+                      width={44}
+                      x={cx - 22}
+                      y={cy - 8}
                     />
                     <text
-                      className="extensive-tree__decision-label"
+                      className="extensive-tree__terminal-label"
                       dominantBaseline="middle"
                       textAnchor="middle"
                       x={cx}
                       y={cy}
                     >
-                      {node.player[0]}
+                      {payoffLabel(node.payoffs)}
                     </text>
                   </g>
                 );
-              }
-              return (
-                <g
-                  data-highlight={
-                    highlighted ? "current" : onSpne ? "spne" : "none"
-                  }
-                  data-testid={`tree-node-${node.id}`}
-                  key={node.id}
-                >
-                  <rect
-                    className="extensive-tree__terminal"
-                    height={16}
-                    rx={2}
-                    width={44}
-                    x={cx - 22}
-                    y={cy - 8}
-                  />
-                  <text
-                    className="extensive-tree__terminal-label"
-                    dominantBaseline="middle"
-                    textAnchor="middle"
-                    x={cx}
-                    y={cy}
-                  >
-                    {payoffLabel(node.payoffs)}
-                  </text>
-                </g>
-              );
-            })}
-          </svg>
+              })}
+            </svg>
+          </div>
           <table className="extensive-session__terminals">
             <caption>
               Every terminal of the tree, with its exact payoff pair.
@@ -296,33 +355,24 @@ export function ExtensivePlayExperience({ slug }: Props) {
             <thead>
               <tr>
                 <th scope="col">Terminal</th>
-                <th scope="col">Entrant</th>
-                <th scope="col">Incumbent</th>
+                {game.players.map((name) => (
+                  <th key={name} scope="col">
+                    {name}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {layout.nodes
-                .filter((layoutNode) => layoutNode.node.kind === "terminal")
+                .filter((layoutNode) => isTerminal(layoutNode.node))
                 .map((layoutNode) => {
-                  const node = layoutNode.node as GameNode & {
-                    kind: "terminal";
-                  };
-                  const parentEdge = layout.edges.find(
-                    (edge) => edge.to.node.id === node.id,
-                  );
-                  const grandparentEdge = parentEdge
-                    ? layout.edges.find(
-                        (edge) => edge.to.node.id === parentEdge.from.node.id,
-                      )
-                    : undefined;
-                  const label = grandparentEdge
-                    ? `${grandparentEdge.label} → ${parentEdge!.label}`
-                    : (parentEdge?.label ?? node.id);
+                  const node = layoutNode.node as TerminalNode;
                   return (
                     <tr key={node.id}>
-                      <th scope="row">{label}</th>
-                      <td>{formatRational(node.payoffs[0])}</td>
-                      <td>{formatRational(node.payoffs[1])}</td>
+                      <th scope="row">{node.id}</th>
+                      {node.payoffs.map((value, index) => (
+                        <td key={index}>{formatRational(value)}</td>
+                      ))}
                     </tr>
                   );
                 })}
@@ -334,14 +384,14 @@ export function ExtensivePlayExperience({ slug }: Props) {
           aria-labelledby="extensive-controls-title"
           className="extensive-session__controls"
         >
-          <h2 id="extensive-controls-title">Play as the Entrant</h2>
+          <h2 id="extensive-controls-title">Play as {content.userPlayer}</h2>
           <fieldset className="extensive-session__rival">
-            <legend>Incumbent policy</legend>
+            <legend>{content.rivalLegend}</legend>
             {content.rivals.map((option) => (
               <label key={option.id}>
                 <input
                   checked={rivalId === option.id}
-                  name="incumbent-policy"
+                  name="extensive-rival-policy"
                   onChange={() => {
                     setRivalId(option.id);
                     reset();
@@ -356,28 +406,30 @@ export function ExtensivePlayExperience({ slug }: Props) {
             ))}
           </fieldset>
 
-          <div className="extensive-session__buttons">
-            {entrantNode.actions.map((action, index) => (
-              <button
-                aria-pressed={entrantChoice === index}
-                className="extensive-session__choice"
-                disabled={entrantChoice !== null}
-                key={action}
-                onClick={() => handleEntrantChoice(index)}
-                type="button"
-              >
-                {action}
-              </button>
-            ))}
-          </div>
+          {walk.awaitingNode ? (
+            <div className="extensive-session__buttons">
+              {walk.awaitingNode.actions.map((action, index) => {
+                const node = walk.awaitingNode!;
+                return (
+                  <button
+                    aria-pressed={false}
+                    className="extensive-session__choice"
+                    key={`${node.id}-${action}`}
+                    onClick={() => handleChoice(node.id, index)}
+                    type="button"
+                  >
+                    {action}
+                  </button>
+                );
+              })}
+            </div>
+          ) : null}
 
           <p aria-live="polite" className="extensive-session__narration">
-            {outcome && terminalPayoffs
-              ? `You played ${entrantNode.actions[entrantChoice!]}. Outcome: Entrant ${formatRational(terminalPayoffs[0])}, Incumbent ${formatRational(terminalPayoffs[1])}.`
-              : "Choose to enter the market or stay out."}
+            {isComplete && outcomeSentence ? outcomeSentence : promptSentence}
           </p>
 
-          {outcome ? (
+          {isComplete ? (
             <button
               className="extensive-session__reset"
               onClick={reset}

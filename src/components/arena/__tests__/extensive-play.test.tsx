@@ -2,7 +2,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { ExtensivePlayExperience } from "@/components/arena/extensive-play";
 
-describe("extensive-form play surface", () => {
+describe("extensive-form play surface — entry deterrence", () => {
   afterEach(() => {
     cleanup();
   });
@@ -15,7 +15,6 @@ describe("extensive-form play surface", () => {
     expect(
       screen.getByText(/Choose to enter the market or stay out\./),
     ).toBeInTheDocument();
-    // Tree nodes present.
     expect(screen.getByTestId("tree-node-entrant-move")).toBeInTheDocument();
     expect(screen.getByTestId("tree-node-incumbent-move")).toBeInTheDocument();
     expect(screen.getByTestId("tree-node-accommodate")).toBeInTheDocument();
@@ -27,8 +26,14 @@ describe("extensive-form play surface", () => {
     expect(
       screen.getByText(/Outcome: Entrant 1, Incumbent 1/),
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "In" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "Out" })).toBeDisabled();
+    // On completion the action buttons are removed; only Play again remains.
+    expect(screen.queryByRole("button", { name: "In" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Out" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Play again" }),
+    ).toBeInTheDocument();
   });
 
   it("switching to the committed incumbent turns In into a mutual loss", () => {
@@ -40,14 +45,15 @@ describe("extensive-form play surface", () => {
     ).toBeInTheDocument();
   });
 
-  it("play again resets the session and re-enables the buttons", () => {
+  it("play again resets the session and restores the action buttons", () => {
     render(<ExtensivePlayExperience slug="entry-deterrence" />);
     fireEvent.click(screen.getByRole("button", { name: "In" }));
     fireEvent.click(screen.getByRole("button", { name: "Play again" }));
     expect(
       screen.getByText(/Choose to enter the market or stay out\./),
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "In" })).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: "In" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Out" })).toBeInTheDocument();
   });
 
   it("changing the rival policy resets the current play", () => {

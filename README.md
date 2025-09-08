@@ -1,6 +1,6 @@
 # Game Theory Sandbox
 
-**Status: v0.16.4** — 191 tests, 97.97% engine coverage, 23 pages, Playwright green. Static export; public deployment remains a separate release step.
+**Status: v0.16.5** — 191 tests, 97.97% engine coverage, 23 pages, Playwright green. Static export; public deployment remains a separate release step.
 
 Game theory is usually taught statically: a payoff matrix in a PDF, an equilibrium circled, a definition memorized. Intuition forms in a loop instead—**act, observe, and only then reveal the theory underneath the outcome.**
 

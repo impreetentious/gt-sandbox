@@ -107,30 +107,40 @@ export function SPNEPanel({ game, oracle, reveal }: Props) {
         </div>
       </section>
 
-      <section
-        aria-labelledby="spne-non-sp-title"
-        className="spne-panel__non-sp"
-      >
-        <h3 id="spne-non-sp-title">Nash but not subgame-perfect</h3>
-        <p>{reveal.credibleThreat}</p>
-        <ul>
-          {nonSpVerdicts.map((entry) => (
-            <li key={entry.label}>
-              <strong>{entry.label}.</strong> Payoffs (
-              {entry.payoffs.join(", ")}). Verifier:{" "}
-              {entry.verdict.isSubgamePerfect ? (
-                <span>marked subgame-perfect (unexpected)</span>
-              ) : (
-                <span>
-                  not subgame-perfect — a strictly better action exists at{" "}
-                  <code>{entry.verdict.violation?.nodeId}</code> for{" "}
-                  {entry.verdict.violation?.player}.
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
-      </section>
+      {nonSpVerdicts.length > 0 ? (
+        <section
+          aria-labelledby="spne-non-sp-title"
+          className="spne-panel__non-sp"
+        >
+          <h3 id="spne-non-sp-title">Nash but not subgame-perfect</h3>
+          <p>{reveal.credibleThreat}</p>
+          <ul>
+            {nonSpVerdicts.map((entry) => (
+              <li key={entry.label}>
+                <strong>{entry.label}.</strong> Payoffs (
+                {entry.payoffs.join(", ")}). Verifier:{" "}
+                {entry.verdict.isSubgamePerfect ? (
+                  <span>marked subgame-perfect (unexpected)</span>
+                ) : (
+                  <span>
+                    not subgame-perfect — a strictly better action exists at{" "}
+                    <code>{entry.verdict.violation?.nodeId}</code> for{" "}
+                    {entry.verdict.violation?.player}.
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : (
+        <section
+          aria-labelledby="spne-non-sp-title"
+          className="spne-panel__non-sp"
+        >
+          <h3 id="spne-non-sp-title">Where the theory strains</h3>
+          <p>{reveal.credibleThreat}</p>
+        </section>
+      )}
 
       <section aria-labelledby="spne-why-title">
         <h3 id="spne-why-title">Why the distinction matters</h3>
