@@ -1,7 +1,7 @@
 import type { RationalInput } from "@/engine/game";
 import type { ExtensiveGame } from "@/engine/extensive";
 
-export type ExtensiveSlug = "entry-deterrence";
+export type ExtensiveSlug = "entry-deterrence" | "ultimatum";
 
 export interface StrategyOracle {
   readonly label: string;

@@ -71,4 +71,50 @@ export const extensiveContent: Readonly<
         "Real incumbents that can credibly pre-commit — through fixed contracts, aggressive-response reputation, or costly capacity — can turn a non-subgame-perfect threat into a binding one. That is the entire theory of strategic entry barriers, and why the equilibrium concept you use matters.",
     },
   },
+  ultimatum: {
+    userPlayer: "Proposer",
+    payoffPairLabel: "(Proposer, Responder)",
+    framing:
+      "You have 10 units to split. Offer any integer share to a Responder, who can accept — you both keep your parts — or reject, in which case you both walk away with nothing. One shot, no repetition, no negotiation.",
+    playerLegend: {
+      user: "You play the Proposer.",
+      rival: "A policy plays the Responder.",
+    },
+    initialPrompt: "Offer any integer share from 0 to 10 to the Responder.",
+    rivalLegend: "Responder policy",
+    rivals: [
+      {
+        id: "spne-responder",
+        label: "Payoff-Maximising Responder",
+        description:
+          "Accepts every strictly positive offer; rejects at zero. Once the offer is in front of them, any positive share beats walking away.",
+        strategy: buildResponderStrategy((offer) => (offer === 0 ? 0 : 1)),
+      },
+      {
+        id: "fair-share-responder",
+        label: "Fair-Share Responder",
+        description:
+          "Rejects anything below 5. Not credible under subgame perfection — but exactly the pattern seen in most experimental play.",
+        strategy: buildResponderStrategy((offer) => (offer < 5 ? 0 : 1)),
+      },
+    ],
+    reveal: {
+      headline:
+        "Backward induction predicts a minimal offer. Experiments predict rebellion.",
+      credibleThreat:
+        "The Nash where the Proposer offers 5 relies on the Responder threatening to reject anything smaller. That threat is not credible: at an offer of, say, 1, Rejecting gives 0 while Accepting gives 1, and subgame perfection insists you only threaten what you would actually do.",
+      whyItMatters:
+        "Human subjects reject unfair offers regularly. That means either preferences include something beyond immediate payoff (fairness, spite, reputation), or subgame perfection is too demanding a refinement for one-shot bargaining. Both are worth taking seriously — but the strict theoretical prediction is what you just watched.",
+    },
+  },
 });
+
+function buildResponderStrategy(
+  decide: (offer: number) => number,
+): ReadonlyMap<string, number> {
+  const strategy = new Map<string, number>();
+  for (let offer = 0; offer <= 10; offer += 1) {
+    strategy.set(`responder-after-offer-${offer}`, decide(offer));
+  }
+  return strategy;
+}
