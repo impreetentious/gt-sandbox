@@ -1,3 +1,4 @@
+import { centipede } from "@/engine/catalog/extensive/centipede";
 import { entryDeterrence } from "@/engine/catalog/extensive/entry-deterrence";
 import { ultimatum } from "@/engine/catalog/extensive/ultimatum";
 import type {
@@ -8,6 +9,7 @@ import type {
 export const extensiveCatalog: readonly ExtensiveCatalogGame[] = [
   entryDeterrence,
   ultimatum,
+  centipede,
 ];
 
 export const extensiveCatalogBySlug: Readonly<
@@ -15,6 +17,7 @@ export const extensiveCatalogBySlug: Readonly<
 > = Object.freeze({
   "entry-deterrence": entryDeterrence,
   ultimatum,
+  centipede,
 });
 
 export type {
@@ -23,4 +26,4 @@ export type {
   ExtensiveOracle,
   StrategyOracle,
 } from "@/engine/catalog/extensive/types";
-export { entryDeterrence, ultimatum };
+export { centipede, entryDeterrence, ultimatum };

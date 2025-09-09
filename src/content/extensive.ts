@@ -107,6 +107,48 @@ export const extensiveContent: Readonly<
         "Human subjects reject unfair offers regularly. That means either preferences include something beyond immediate payoff (fairness, spite, reputation), or subgame perfection is too demanding a refinement for one-shot bargaining. Both are worth taking seriously — but the strict theoretical prediction is what you just watched.",
     },
   },
+  centipede: {
+    userPlayer: "Player 1",
+    payoffPairLabel: "(Player 1, Player 2)",
+    framing:
+      "You and a rival alternate. On each of your turns you can Take — end the game with the split shown at the Take terminal — or Pass, giving the other side a turn at a larger pot. If both of you Pass every time, you reach the (4, 4) terminal that Pareto-dominates every earlier Take. Rational backward induction says you should Take on turn one anyway.",
+    playerLegend: {
+      user: "You play Player 1 (odd-numbered nodes).",
+      rival: "A policy plays Player 2 (even-numbered nodes).",
+    },
+    initialPrompt:
+      "Take now to end the game with (1, 1), or Pass to send the larger pot to Player 2.",
+    rivalLegend: "Player 2 policy",
+    rivals: [
+      {
+        id: "spne-taker",
+        label: "Payoff-Maximising Player 2",
+        description:
+          "Applies backward induction and Takes at every opportunity — starting with node 4, where Take (5) beats Pass (4).",
+        strategy: new Map([
+          ["node-2", 0],
+          ["node-4", 0],
+        ]),
+      },
+      {
+        id: "always-pass",
+        label: "Always-Pass Player 2",
+        description:
+          "Never Takes. Not a best response — Player 2 would rather Take at node 4 — but useful to feel what long play would earn if both sides sustained cooperation.",
+        strategy: new Map([
+          ["node-2", 1],
+          ["node-4", 1],
+        ]),
+      },
+    ],
+    reveal: {
+      headline: "Backward induction says: take on turn one. People rarely do.",
+      credibleThreat:
+        "Nothing about the SPNE relies on a non-credible threat — every mover simply prefers their next Take to whatever continuation offers. The interesting failure is empirical: given more moves, real players earn far more than the SPNE predicts.",
+      whyItMatters:
+        "Experimental subjects Pass repeatedly, even against strangers, even in one-shot play. That is evidence for other-regarding preferences, for bounded reasoning depth (each player believes the other will Pass one more time than they actually will), or for coordination on the Pareto-efficient continuation. Any of those breaks the assumption that a rational player instantly performs the full backward induction.",
+    },
+  },
 });
 
 function buildResponderStrategy(

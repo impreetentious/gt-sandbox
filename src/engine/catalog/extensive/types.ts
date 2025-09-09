@@ -1,7 +1,7 @@
 import type { RationalInput } from "@/engine/game";
 import type { ExtensiveGame } from "@/engine/extensive";
 
-export type ExtensiveSlug = "entry-deterrence" | "ultimatum";
+export type ExtensiveSlug = "entry-deterrence" | "ultimatum" | "centipede";
 
 export interface StrategyOracle {
   readonly label: string;
@@ -14,7 +14,10 @@ export interface StrategyOracle {
 export interface ExtensiveOracle {
   /** The unique (or lowest-index) SPNE this game admits. */
   readonly spne: StrategyOracle;
-  /** Named non-subgame-perfect Nash equilibria — the reveal talks about these. */
+  /**
+   * Named non-subgame-perfect Nash equilibria — the reveal talks about these.
+   * May be empty for games (e.g. Centipede) where every Nash is subgame-perfect.
+   */
   readonly nonSubgamePerfectNash: readonly StrategyOracle[];
 }
 
