@@ -7,7 +7,9 @@ export type GlossaryTermId =
   | "dominant-strategy"
   | "focal-point"
   | "folk-theorem"
+  | "free-riding"
   | "individually-rational"
+  | "marginal-per-capita-return"
   | "minimax"
   | "mixed-strategy"
   | "nash-equilibrium"
@@ -67,10 +69,20 @@ export const glossary: Readonly<
     definition:
       "The result that in a repeated game, any feasible payoff giving each player at least their minimax value can be sustained by an equilibrium when players are patient enough.",
   },
+  "free-riding": {
+    label: "free-riding",
+    definition:
+      "Taking the benefit of a shared good without paying toward it — the dominant strategy whenever a contribution returns the contributor less than it costs.",
+  },
   "individually-rational": {
     label: "individually rational",
     definition:
       "A payoff at or above a player's minimax value — the most the opponent can hold them below by playing adversarially.",
+  },
+  "marginal-per-capita-return": {
+    label: "marginal per capita return",
+    definition:
+      "In a public-goods game, the share of one contributed token that flows back to each player, including the contributor. Written MPCR.",
   },
   minimax: {
     label: "minimax",
