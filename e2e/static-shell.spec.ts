@@ -23,6 +23,8 @@ const routes = [
   "/build/",
   "/methods/",
   "/extensive/entry-deterrence/",
+  "/extensive/ultimatum/",
+  "/extensive/centipede/",
 ];
 
 test("every static route is same-origin, CSP-protected, and accessible", async ({

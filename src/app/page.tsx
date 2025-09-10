@@ -100,6 +100,20 @@ const path = [
     description:
       "Enter the market or stay out, watch the incumbent's response, and see backward induction extract the subgame-perfect equilibrium.",
   },
+  {
+    href: "/extensive/ultimatum/",
+    title: "Ultimatum",
+    concept: "Credible threats",
+    description:
+      "Offer a share of the pie to a responder and see why backward induction predicts a minimal offer that experiments almost never sustain.",
+  },
+  {
+    href: "/extensive/centipede/",
+    title: "Centipede",
+    concept: "Unraveling cooperation",
+    description:
+      "Alternate take-or-pass turns and watch backward induction wipe out the Pareto-superior long game.",
+  },
 ] as const;
 
 export default function HomePage() {
@@ -151,7 +165,7 @@ export default function HomePage() {
       <section aria-labelledby="path-title" className="home-path">
         <div className="home-section-heading">
           <p className="eyebrow">Suggested path</p>
-          <h2 id="path-title">Thirteen stops. No gates.</h2>
+          <h2 id="path-title">The current path. No gates.</h2>
           <p>Follow the arc or enter wherever the incentives look familiar.</p>
         </div>
         <ol className="home-path__grid">
