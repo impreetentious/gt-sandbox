@@ -5,6 +5,8 @@ export type GlossaryTermId =
   | "credible-threat"
   | "degenerate"
   | "dominant-strategy"
+  | "evolutionarily-stable-strategy"
+  | "fixation-probability"
   | "focal-point"
   | "folk-theorem"
   | "free-riding"
@@ -58,6 +60,16 @@ export const glossary: Readonly<
     label: "dominant strategy",
     definition:
       "An action that gives a player a higher payoff than another action against every possible opposing action.",
+  },
+  "evolutionarily-stable-strategy": {
+    label: "evolutionarily stable strategy",
+    definition:
+      "A strategy that, once common, resists invasion by any rare mutant — it either strictly out-earns the mutant against the resident population, or ties there and strictly out-earns it against the mutant.",
+  },
+  "fixation-probability": {
+    label: "fixation probability",
+    definition:
+      "The chance that a strategy starting from a given number of individuals eventually takes over the entire finite population.",
   },
   "focal-point": {
     label: "focal point",

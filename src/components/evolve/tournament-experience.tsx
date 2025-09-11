@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { EvolutionExperience } from "@/components/evolve/evolution-experience";
+import { FinitePopulationExperience } from "@/components/evolve/finite-population-experience";
 import { formatRational, type Rational } from "@/engine/rational";
 import {
   DEFAULT_TOURNAMENT_CONTINUATION_PROBABILITY,
@@ -36,7 +37,9 @@ function heatColor(value: Rational, low: number, high: number): string {
 
 /** P7's client surface for the pure, seeded IPD tournament engine. */
 export function TournamentExperience() {
-  const [view, setView] = useState<"tournament" | "evolution">("tournament");
+  const [view, setView] = useState<"tournament" | "evolution" | "finite">(
+    "tournament",
+  );
   const [roster, setRoster] = useState<readonly IpdStrategyId[]>(
     defaultTournamentRoster,
   );
@@ -83,17 +86,26 @@ export function TournamentExperience() {
     <section aria-labelledby="evolve-title" className="tournament">
       <header className="tournament__header">
         <p className="eyebrow">
-          Evolve / {view === "tournament" ? "Tournament" : "Evolution"}
+          Evolve /{" "}
+          {view === "tournament"
+            ? "Tournament"
+            : view === "evolution"
+              ? "Evolution"
+              : "Finite population"}
         </p>
         <h1 className="display" id="evolve-title">
           {view === "tournament"
             ? "A finite tournament of repeatable strategies."
-            : "A population is more than a scoreboard."}
+            : view === "evolution"
+              ? "A population is more than a scoreboard."
+              : "In a small population, luck outranks fitness."}
         </h1>
         <p className="lede">
           {view === "tournament"
             ? "Eight specified Iterated Prisoner's Dilemma policies meet in a reproducible round-robin. The table rewards a strategy's average payoff per round, never the luck of a longer match."
-            : "Hold a seeded match environment fixed, then see which strategies become more common under discrete replicator dynamics."}
+            : view === "evolution"
+              ? "Hold a seeded match environment fixed, then see which strategies become more common under discrete replicator dynamics."
+              : "Drop a single mutant into a population of N and compute exactly how often it takes over — then compare that against the formal evolutionary-stability test the infinite-population theory gives you."}
         </p>
       </header>
 
@@ -117,6 +129,16 @@ export function TournamentExperience() {
           type="button"
         >
           Evolution
+        </button>
+        <button
+          aria-controls="finite-panel"
+          aria-selected={view === "finite"}
+          id="finite-tab"
+          onClick={() => setView("finite")}
+          role="tab"
+          type="button"
+        >
+          Finite population
         </button>
       </div>
 
@@ -323,8 +345,10 @@ export function TournamentExperience() {
             </details>
           </section>
         </div>
-      ) : (
+      ) : view === "evolution" ? (
         <EvolutionExperience />
+      ) : (
+        <FinitePopulationExperience />
       )}
     </section>
   );

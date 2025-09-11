@@ -3338,3 +3338,233 @@ main {
   font: inherit;
   font-weight: 700;
 }
+
+/* --- V2-P4: finite-population dynamics --------------------------------- */
+
+.finite__intro {
+  margin-bottom: 1.5rem;
+  max-width: 46rem;
+}
+
+.finite__intro h2 {
+  margin: 0 0 0.5rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: 1.25rem;
+}
+
+.finite__intro p {
+  margin: 0 0 0.6rem;
+  color: var(--muted);
+}
+
+.finite__layout {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+}
+
+@media (max-width: 60rem) {
+  .finite__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.finite__controls h3,
+.finite__results h3,
+.finite__ess h3 {
+  margin: 0 0 0.75rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: 1.1rem;
+}
+
+.finite__control {
+  margin-bottom: 1.15rem;
+}
+
+.finite__control label {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.finite__control output {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.finite__control select {
+  width: 100%;
+  min-height: 2.75rem;
+  margin-top: 0.3rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+  font: inherit;
+}
+
+.finite__control input[type="range"] {
+  width: 100%;
+  min-height: 2.75rem;
+  margin-top: 0.3rem;
+}
+
+.finite__control-note {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.finite__matrix,
+.finite__fixation,
+.finite__table-fallback table {
+  width: 100%;
+  margin: 0.6rem 0;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.88rem;
+}
+
+.finite__matrix caption,
+.finite__fixation caption,
+.finite__table-fallback caption {
+  margin-bottom: 0.35rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-align: left;
+}
+
+.finite__matrix th,
+.finite__matrix td,
+.finite__fixation th,
+.finite__fixation td,
+.finite__table-fallback th,
+.finite__table-fallback td {
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid var(--line);
+  text-align: right;
+}
+
+.finite__matrix th[scope="row"],
+.finite__matrix th[scope="col"]:first-child,
+.finite__fixation th[scope="row"],
+.finite__fixation th[scope="col"]:first-child,
+.finite__table-fallback th[scope="row"],
+.finite__table-fallback th[scope="col"]:first-child {
+  text-align: left;
+}
+
+/* Exact rationals can run to hundreds of digits; let them wrap and scroll
+   rather than forcing the whole page horizontal. */
+.finite__exact {
+  max-width: 22rem;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.finite__rule {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.finite__figure {
+  margin: 1.25rem 0 0;
+}
+
+.finite__plot {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+}
+
+.finite__figure figcaption {
+  margin-top: 0.4rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.finite__axis {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.finite__curve {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.finite__neutral-line {
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+.finite__table-fallback {
+  margin-top: 1rem;
+}
+
+.finite__table-fallback summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.finite__table-scroll {
+  max-height: 20rem;
+  overflow: auto;
+}
+
+.finite__ess {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.finite__ess-list {
+  margin: 0.5rem 0;
+  padding-left: 1.25rem;
+}
+
+.finite__ess-list li {
+  margin: 0.4rem 0;
+  font-size: 0.92rem;
+}
+
+.finite__disagreement {
+  margin-top: 0.9rem;
+  padding: 0.8rem 1rem;
+  border-left: 3px solid var(--accent-warm);
+  background: var(--paper);
+  font-size: 0.9rem;
+}
+
+.finite__exactness {
+  margin-top: 1.25rem;
+}
+
+.finite__exactness summary {
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.finite__exactness p {
+  margin: 0.5rem 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.finite__exactness code {
+  overflow-wrap: anywhere;
+  word-break: break-all;
+  font-size: 0.78rem;
+}
