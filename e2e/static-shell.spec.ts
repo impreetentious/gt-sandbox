@@ -25,6 +25,7 @@ const routes = [
   "/extensive/entry-deterrence/",
   "/extensive/ultimatum/",
   "/extensive/centipede/",
+  "/nplayer/public-goods/",
 ];
 
 test("every static route is same-origin, CSP-protected, and accessible", async ({
@@ -593,6 +594,81 @@ test("unknown game slugs serve the exported not-found page", async ({
   await expect(
     page.getByRole("heading", { name: "This payoff does not exist." }),
   ).toBeVisible();
+});
+
+test("the finite-population tab computes exact fixation and stays accessible", async ({
+  page,
+}) => {
+  await page.goto("/evolve/");
+  await page.getByRole("tab", { name: "Finite population" }).click();
+  await expect(
+    page.getByRole("heading", {
+      name: "In a small population, luck outranks fitness.",
+    }),
+  ).toBeVisible();
+
+  // Stag Hunt at N = 20: ESS calls both stable, yet Hare is favoured.
+  await expect(page.getByTestId("finite-disagreement")).toBeVisible();
+
+  // Neutral drift must land on exactly 1/N with no selection pressure.
+  await page.getByLabel("Game").selectOption("neutral");
+  const size = page.getByRole("slider", { name: /Population size/ });
+  await size.fill("8");
+  await expect(page.getByTestId("finite-fixation")).toContainText("1/8");
+  await expect(page.getByTestId("finite-disagreement")).toHaveCount(0);
+
+  await page
+    .getByText("View the fixation curve as an accessible data table")
+    .click();
+  await expect(
+    page.getByRole("table", { name: /Exact fixation probability for Red/ }),
+  ).toBeVisible();
+
+  // Long exact rationals must not push the page horizontally.
+  await page.getByLabel("Game").selectOption("stag-hunt");
+  await size.fill("60");
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
+});
+
+test("the public-goods surface prices free-riding and exposes the dilemma window", async ({
+  page,
+}) => {
+  await page.goto("/nplayer/public-goods/");
+  await expect(
+    page.getByRole("heading", {
+      name: "Everyone gains if everyone gives. Nobody gains by giving.",
+    }),
+  ).toBeVisible();
+
+  // Default N=4, MPCR=2/5, half contributors → pot 15, free-ride pays 16.
+  await page.getByRole("button", { name: "0", exact: true }).click();
+  await expect(page.getByTestId("pg-narration")).toContainText(
+    "the pot held 15",
+  );
+  await expect(page.getByTestId("pg-narration")).toContainText(
+    "You earned 16.",
+  );
+
+  const drawer = page.locator(".analysis-drawer");
+  await drawer.locator("summary").click();
+  await expect(page.getByText(/sits inside the dilemma window/)).toBeVisible();
+
+  await page.getByRole("button", { name: "Show the exact sweep" }).click();
+  await expect(
+    page.getByRole("table", {
+      name: /Your payoff and total welfare at every contribution/,
+    }),
+  ).toBeVisible();
+
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
 });
 
 test("entry deterrence plays through both incumbent policies and reveals SPNE", async ({

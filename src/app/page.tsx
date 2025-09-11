@@ -114,6 +114,13 @@ const path = [
     description:
       "Alternate take-or-pass turns and watch backward induction wipe out the Pareto-superior long game.",
   },
+  {
+    href: "/nplayer/public-goods/",
+    title: "Public Goods",
+    concept: "Groups, not pairs",
+    description:
+      "Move the group size and the per-capita return to find the exact window where giving is individually irrational and collectively necessary.",
+  },
 ] as const;
 
 export default function HomePage() {
