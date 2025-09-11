@@ -18,6 +18,7 @@ export type GlossaryTermId =
   | "pareto-efficient"
   | "replicator-dynamics"
   | "risk-dominant"
+  | "spatial-reciprocity"
   | "subgame-perfect-equilibrium"
   | "winners-curse"
   | "zero-sum";
@@ -124,6 +125,11 @@ export const glossary: Readonly<
     label: "risk dominant",
     definition:
       "Among competing equilibria, the one with the larger product of players' losses from unilateral deviation.",
+  },
+  "spatial-reciprocity": {
+    label: "spatial reciprocity",
+    definition:
+      "Cooperation surviving purely because interactions are local: a cluster of cooperators loses on its boundary but keeps earning in its interior, with no memory, reputation, or punishment involved.",
   },
   "subgame-perfect-equilibrium": {
     label: "subgame-perfect equilibrium",

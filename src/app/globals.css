@@ -3568,3 +3568,249 @@ main {
   word-break: break-all;
   font-size: 0.78rem;
 }
+
+/* --- V2-P5: spatial evolution lattice ----------------------------------- */
+
+.spatial {
+  display: block;
+  padding-block: 1.5rem 3rem;
+}
+
+.spatial__header {
+  margin-bottom: 1.75rem;
+  max-width: 46rem;
+}
+
+.spatial__layout {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+}
+
+@media (max-width: 60rem) {
+  .spatial__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.spatial__controls h2,
+.spatial__results h2,
+.spatial__why h2 {
+  margin: 0 0 0.75rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: 1.1rem;
+}
+
+.spatial__control {
+  margin-bottom: 1.15rem;
+}
+
+.spatial__control label {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.spatial__control output {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.spatial__control select {
+  width: 100%;
+  min-height: 2.75rem;
+  margin-top: 0.3rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+  font: inherit;
+}
+
+.spatial__control input[type="range"] {
+  width: 100%;
+  min-height: 2.75rem;
+  margin-top: 0.3rem;
+}
+
+.spatial__control-note {
+  display: block;
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.spatial__control--check {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+
+.spatial__control--check input {
+  min-width: 1.1rem;
+  min-height: 1.1rem;
+  margin-top: 0.2rem;
+}
+
+.spatial__control--check label {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.spatial__figure {
+  margin: 0 0 1rem;
+}
+
+.spatial__grid {
+  display: block;
+  width: 100%;
+  max-width: 26rem;
+  height: auto;
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+}
+
+/*
+ * Cooperators are filled with the accent, defectors are left as paper with a
+ * hairline. Shape as well as colour carries the distinction, so the lattice
+ * still reads when colour does not — the same reason the data table exists.
+ */
+.spatial__cell--c {
+  fill: var(--accent);
+  stroke: var(--accent);
+  stroke-width: 0.5;
+}
+
+.spatial__cell--d {
+  fill: var(--paper-raised);
+  stroke: var(--line);
+  stroke-width: 0.5;
+}
+
+.spatial__figure figcaption {
+  margin-top: 0.5rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.spatial__transport {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+.spatial__transport button {
+  min-height: 2.75rem;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--accent);
+  background: var(--paper-raised);
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+}
+
+.spatial__transport button:disabled {
+  border-color: var(--line);
+  color: var(--muted);
+  cursor: default;
+}
+
+.spatial__scrub {
+  flex: 1;
+  min-width: 0;
+}
+
+.spatial__scrub label {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.spatial__scrub output {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.spatial__scrub input[type="range"] {
+  width: 100%;
+  min-height: 2.75rem;
+}
+
+.spatial__termination {
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.75rem;
+  border-left: 3px solid var(--accent-warm);
+  background: var(--paper-raised);
+  font-size: 0.88rem;
+}
+
+.spatial__table-fallback summary,
+.spatial__exactness summary {
+  min-height: 2.75rem;
+  padding: 0.5rem 0;
+  cursor: pointer;
+}
+
+/*
+ * Same treatment as the finite-population table: a scroll container needs to be
+ * focusable or axe reports scrollable-region-focusable, and the unit tests
+ * cannot see it.
+ */
+.spatial__table-scroll {
+  overflow-x: auto;
+  max-height: 22rem;
+  overflow-y: auto;
+}
+
+.spatial__table-scroll table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.spatial__table-scroll caption {
+  margin-bottom: 0.4rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-align: left;
+}
+
+.spatial__table-scroll th,
+.spatial__table-scroll td {
+  padding: 0.3rem 0.5rem;
+  border-bottom: 1px solid var(--line);
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+}
+
+.spatial__why {
+  max-width: 46rem;
+  margin-top: 2rem;
+}
+
+.spatial__why p {
+  margin: 0 0 0.7rem;
+  color: var(--muted);
+}
+
+@media (forced-colors: active) {
+  /*
+   * Forced colours flatten fill to a system colour, so the two cell states
+   * would become indistinguishable. Give the defector cell a visible gap
+   * instead of relying on fill alone.
+   */
+  .spatial__cell--c {
+    fill: CanvasText;
+    stroke: CanvasText;
+  }
+
+  .spatial__cell--d {
+    fill: Canvas;
+    stroke: GrayText;
+  }
+}
