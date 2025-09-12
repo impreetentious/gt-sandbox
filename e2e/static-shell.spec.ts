@@ -26,6 +26,7 @@ const routes = [
   "/extensive/ultimatum/",
   "/extensive/centipede/",
   "/nplayer/public-goods/",
+  "/evolve/spatial/",
 ];
 
 test("every static route is same-origin, CSP-protected, and accessible", async ({
@@ -666,6 +667,87 @@ test("the public-goods surface prices free-riding and exposes the dilemma window
       name: /Your payoff and total welfare at every contribution/,
     }),
   ).toBeVisible();
+
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
+});
+
+test("the methods page derives zero-determinant strategies exactly", async ({
+  page,
+}) => {
+  await page.goto("/methods/");
+  await expect(
+    page.getByRole("heading", { name: "One player can fix the scoreboard." }),
+  ).toBeVisible();
+
+  // χ = 1 is the fair boundary, and at the canonical payoffs it is exactly TFT.
+  await page.getByRole("slider", { name: /Factor/ }).fill("10");
+  await expect(page.getByTestId("zd-tft")).toBeVisible();
+
+  // The relation must bind against an opponent that never agreed to it, and
+  // the residual comes from a directly solved chain rather than the identity.
+  await page.getByRole("slider", { name: /Factor/ }).fill("34");
+  await expect(page.getByTestId("zd-tft")).toHaveCount(0);
+  await expect(page.getByTestId("zd-residual")).toHaveText("0");
+
+  await page.getByLabel("Family").selectOption("generous");
+  await expect(page.getByTestId("zd-residual")).toHaveText("0");
+
+  await page.getByText("What Always Defect is not").click();
+  await expect(page.getByTestId("zd-alld")).toBeVisible();
+
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
+});
+
+test("the spatial lattice steps deterministically and stays accessible", async ({
+  page,
+}) => {
+  await page.goto("/evolve/spatial/");
+  await expect(
+    page.getByRole("heading", {
+      name: "Cooperation survives because it can cluster.",
+    }),
+  ).toBeVisible();
+
+  // Coexistence preset: one defector in a 21 × 21 cooperator field.
+  await expect(page.getByTestId("spatial-share")).toHaveText("440/441");
+  await expect(page.getByTestId("spatial-termination")).toContainText(
+    "Still moving after 40 generations",
+  );
+
+  // The transport is the reduced-motion path: discrete steps, no animation.
+  await page.getByRole("button", { name: "Step forward" }).click();
+  await expect(page.getByTestId("spatial-share")).toHaveText("48/49");
+  await page.getByRole("button", { name: "Step back" }).click();
+  await expect(page.getByTestId("spatial-share")).toHaveText("440/441");
+  await expect(page.getByRole("button", { name: "Step back" })).toBeDisabled();
+
+  // The scrubber is keyboard-operable and lands on the frozen fixture value.
+  const scrub = page.getByRole("slider", { name: /Generation/ });
+  await scrub.fill("20");
+  await expect(page.getByTestId("spatial-share")).toHaveText("260/441");
+
+  // A preset swap replaces the whole configuration and reports its fixed point.
+  await page.getByLabel("Scenario").selectOption("recovery");
+  await expect(page.getByTestId("spatial-termination")).toContainText(
+    "stopped changing at generation 10",
+  );
+
+  await page.getByText("View the run as an accessible data table").click();
+  await expect(
+    page.getByRole("table", {
+      name: /Exact cooperator share at every generation/,
+    }),
+  ).toBeVisible();
+
+  // The largest lattice must not push the page sideways.
+  await page.getByRole("slider", { name: /Lattice/ }).fill("29");
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
 
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);

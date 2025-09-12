@@ -3814,3 +3814,129 @@ main {
     stroke: GrayText;
   }
 }
+
+/* --- V2-P6: zero-determinant demo --------------------------------------- */
+
+.zd-demo {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+}
+
+.zd-demo__controls {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 40rem) {
+  .zd-demo__controls {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.zd-demo__control label {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.zd-demo__control output {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.zd-demo__control select {
+  width: 100%;
+  min-height: 2.75rem;
+  margin-top: 0.3rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  font: inherit;
+}
+
+.zd-demo__control input[type="range"] {
+  width: 100%;
+  min-height: 2.75rem;
+  margin-top: 0.3rem;
+}
+
+.zd-demo__note {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.zd-demo__strategy,
+.zd-demo__outcome {
+  width: 100%;
+  margin-bottom: 1rem;
+  border-collapse: collapse;
+  font-size: 0.87rem;
+}
+
+.zd-demo__strategy caption,
+.zd-demo__outcome caption {
+  margin-bottom: 0.4rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-align: left;
+}
+
+.zd-demo__strategy th,
+.zd-demo__strategy td,
+.zd-demo__outcome th,
+.zd-demo__outcome td {
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid var(--line);
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+}
+
+.zd-demo__strategy td,
+.zd-demo__outcome td {
+  font-weight: 700;
+}
+
+.zd-demo__callout {
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.75rem;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  font-size: 0.88rem;
+}
+
+.zd-demo__relation {
+  margin: 0 0 1rem;
+  font-size: 0.88rem;
+}
+
+/* The relation can run long once χ is a fraction; wrap rather than overflow. */
+.zd-demo__relation code {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  font-size: 0.85rem;
+}
+
+.zd-demo__infeasible {
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.75rem;
+  border-left: 3px solid var(--accent-warm);
+  font-size: 0.88rem;
+}
+
+.zd-demo__honesty summary {
+  min-height: 2.75rem;
+  padding: 0.5rem 0;
+  cursor: pointer;
+}
+
+.zd-demo__honesty p {
+  margin: 0 0 0.6rem;
+  color: var(--muted);
+  font-size: 0.86rem;
+}

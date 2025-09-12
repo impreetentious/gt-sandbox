@@ -21,6 +21,7 @@ export type GlossaryTermId =
   | "spatial-reciprocity"
   | "subgame-perfect-equilibrium"
   | "winners-curse"
+  | "zero-determinant-strategy"
   | "zero-sum";
 
 export interface GlossaryTermDefinition {
@@ -140,6 +141,11 @@ export const glossary: Readonly<
     label: "winner's curse",
     definition:
       "In a common-value auction, the tendency for the winning bidder to have overestimated the item's value, since winning means bidding more than everyone else.",
+  },
+  "zero-determinant-strategy": {
+    label: "zero-determinant strategy",
+    definition:
+      "A memory-one strategy for a repeated game that unilaterally forces a fixed linear relationship between the two players' long-run average payoffs, whatever the opponent does.",
   },
   "zero-sum": {
     label: "zero-sum",

@@ -121,6 +121,13 @@ const path = [
     description:
       "Move the group size and the per-capita return to find the exact window where giving is individually irrational and collectively necessary.",
   },
+  {
+    href: "/evolve/spatial/",
+    title: "Spatial Evolution",
+    concept: "Neighbours, not strangers",
+    description:
+      "Put the same dilemma on a lattice where each cell meets only the cells beside it, and watch cooperator clusters hold ground the well-mixed model says they cannot.",
+  },
 ] as const;
 
 export default function HomePage() {

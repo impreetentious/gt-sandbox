@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { ZeroDeterminantDemo } from "@/components/methods/zd-demo";
+import { zdContent } from "@/content/zd";
 
 export const metadata: Metadata = {
   title: "Methods",
@@ -117,6 +119,21 @@ export default function MethodsPage() {
             non-finite mean-fitness denominator returns a typed failure before
             division.
           </p>
+        </div>
+      </section>
+
+      <section
+        aria-labelledby="zd-title"
+        className="methods__section methods__zd"
+      >
+        <div>
+          <p className="eyebrow">Worked demonstration</p>
+          <h2 id="zd-title">One player can fix the scoreboard.</h2>
+        </div>
+        <div>
+          <p>{zdContent.framing}</p>
+          <p>{zdContent.exactness}</p>
+          <ZeroDeterminantDemo />
         </div>
       </section>
 
