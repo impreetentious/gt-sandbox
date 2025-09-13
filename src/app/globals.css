@@ -4136,3 +4136,154 @@ main {
   color: var(--muted);
   font-size: 0.86rem;
 }
+
+/* --- V2-P10: learn curriculum -------------------------------------------- */
+
+.learn__hero {
+  max-width: 58rem;
+}
+
+.learn__hero > p:last-child {
+  max-width: 42rem;
+  margin: 1.25rem 0 0;
+  color: var(--muted);
+}
+
+.curriculum {
+  margin-top: 3rem;
+}
+
+.curriculum__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 2px solid var(--ink);
+}
+
+.curriculum__gate {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.curriculum__controls .analysis-button {
+  margin-top: 0;
+}
+
+.curriculum__status {
+  margin: 1rem 0 0;
+  color: var(--muted);
+}
+
+.curriculum__list {
+  display: grid;
+  gap: 0;
+  padding: 0;
+  margin: 1.5rem 0 0;
+  list-style: none;
+}
+
+.curriculum__step {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: 0 1rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+/*
+ * A locked stop is dimmed but never hidden, and its title stays plain text
+ * rather than a disabled link — a control that announces itself and then
+ * refuses is worse than no control. Colour is not the only signal either: the
+ * state is stated in words underneath.
+ */
+.curriculum__step[data-state="locked"] {
+  color: var(--muted);
+}
+
+.curriculum__index {
+  margin: 0;
+  color: var(--muted);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.4rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.curriculum__step[data-state="done"] .curriculum__index {
+  color: var(--accent);
+}
+
+.curriculum__step h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.curriculum__concept {
+  margin: 0.25rem 0 0;
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.curriculum__step > div > p:not(.curriculum__concept) {
+  max-width: 44rem;
+  margin: 0.7rem 0 0;
+}
+
+.curriculum__done {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.85rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.curriculum__locked-note {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.learn__note {
+  display: grid;
+  grid-template-columns: minmax(15rem, 0.75fr) minmax(0, 1.25fr);
+  gap: clamp(1.5rem, 5vw, 4rem);
+  padding-top: 1.5rem;
+  margin-top: 3rem;
+  border-top: 2px solid var(--ink);
+}
+
+.learn__note h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.learn__note > div:last-child p {
+  max-width: 47rem;
+  margin: 0;
+  color: var(--muted);
+}
+
+@media (max-width: 40rem) {
+  .curriculum__step {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .learn__note {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
