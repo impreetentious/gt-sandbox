@@ -27,16 +27,16 @@ import {
   encodeEvolutionConfig,
 } from "@/state/evolution-url";
 
-const chartColors = [
-  "#155e75",
-  "#b45309",
-  "#5b6b35",
-  "#7c3f67",
-  "#475569",
-  "#8a5a2b",
-  "#236b57",
-  "#72518a",
-];
+/**
+ * Series colours live in `globals.css` as `--series-1` … `--series-8`, not as
+ * literals here, so the dark palette can restate them (V2-P8). Eight is the
+ * roster cap; a ninth strategy would need a ninth token rather than a wrap,
+ * because two identical bands would be worse than an ugly one.
+ */
+const chartColors = Array.from(
+  { length: 8 },
+  (_, index) => `var(--series-${index + 1})`,
+);
 
 type PresetSelection = EvolutionPresetId | "custom";
 

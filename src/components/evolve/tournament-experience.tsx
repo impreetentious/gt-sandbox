@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import { EvolutionExperience } from "@/components/evolve/evolution-experience";
 import { FinitePopulationExperience } from "@/components/evolve/finite-population-experience";
 import { formatRational, type Rational } from "@/engine/rational";
@@ -26,13 +26,20 @@ function payoffNumber(value: Rational): number {
   return Number(value.numerator) / Number(value.denominator);
 }
 
-function heatColor(value: Rational, low: number, high: number): string {
+/**
+ * Position of a payoff within the matrix range, as a fraction in [0, 1].
+ *
+ * The component deliberately stops here rather than producing a colour. The
+ * stylesheet mixes `--heat-low` towards `--heat-high` by this fraction, so the
+ * scale re-anchors itself in the dark palette (V2-P8) without this file knowing
+ * a theme exists. Colour is never the only channel anyway — every cell prints
+ * its own payoff, and the exact fraction is in the table fallback.
+ */
+function heatFraction(value: Rational, low: number, high: number): number {
   const span = high - low;
   const relative = span === 0 ? 0.5 : (payoffNumber(value) - low) / span;
-  const bounded = Math.max(0, Math.min(1, relative));
-  const lightness = 96 - bounded * 36;
 
-  return "hsl(193 55% " + lightness + "%)";
+  return Math.max(0, Math.min(1, relative));
 }
 
 /** P7's client surface for the pure, seeded IPD tournament engine. */
@@ -292,9 +299,11 @@ export function TournamentExperience() {
                       }
                       className="tournament-heatmap__cell"
                       key={row.strategy + "-" + entry.opponent}
-                      style={{
-                        backgroundColor: heatColor(entry.payoff, low, high),
-                      }}
+                      style={
+                        {
+                          "--heat": heatFraction(entry.payoff, low, high),
+                        } as CSSProperties
+                      }
                       title={"Exact: " + formatRational(entry.payoff)}
                     >
                       {decimalPayoff(entry.payoff)}

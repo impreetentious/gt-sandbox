@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+/*
+ * V2-P8 — every colour in the product resolves through these tokens, which is
+ * what made a dark palette a palette swap rather than a rewrite. Two rules keep
+ * it that way: no component may hardcode a colour, and any value a component
+ * has to compute (a heat scale, a series colour) is emitted as a *fraction* or
+ * an index and resolved back to a token here.
+ *
+ * Every pair below was measured, not eyeballed: body text is at or above 4.5:1
+ * on both surfaces in both themes, focus rings and chart series above 3:1.
+ * `--line` is deliberately low-contrast in both themes — it separates sections
+ * and never carries the identity of a control, all of which border on `--ink`.
+ */
 :root {
   --paper: #f7f5ef;
   --paper-raised: #fffdf8;
@@ -10,7 +22,74 @@
   --accent-soft: #dceff3;
   --accent-warm: #b45309;
   --focus: #1d4ed8;
+  --warn-soft: #fff1df;
+  --heat-low: #eff8fa;
+  --heat-high: #61b9d1;
+  --series-1: #155e75;
+  --series-2: #b45309;
+  --series-3: #5b6b35;
+  --series-4: #7c3f67;
+  --series-5: #475569;
+  --series-6: #8a5a2b;
+  --series-7: #236b57;
+  --series-8: #72518a;
   color-scheme: light;
+}
+
+/*
+ * The dark block is written once and applied twice: for the explicit choice,
+ * and for the system preference when no explicit choice overrides it. The
+ * `:not([data-theme="light"])` is what lets someone on a dark-set OS pin the
+ * product to light and have it stick.
+ */
+:root[data-theme="dark"] {
+  --paper: #14161a;
+  --paper-raised: #1c2027;
+  --ink: #ecebe6;
+  --muted: #a9a69e;
+  --line: #3b3f47;
+  --accent: #7ec8de;
+  --accent-soft: #16323b;
+  --accent-warm: #e39b4d;
+  --focus: #93b4ff;
+  --warn-soft: #3a2a14;
+  --heat-low: #1a2b31;
+  --heat-high: #356f80;
+  --series-1: #7ec8de;
+  --series-2: #e39b4d;
+  --series-3: #a8bf6e;
+  --series-4: #dba2c6;
+  --series-5: #9db2cc;
+  --series-6: #d6a882;
+  --series-7: #6fc9a9;
+  --series-8: #bda3dd;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #14161a;
+    --paper-raised: #1c2027;
+    --ink: #ecebe6;
+    --muted: #a9a69e;
+    --line: #3b3f47;
+    --accent: #7ec8de;
+    --accent-soft: #16323b;
+    --accent-warm: #e39b4d;
+    --focus: #93b4ff;
+    --warn-soft: #3a2a14;
+    --heat-low: #1a2b31;
+    --heat-high: #356f80;
+    --series-1: #7ec8de;
+    --series-2: #e39b4d;
+    --series-3: #a8bf6e;
+    --series-4: #dba2c6;
+    --series-5: #9db2cc;
+    --series-6: #d6a882;
+    --series-7: #6fc9a9;
+    --series-8: #bda3dd;
+    color-scheme: dark;
+  }
 }
 
 * {
@@ -81,6 +160,64 @@ a:hover {
 
 .site-nav a {
   text-decoration: none;
+}
+
+.site-header__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 0.875rem 1.25rem;
+}
+
+/* V2-P8 — three-way theme control, drawn as a segmented set of real radios. */
+.theme-toggle {
+  display: flex;
+  gap: 0;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--line);
+}
+
+.theme-toggle legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.theme-toggle__option {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.45rem;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.theme-toggle__option + .theme-toggle__option {
+  border-left: 1px solid var(--line);
+}
+
+.theme-toggle__option:has(input:checked) {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.theme-toggle__option input {
+  width: 0.7rem;
+  height: 0.7rem;
+  margin: 0;
+  accent-color: var(--accent);
 }
 
 main {
@@ -477,6 +614,35 @@ main {
 
 .version {
   font-variant-numeric: tabular-nums;
+}
+
+.site-footer__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 0.5rem 1rem;
+}
+
+/*
+ * V2-P9 — shown only when the browser has already judged the app installable,
+ * so it is a plain control in the footer rather than an interruption.
+ */
+.install-app {
+  min-height: 2.25rem;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--accent);
+  border-radius: 0;
+  background: var(--paper-raised);
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.install-app:hover {
+  background: var(--accent-soft);
 }
 
 .sr-only {
@@ -1192,6 +1358,16 @@ main {
   padding-left: 1.15rem;
 }
 
+/* V2-P7 — mixture-only dominance, set apart inside the dominance panel. */
+.analysis-subheading {
+  margin: 1.4rem 0 0;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
 .analysis-button {
   min-height: 2.75rem;
   padding: 0.45rem 0.7rem;
@@ -1223,7 +1399,7 @@ main {
 .analysis-warning {
   padding: 0.75rem;
   border: 1px solid var(--accent-warm);
-  background: #fff1df;
+  background: var(--warn-soft);
 }
 
 .analysis-toggle {
@@ -1538,6 +1714,16 @@ main {
 .tournament-heatmap__cell {
   display: grid;
   place-items: center;
+  /*
+   * The component supplies `--heat` as a fraction of the payoff range; the
+   * endpoints are palette tokens, so the scale re-anchors in dark mode and
+   * `--ink` clears 4.5:1 against both ends of it in either theme (V2-P8).
+   */
+  background: color-mix(
+    in srgb,
+    var(--heat-high) calc(var(--heat, 0) * 100%),
+    var(--heat-low)
+  );
   color: var(--ink);
   font: inherit;
   font-variant-numeric: tabular-nums;
@@ -1711,7 +1897,7 @@ main {
 .evolution__warning {
   padding: 1rem;
   border: 1px solid var(--accent-warm);
-  background: #fff1df;
+  background: var(--warn-soft);
 }
 
 .evolution-chart__bands {
@@ -1932,7 +2118,7 @@ main {
   padding: 0.8rem 1rem;
   margin: 1rem 0 0;
   border: 1px solid var(--accent-warm);
-  background: #fff1df;
+  background: var(--warn-soft);
 }
 
 .game-workbench__matrix-scroll {
@@ -2321,6 +2507,16 @@ main {
   .home-proof {
     outline: 3px solid Highlight;
     outline-offset: -3px;
+  }
+
+  /*
+   * Forced colours discard the palette entirely, so the selected theme option
+   * would lose its `--accent-soft` fill. The radio itself still renders and
+   * still announces, and this restores a visible boundary around the choice.
+   */
+  .theme-toggle__option:has(input:checked) {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
   }
 }
 
