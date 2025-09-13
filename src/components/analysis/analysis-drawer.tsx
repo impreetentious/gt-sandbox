@@ -19,6 +19,7 @@ import { classifyTwoByTwo } from "@/engine/solve/classify";
 import {
   analyzeDominance,
   type EliminationStep,
+  type MixedDominanceRelation,
 } from "@/engine/solve/dominance";
 import {
   analyzeMixedEquilibria,
@@ -125,6 +126,65 @@ function describeElimination(
   return `${player}: ${dominator} eliminates ${dominated}.`;
 }
 
+function describeMixture(
+  game: NormalFormGame,
+  relation: MixedDominanceRelation,
+): string {
+  return relation.support
+    .map(
+      (action) =>
+        `${actionLabel(game, relation.player, action)} ${formatRational(relation.weights[action])}`,
+    )
+    .join(" and ");
+}
+
+/**
+ * Mixture-only dominance, shown separately because it is the part a pure
+ * elimination walkthrough cannot reach. Rendered only when the engine actually
+ * finds one, so 2×2 games — where mixing provably adds nothing — stay quiet.
+ */
+function MixedDominanceSection({
+  game,
+  relations,
+}: {
+  readonly game: NormalFormGame;
+  readonly relations: readonly MixedDominanceRelation[];
+}) {
+  if (relations.length === 0) {
+    return null;
+  }
+
+  return (
+    <>
+      <h4 className="analysis-subheading">
+        <GlossaryTerm term="dominance-by-mixtures" />
+      </h4>
+      <p>
+        Pure comparison misses these. No single action beats them, so nothing
+        above eliminates them — but a randomization does.
+      </p>
+      <ul className="analysis-list">
+        {relations.map((relation) => (
+          <li key={`${relation.player}-${relation.dominated}`}>
+            {relation.player === "row" ? "You" : "Your rival"}:{" "}
+            <strong>
+              {actionLabel(game, relation.player, relation.dominated)}
+            </strong>{" "}
+            is beaten by mixing {describeMixture(game, relation)}, which earns
+            at least {formatRational(relation.margin)} more against every
+            opposing action.
+          </li>
+        ))}
+      </ul>
+      <p className="analysis-caveat">
+        Equivalently: there is no belief about the opponent that makes these
+        actions worth playing. The margin is the exact worst case, solved as a
+        linear program over fractions rather than estimated.
+      </p>
+    </>
+  );
+}
+
 function DominancePanel({ game }: { readonly game: NormalFormGame }) {
   const analysis = analyzeDominance(game);
   const [visibleSteps, setVisibleSteps] = useState(0);
@@ -170,6 +230,12 @@ function DominancePanel({ game }: { readonly game: NormalFormGame }) {
           )}
         </>
       )}
+      <MixedDominanceSection
+        game={game}
+        relations={analysis.mixedStrict.filter(
+          (relation) => relation.requiresMixing,
+        )}
+      />
       {trace.steps.length === 0 && analysis.weakTrace.steps.length > 0 ? (
         <p className="analysis-caveat">
           Weak-dominance elimination can depend on the order of elimination;

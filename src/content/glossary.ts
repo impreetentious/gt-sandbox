@@ -4,6 +4,7 @@ export type GlossaryTermId =
   | "continuation-probability"
   | "credible-threat"
   | "degenerate"
+  | "dominance-by-mixtures"
   | "dominant-strategy"
   | "evolutionarily-stable-strategy"
   | "fixation-probability"
@@ -57,6 +58,11 @@ export const glossary: Readonly<
     label: "degenerate",
     definition:
       "A game with tied best responses that can create more best responses than a mixed-strategy support predicts.",
+  },
+  "dominance-by-mixtures": {
+    label: "dominance by mixtures",
+    definition:
+      "A strategy can be beaten by a randomization over other strategies while losing to none of them individually. In a two-player game that is exactly the test for a strategy that is never a best response to any belief about the opponent.",
   },
   "dominant-strategy": {
     label: "dominant strategy",
