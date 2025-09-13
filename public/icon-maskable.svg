@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="Game Theory Sandbox">
+  <!--
+    The maskable variant of icon.svg: full-bleed background with no corner
+    radius, because the platform supplies the shape. The mark itself is inset
+    by 12.5% on every side, clear of the 10% safe zone a circular mask crops to.
+  -->
+  <rect width="64" height="64" fill="#f7f5ef"/>
+  <rect x="14" y="14" width="36" height="36" fill="none" stroke="#171717" stroke-width="3"/>
+  <path d="M32 14v36M14 32h36" stroke="#d5d0c5" stroke-width="2.5"/>
+  <rect x="33.5" y="33.5" width="15" height="15" fill="#dceff3" stroke="#155e75" stroke-width="2.5"/>
+</svg>

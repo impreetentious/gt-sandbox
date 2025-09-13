@@ -57,6 +57,20 @@ report_violation \
   'Next server actions are forbidden.' \
   has_matches "['\"]use server['\"]" src
 
+# V2-P9: the service worker is the one place in the product that legitimately
+# calls fetch, so the I4 boundary is checked there directly — it may never name
+# an off-origin URL, and it must keep its explicit same-origin guard.
+if [[ -e public/sw.js ]]; then
+  report_violation \
+    'the service worker must not reference an off-origin URL.' \
+    rg --quiet 'https?://' public/sw.js
+
+  if ! rg --quiet 'self\.location\.origin' public/sw.js; then
+    echo 'Invariant violation: the service worker lost its same-origin guard.' >&2
+    failed=1
+  fi
+fi
+
 if [[ -e middleware.ts || -e middleware.js || -e middleware.mjs ]]; then
   echo 'Invariant violation: Next middleware is forbidden.' >&2
   failed=1

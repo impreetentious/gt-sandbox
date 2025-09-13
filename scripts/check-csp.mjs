@@ -12,6 +12,11 @@ const requiredDirectives = [
   "object-src 'none'",
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
+  // V2-P9 — the offline worker and the manifest are same-origin and must stay
+  // that way; pinning both directives here stops a future edit from widening
+  // them without the check noticing.
+  "manifest-src 'self'",
+  "worker-src 'self'",
 ];
 
 function cspFromConfig(filename) {
