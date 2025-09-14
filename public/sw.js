@@ -75,15 +75,17 @@ self.addEventListener("fetch", (event) => {
 async function staleWhileRevalidate(request) {
   const cache = await caches.open(CACHE);
   const cached = await cache.match(request);
-  const network = fetch(request)
-    .then((response) => {
-      if (response.ok && response.type === "basic") {
-        cache.put(request, response.clone());
-      }
+  const network = self.navigator.onLine
+    ? fetch(request)
+        .then(async (response) => {
+          if (response.ok && response.type === "basic") {
+            await cache.put(request, response.clone());
+          }
 
-      return response;
-    })
-    .catch(() => null);
+          return response;
+        })
+        .catch(() => null)
+    : Promise.resolve(null);
 
   if (cached) {
     return cached;
@@ -103,7 +105,9 @@ async function staleWhileRevalidate(request) {
     const notice = await cache.match("/offline/");
 
     if (notice) {
-      return notice;
+      // Keep the URL aligned with the fallback document so Next.js cannot
+      // hydrate a prefetched route over the offline notice.
+      return Response.redirect(new URL("/offline/", self.location.origin), 302);
     }
   }
 

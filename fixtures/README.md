@@ -15,7 +15,7 @@ The generated output is an external cross-oracle, not a replacement for the engi
 
 ## Evolution presets
 
-`evolution-presets.json` is P8's reviewed calibration record. Each preset
+`evolution-presets.json` is the calibration record for the evolution presets. Each preset
 pins the complete seeded match environment, its estimated per-round payoff
 matrix, final population shares after 100 discrete replicator generations, and
 a named threshold predicate. Tests rerun every configuration and require an

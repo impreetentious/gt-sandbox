@@ -957,6 +957,7 @@ test("the service worker registers and serves a later load offline", async ({
   // A route never visited says so, rather than quietly rendering the home
   // page under someone else's URL.
   await page.goto("/classroom/");
+  await expect(page).toHaveURL(/\/offline\/$/);
   await expect(
     page.getByRole("heading", { name: "Not cached yet." }),
   ).toBeVisible();
