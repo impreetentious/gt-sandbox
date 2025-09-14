@@ -70,6 +70,16 @@ export default function MethodsPage() {
             support-size witness, reports pure equilibria and verified mixed
             samples, and does not call that sample complete.
           </p>
+          <p>
+            Dominance is decided against <em>mixed</em> dominators, not only
+            pure ones. From three actions upwards a strategy can be beaten by a
+            randomization over others while losing to none of them alone, and a
+            pure-only test reports no dominance in exactly that case. The
+            question is a linear program; it is solved by a two-phase simplex
+            over the same bigint fractions, using Bland&apos;s pivot rule
+            because dominance programs are routinely degenerate and the usual
+            rule can cycle on them.
+          </p>
         </div>
       </section>
 
@@ -156,14 +166,23 @@ export default function MethodsPage() {
               documents, scripts, styles, images, and build-emitted route data.
             </li>
             <li>
+              An optional service worker caches those same files so the sandbox
+              keeps working offline. It refuses any request that is not on this
+              origin, and its cache is keyed to the release version, so a new
+              version discards the previous one instead of accumulating.
+            </li>
+            <li>
               A Build link can encode its bounded title, action labels, exact
               payoffs, persona, seed, continuation probability, and noise. Read
               the URL before sharing it if those labels are sensitive.
             </li>
             <li>
-              Local storage contains one optional key,{" "}
-              <code>seenOnboarding</code>, solely to hide the first-visit hint
-              after dismissal.
+              Local storage contains three optional keys and nothing else:{" "}
+              <code>seenOnboarding</code>, which hides the first-visit hint
+              after dismissal; <code>theme</code>, written only if you pin light
+              or dark rather than following your system; and{" "}
+              <code>curriculum</code>, written only if you use the Learn path,
+              holding which stops you marked done and whether its gate is on.
             </li>
           </ul>
         </div>

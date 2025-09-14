@@ -3,6 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 
 const routes = [
   "/",
+  "/learn/",
   "/play/pd/",
   "/play/stag-hunt/",
   "/play/battle-of-the-sexes/",
@@ -27,6 +28,7 @@ const routes = [
   "/extensive/centipede/",
   "/nplayer/public-goods/",
   "/evolve/spatial/",
+  "/offline/",
 ];
 
 test("every static route is same-origin, CSP-protected, and accessible", async ({
@@ -72,6 +74,7 @@ test("every static route is same-origin, CSP-protected, and accessible", async (
 
 test("the primary routes can be opened with the keyboard", async ({ page }) => {
   const routes = [
+    { name: "Learn", heading: "Ten stops, in the order they build." },
     { name: "Play", heading: "Prisoner's Dilemma" },
     {
       name: "Evolve",
@@ -785,4 +788,262 @@ test("entry deterrence plays through both incumbent policies and reveals SPNE", 
 
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
+});
+
+test("the build editor surfaces dominance that only a mixture can find", async ({
+  page,
+}) => {
+  // Push and Hold each lose to Steady somewhere, so nothing is eliminated by
+  // pure comparison; an even split between them beats Steady everywhere. The
+  // engine has to run a linear program to see it, and this is the browser
+  // assertion that the result reaches the page.
+  await page.goto("/build/");
+  await page.getByLabel("Number of row actions").selectOption("3");
+  await page.getByLabel("Number of column actions").selectOption("3");
+
+  const rowPayoffs = [
+    [6, 0, 3],
+    [0, 6, 3],
+    [2, 2, 2],
+  ];
+
+  for (const [row, values] of rowPayoffs.entries()) {
+    for (const [column, value] of values.entries()) {
+      await page
+        .getByLabel(`Your payoff for row ${row + 1}, column ${column + 1}`)
+        .fill(String(value));
+    }
+  }
+
+  await expect(
+    page.getByText(/No strict-dominance elimination applies to this game\./),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/is beaten by mixing .* which earns at least 1 more/),
+  ).toBeVisible();
+
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
+});
+
+test("every static route stays accessible under the dark palette", async ({
+  page,
+}) => {
+  // The unit layer cannot see contrast, so the dark palette gets the same
+  // per-route axe sweep the light one does — with the theme pinned explicitly
+  // and again through the system preference, because those are two different
+  // code paths in `globals.css`.
+  await page.goto("/");
+  await page.getByRole("radio", { name: "Dark" }).check();
+
+  for (const route of routes) {
+    await page.goto(route);
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+    expect(
+      accessibilityScanResults.violations,
+      `dark-mode axe violations on ${route}`,
+    ).toEqual([]);
+  }
+});
+
+test("the system preference drives the palette when nothing is pinned", async ({
+  page,
+}) => {
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.goto("/evolve/");
+
+  await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
+  const systemDark = await page.evaluate(() =>
+    getComputedStyle(document.documentElement)
+      .getPropertyValue("--paper")
+      .trim(),
+  );
+
+  // Pinning light must win over a dark system preference.
+  await page.getByRole("radio", { name: "Light", exact: true }).check();
+  const pinnedLight = await page.evaluate(() =>
+    getComputedStyle(document.documentElement)
+      .getPropertyValue("--paper")
+      .trim(),
+  );
+
+  expect(systemDark).toBe("#14161a");
+  expect(pinnedLight).toBe("#f7f5ef");
+
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
+});
+
+test("the theme choice survives navigation and a reload without flashing", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("radio", { name: "Dark" }).check();
+  expect(await page.evaluate(() => window.localStorage.getItem("theme"))).toBe(
+    "dark",
+  );
+
+  // The inline bootstrap has to win before first paint, so the attribute must
+  // already be present when the document reaches the load event.
+  await page.goto("/methods/");
+  expect(
+    await page.evaluate(() =>
+      document.documentElement.getAttribute("data-theme"),
+    ),
+  ).toBe("dark");
+  await expect(page.getByRole("radio", { name: "Dark" })).toBeChecked();
+
+  // Returning to System removes the key rather than storing a third value.
+  await page.getByRole("radio", { name: "System" }).check();
+  expect(
+    await page.evaluate(() => window.localStorage.getItem("theme")),
+  ).toBeNull();
+  await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
+});
+
+test("the tournament heatmap re-anchors its scale in dark mode", async ({
+  page,
+}) => {
+  await page.goto("/evolve/");
+  const cell = page.locator(".tournament-heatmap__cell").first();
+  const lightBackground = await cell.evaluate(
+    (element) => getComputedStyle(element).backgroundColor,
+  );
+
+  await page.getByRole("radio", { name: "Dark" }).check();
+  const darkBackground = await cell.evaluate(
+    (element) => getComputedStyle(element).backgroundColor,
+  );
+
+  expect(darkBackground).not.toBe(lightBackground);
+
+  const accessibilityScanResults = await new AxeBuilder({ page })
+    .include(".tournament-heatmap")
+    .analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
+});
+
+test("the service worker registers and serves a later load offline", async ({
+  page,
+  context,
+}) => {
+  await page.goto("/");
+  await expect
+    .poll(() => page.evaluate(() => navigator.serviceWorker.controller !== null))
+    .toBe(true);
+
+  const registration = await page.evaluate(async () => {
+    const ready = await navigator.serviceWorker.ready;
+    return {
+      scope: new URL(ready.scope).pathname,
+      script: ready.active ? new URL(ready.active.scriptURL).pathname : null,
+    };
+  });
+  expect(registration).toEqual({ scope: "/", script: "/sw.js" });
+
+  // A visited route has to survive the network going away; that is the whole
+  // claim, and asserting registration alone would not test it.
+  await page.goto("/methods/");
+  await expect(page.getByRole("main")).toBeVisible();
+
+  await context.setOffline(true);
+  await page.reload();
+  await expect(page.getByRole("main")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Correctness is the product." }),
+  ).toBeVisible();
+
+  // A route never visited says so, rather than quietly rendering the home
+  // page under someone else's URL.
+  await page.goto("/classroom/");
+  await expect(
+    page.getByRole("heading", { name: "Not cached yet." }),
+  ).toBeVisible();
+
+  await context.setOffline(false);
+});
+
+test("the manifest is same-origin, installable, and names only local icons", async ({
+  page,
+  baseURL,
+}) => {
+  const origin = new URL(baseURL ?? "http://127.0.0.1:4002").origin;
+  const response = await page.request.get("/manifest.webmanifest");
+
+  expect(response.ok()).toBeTruthy();
+
+  const manifest = await response.json();
+
+  expect(manifest.start_url).toBe("/");
+  expect(manifest.scope).toBe("/");
+  expect(manifest.display).toBe("standalone");
+  expect(manifest.icons.length).toBeGreaterThan(0);
+  expect(
+    manifest.icons.map((icon: { purpose: string }) => icon.purpose),
+  ).toContain("maskable");
+
+  for (const icon of manifest.icons as { src: string }[]) {
+    expect(icon.src.startsWith("/")).toBe(true);
+    const iconResponse = await page.request.get(new URL(icon.src, origin).href);
+    expect(iconResponse.ok(), `icon should exist: ${icon.src}`).toBeTruthy();
+  }
+});
+
+test("the learn path gates by default and opens entirely from one control", async ({
+  page,
+}) => {
+  await page.goto("/learn/");
+
+  const first = page.getByRole("link", { name: "Prisoner's Dilemma" });
+  await expect(first).toBeVisible();
+  // A locked stop is listed but is not a link.
+  await expect(page.getByText("Stag Hunt")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Stag Hunt" })).toHaveCount(0);
+
+  // The gate is the acceptance: one checkbox, and every stop is reachable.
+  await page.getByLabel("Open every stop now").check();
+  await expect(page.getByRole("link", { name: "Stag Hunt" })).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Build your own" }),
+  ).toBeVisible();
+  await expect(page.getByRole("status")).toContainText(
+    "Gating is off; every stop is open.",
+  );
+
+  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(accessibilityScanResults.violations).toEqual([]);
+});
+
+test("the learn path advances, persists, and stores exactly one key", async ({
+  page,
+}) => {
+  await page.goto("/learn/");
+  await page.getByLabel("Mark this stop done").first().check();
+
+  await expect(page.getByRole("status")).toContainText(
+    "1 of 10 stops done. Next: Stag Hunt.",
+  );
+  await expect(page.getByRole("link", { name: "Stag Hunt" })).toBeVisible();
+
+  // Nothing beyond the documented key, and nothing derived from a clock.
+  expect(
+    await page.evaluate(() => Object.keys(window.localStorage).sort()),
+  ).toEqual(["curriculum"]);
+
+  await page.reload();
+  await expect(page.getByRole("link", { name: "Stag Hunt" })).toBeVisible();
+
+  // Following a stop's link counts as doing it, so the path keeps up with a
+  // reader who simply went and used the surface.
+  await page.getByRole("link", { name: "Stag Hunt" }).click();
+  await expect(page).toHaveURL(/\/play\/stag-hunt\//);
+  await page.goto("/learn/");
+  await expect(page.getByRole("status")).toContainText("2 of 10 stops done");
+
+  await page.getByRole("button", { name: "Start the path over" }).click();
+  expect(
+    await page.evaluate(() => window.localStorage.getItem("curriculum")),
+  ).toBeNull();
+  await expect(page.getByRole("link", { name: "Stag Hunt" })).toHaveCount(0);
 });

@@ -1,6 +1,6 @@
 {
   "name": "game-theory-sandbox",
-  "version": "0.16.21",
+  "version": "0.16.22",
   "private": true,
   "packageManager": "pnpm@10.14.0",
   "engines": {
@@ -8,8 +8,9 @@
     "pnpm": ">=10.14.0"
   },
   "scripts": {
+    "preinstall": "node scripts/check-node.mjs",
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/check-node.mjs && next build",
     "start": "serve -l 4002 --config ../serve.json out",
     "serve:export": "serve -l 4002 --config ../serve.json out",
     "typecheck": "tsc --noEmit",
