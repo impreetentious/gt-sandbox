@@ -550,6 +550,11 @@ export function GameWorkbench({
         <button className="analysis-button" onClick={copyLink} type="button">
           Copy reproducible link
         </button>
+        {variant === "page" ? (
+          <a className="analysis-button" href={`/quiz/?${shareSearch}`}>
+            Quiz this game
+          </a>
+        ) : null}
         {copied ? (
           <p className="game-workbench__copied" role="status">
             Copied. The complete bounded state is in the link.

@@ -82,6 +82,8 @@ const navigation = [
   { href: "/repeat/", label: "Repeat" },
   { href: "/auctions/second-price/", label: "Auctions" },
   { href: "/classroom/", label: "Classroom" },
+  { href: "/topology/", label: "Atlas" },
+  { href: "/quiz/", label: "Quiz" },
 ];
 
 export default function RootLayout({
