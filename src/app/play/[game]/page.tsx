@@ -37,6 +37,15 @@ const descriptions: Record<GameSlug, string> = {
     "Play a seeded repeated Prisoner's Dilemma with mystery rivals and a counterfactual replay.",
 };
 
+const ogSlugs: Record<GameSlug, string> = {
+  pd: "pd",
+  "stag-hunt": "stag-hunt",
+  "battle-of-the-sexes": "battle-of-the-sexes",
+  chicken: "chicken",
+  "matching-pennies": "matching-pennies",
+  "iterated-pd": "iterated-pd",
+};
+
 export function generateStaticParams(): Array<{ game: GameSlug }> {
   return games.map((game) => ({ game }));
 }
@@ -53,7 +62,21 @@ export async function generateMetadata({
   }
 
   const slug = game as GameSlug;
-  return { title: labels[slug], description: descriptions[slug] };
+  return {
+    title: labels[slug],
+    description: descriptions[slug],
+    openGraph: {
+      images: [
+        {
+          url: `/og/${ogSlugs[slug]}.png`,
+          width: 1200,
+          height: 630,
+          alt: `${labels[slug]} payoff matrix`,
+        },
+      ],
+    },
+    twitter: { images: [`/og/${ogSlugs[slug]}.png`] },
+  };
 }
 
 export default async function PlayGamePage({
