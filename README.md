@@ -15,8 +15,10 @@ Game Theory Sandbox is a static, private interactive tool for strategy-curious p
 - **Contribute** to an n-player public-goods game with 2 to 10 players and a movable marginal per capita return, showing exactly why free-riding is dominant while full contribution is efficient.
 - **Build** a two-player game from 2×2 through 4×4, enter exact fractions or bounded decimals, and watch best responses, dominance, equilibria, efficiency, degeneracy, and strategic structure update live.
 - **Learn** through a ten-stop path ordered so each idea needs the previous one. The ordering is a default, not a lock — one checkbox opens every stop.
+- **Browse** all 144 strict ordinal 2×2 structures in a keyboard-operable topology atlas.
+- **Quiz** yourself with a deterministic five-question equilibrium round, optionally sourced from a shared 2×2 Build game.
 - **Teach** with the classroom kit: build an assignment link that pins one exercise for a whole class, then aggregate the sessions students download — entirely on your device, with nothing uploaded.
-- **Share** a versioned URL containing a bounded custom game and any supplied persona, seed, continuation probability, or action noise. No server stores the state.
+- **Share and embed** a versioned URL containing a bounded custom game, annotation, persona, seed, continuation probability, or action noise; chromeless static embeds and per-game social cards need no server.
 
 ## Two-minute tour
 
@@ -82,4 +84,4 @@ MIT © Sidakpreet Singh — see [LICENSE](LICENSE).
 
 ---
 
-**Version:** v0.17.3
+**Version:** v0.17.4

@@ -24,6 +24,7 @@ import {
   type EditableGameDraft,
   type GameShareExtras,
 } from "@/state/game-url";
+import { decodeAnnotation, setAnnotation } from "@/state/annotation-url";
 
 const blankGame = createNormalFormGame({
   id: "custom",
@@ -132,6 +133,8 @@ export function GameWorkbench({
   const [paretoMode, setParetoMode] = useState(false);
   const [copied, setCopied] = useState(false);
   const [manualCopy, setManualCopy] = useState(false);
+  const [annotation, setAnnotationText] = useState("");
+  const [annotationError, setAnnotationError] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
   const manualCopyRef = useRef<HTMLInputElement>(null);
   const previousStructureRef = useRef(structureFor(defaultGame));
@@ -152,6 +155,9 @@ export function GameWorkbench({
       } else if (decoded.kind === "invalid") {
         setNotice(decoded.notice);
       }
+      setAnnotationText(
+        decodeAnnotation(new URLSearchParams(initialSearch)) ?? "",
+      );
     }, 0);
 
     return () => window.clearTimeout(timer);
@@ -197,10 +203,12 @@ export function GameWorkbench({
     return () => window.clearTimeout(timer);
   }, [defaultGame.id, draft]);
 
-  const shareSearch = useMemo(
-    () => encodeGameSearch({ game, extras: shareExtras }),
-    [game, shareExtras],
-  );
+  const shareSearch = useMemo(() => {
+    const params = new URLSearchParams(
+      encodeGameSearch({ game, extras: shareExtras }),
+    );
+    return setAnnotation(params, annotation).toString();
+  }, [annotation, game, shareExtras]);
   const shareUrl =
     typeof window === "undefined"
       ? `?${shareSearch}`
@@ -515,6 +523,52 @@ export function GameWorkbench({
           <p className="analysis-warning" role="status">
             Degeneracy detected. The engine shows verified equilibria without
             claiming that this sample describes every equilibrium component.
+          </p>
+        ) : null}
+      </section>
+
+      <section
+        className="game-workbench__annotation"
+        aria-labelledby={`${defaultGame.id}-annotation-title`}
+      >
+        <div>
+          <p className="eyebrow">Annotation</p>
+          <h2 id={`${defaultGame.id}-annotation-title`}>
+            Carry one observation with the game.
+          </h2>
+          <p>
+            A bounded plain-text note travels in <code>?a=</code>. It stays in
+            the URL; nothing is stored or sent elsewhere.
+          </p>
+        </div>
+        <label>
+          <span className="sr-only">Game annotation</span>
+          <textarea
+            aria-describedby={
+              annotationError ? `${defaultGame.id}-annotation-error` : undefined
+            }
+            onChange={(event) => {
+              const next = event.target.value;
+              try {
+                setAnnotation(new URLSearchParams(), next);
+                setAnnotationText(next);
+                setAnnotationError(null);
+                setDirty(true);
+              } catch (error) {
+                setAnnotationError(
+                  error instanceof Error
+                    ? error.message
+                    : "Annotation is invalid.",
+                );
+              }
+            }}
+            placeholder="e.g. Is the threat credible after entry?"
+            value={annotation}
+          />
+        </label>
+        {annotationError ? (
+          <p id={`${defaultGame.id}-annotation-error`} role="alert">
+            {annotationError}
           </p>
         ) : null}
       </section>

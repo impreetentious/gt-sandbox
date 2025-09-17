@@ -29,6 +29,9 @@ const routes = [
   "/nplayer/public-goods/",
   "/evolve/spatial/",
   "/offline/",
+  "/topology/",
+  "/quiz/",
+  "/embed/pd/",
 ];
 
 test("every static route is same-origin, CSP-protected, and accessible", async ({
@@ -108,6 +111,40 @@ test("the exported game route works as a direct deep link", async ({
   await expect(
     page.getByRole("heading", { name: "Prisoner's Dilemma" }),
   ).toBeVisible();
+});
+
+test("the topology atlas, seeded quiz, and chromeless embed are operable", async ({
+  page,
+}) => {
+  await page.goto("/topology/");
+  await expect(
+    page.getByRole("heading", { name: "Every strict ordinal 2×2 game." }),
+  ).toBeVisible();
+  const grid = page.getByRole("listbox", { name: "Ordinal game grid" });
+  await grid.focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(grid).toHaveAttribute("aria-activedescendant", /ordinal-/);
+
+  await page.goto("/quiz/?seed=42");
+  await expect(
+    page.getByRole("heading", {
+      name: "Make the call before the solver does.",
+    }),
+  ).toBeVisible();
+  for (let question = 0; question < 5; question += 1) {
+    await page.locator(".quiz-experience__choices button").first().click();
+    await expect(page.getByRole("status")).toBeVisible();
+    if (question < 4)
+      await page.getByRole("button", { name: "Next question" }).click();
+  }
+  await expect(page.getByRole("status")).toContainText(
+    /Round complete: \d of 5/,
+  );
+
+  await page.goto("/embed/pd/");
+  await expect(page.locator(".site-header")).toBeHidden();
+  await expect(page.locator(".site-footer")).toBeHidden();
+  await expect(page.getByTestId("game-workbench")).toBeVisible();
 });
 
 test("the PD session completes keyboard-only and stays accessible", async ({

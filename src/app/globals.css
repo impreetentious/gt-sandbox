@@ -2305,6 +2305,198 @@ main {
   font-weight: 700;
 }
 
+/* V2-P11 topology atlas, V2-P12 seeded quiz, and V2-P13 chromeless embeds. */
+.topology-atlas,
+.quiz-experience {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.topology-atlas__header,
+.quiz-experience > header {
+  max-width: 50rem;
+}
+
+.topology-atlas__filter,
+.quiz-experience__controls label {
+  display: grid;
+  max-width: 34rem;
+  gap: 0.4rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.topology-atlas__filter input,
+.quiz-experience__controls input,
+.game-workbench__annotation textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--paper-raised);
+  color: var(--ink);
+  font: inherit;
+  padding: 0.7rem;
+}
+
+.topology-atlas__count,
+.topology-atlas__help,
+.quiz-experience__controls p,
+.quiz-experience__score,
+.game-workbench__annotation p {
+  color: var(--muted);
+}
+
+.topology-atlas__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 24rem);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.topology-atlas__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+  gap: 0.45rem;
+  border: 1px solid var(--line);
+  padding: 0.75rem;
+}
+
+.topology-atlas__tile,
+.quiz-experience__choices button {
+  min-height: 3.25rem;
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.topology-atlas__tile {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.5rem;
+}
+
+.topology-atlas__tile strong {
+  color: var(--accent);
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
+.topology-atlas__tile[aria-selected="true"],
+.topology-atlas__tile:hover,
+.quiz-experience__choices button:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.topology-atlas__detail,
+.quiz-experience__card,
+.game-workbench__annotation {
+  border: 1px solid var(--line);
+  background: var(--paper-raised);
+  padding: 1.25rem;
+}
+
+.topology-atlas__detail h2,
+.quiz-experience__card h2,
+.game-workbench__annotation h2 {
+  margin-top: 0;
+}
+
+.topology-atlas__detail table {
+  width: 100%;
+  margin-block: 1rem;
+  border-collapse: collapse;
+}
+
+.topology-atlas__detail td {
+  border: 1px solid var(--line);
+  padding: 0.55rem;
+  text-align: center;
+}
+
+.topology-atlas__empty {
+  border: 1px dashed var(--line);
+  padding: 1rem;
+}
+
+.quiz-experience__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  align-items: end;
+}
+
+.quiz-experience__controls p {
+  max-width: 38rem;
+  margin: 0;
+}
+
+.quiz-experience__card {
+  display: grid;
+  max-width: 48rem;
+  gap: 1rem;
+}
+
+.quiz-experience__choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 0.65rem;
+}
+
+.quiz-experience__choices button {
+  padding: 0.7rem;
+}
+
+.quiz-experience__choices .is-correct {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.quiz-experience__choices .is-incorrect {
+  border-color: var(--accent-warm);
+  background: var(--warn-soft);
+}
+
+.quiz-experience__result {
+  border-left: 3px solid var(--accent);
+  margin: 0;
+  padding-left: 0.75rem;
+}
+
+.game-workbench__annotation {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.game-workbench__annotation textarea {
+  min-height: 5rem;
+  resize: vertical;
+}
+
+body:has(.embed-game) .site-header,
+body:has(.embed-game) .site-footer {
+  display: none;
+}
+
+body:has(.embed-game) main {
+  padding-block: 0;
+}
+
+.embed-game .game-workbench {
+  margin: 0;
+}
+
+@media (max-width: 48rem) {
+  .topology-atlas__layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 52rem) {
   .pd-layout,
   .one-shot-layout {
