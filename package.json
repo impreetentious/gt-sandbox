@@ -1,6 +1,6 @@
 {
   "name": "game-theory-sandbox",
-  "version": "0.18.0",
+  "version": "0.18.1",
   "private": true,
   "packageManager": "pnpm@10.19.0",
   "engines": {
@@ -23,7 +23,7 @@
     "test:invariants": "node scripts/test-invariants.mjs",
     "check:csp": "node scripts/check-csp.mjs",
     "bundle:check": "node scripts/bundle-budget.mjs",
-    "verify": "pnpm check:invariants && pnpm check:csp && pnpm typecheck && pnpm lint && pnpm test:coverage",
+    "verify": "pnpm check:invariants && pnpm check:csp && pnpm typecheck && pnpm lint && pnpm format:check && pnpm test:coverage",
     "verify:full": "pnpm verify && pnpm build && pnpm bundle:check && pnpm test:invariants && pnpm exec playwright test"
   },
   "dependencies": {
