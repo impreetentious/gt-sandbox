@@ -9,8 +9,7 @@ import { formatRational, type Rational } from "@/engine/rational";
 export const SESSION_EXPORT_SCHEMA = "gt-sandbox/session";
 export const SESSION_EXPORT_VERSION = 1;
 
-export type SessionExportKind =
-  "one-shot" | "hot-seat" | "ipd" | "iterated" | "auction";
+export type SessionExportKind = "one-shot" | "hot-seat" | "ipd" | "iterated" | "auction";
 
 export interface SessionRoundExport {
   readonly round: number;
@@ -90,13 +89,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-const KINDS: readonly SessionExportKind[] = [
-  "one-shot",
-  "hot-seat",
-  "ipd",
-  "iterated",
-  "auction",
-];
+const KINDS: readonly SessionExportKind[] = ["one-shot", "hot-seat", "ipd", "iterated", "auction"];
 
 function parseRoundArray(value: unknown): SessionRoundExport[] | null {
   if (!Array.isArray(value)) {

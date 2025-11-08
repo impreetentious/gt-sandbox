@@ -32,21 +32,19 @@ function FirstPriceReveal({ persona }: { readonly persona: string }) {
     <div className="auction-reveal">
       <h3>Why shade your bid</h3>
       <p>
-        Bidding your full valuation guarantees zero profit: if you win, you pay
-        exactly what the item was worth. The risk-neutral symmetric benchmark
-        for two bidders with uniform valuations is to bid half your value — for
-        a valuation of 8 that benchmark bid is{" "}
+        Bidding your full valuation guarantees zero profit: if you win, you pay exactly what the
+        item was worth. The risk-neutral symmetric benchmark for two bidders with uniform valuations
+        is to bid half your value — for a valuation of 8 that benchmark bid is{" "}
         <strong>{formatRational(benchmark)}</strong>.
       </p>
       <p>
         Against a shading rival, the exact best-response bid at valuation 8 is{" "}
         <strong>{best.bid}</strong>, earning an expected{" "}
-        <strong>{formatRational(best.payoff)}</strong>. The rival persona is{" "}
-        {persona}.
+        <strong>{formatRational(best.payoff)}</strong>. The rival persona is {persona}.
       </p>
       <p className="auction-reveal__note">
-        The half-value figure is the continuous-uniform benchmark, labelled as
-        such — not a claim about the exact discrete-grid equilibrium.
+        The half-value figure is the continuous-uniform benchmark, labelled as such — not a claim
+        about the exact discrete-grid equilibrium.
       </p>
     </div>
   );
@@ -58,32 +56,26 @@ function SecondPriceReveal() {
     <div className="auction-reveal">
       <h3>Why truthful bidding is dominant</h3>
       <p>
-        The engine checks every valuation, every alternative bid, and every
-        rival bid on the grid. Bidding your valuation is{" "}
-        <strong>
-          {dominance.weaklyDominant ? "weakly dominant" : "not dominant"}
-        </strong>
-        : it never does worse, and sometimes strictly better.
+        The engine checks every valuation, every alternative bid, and every rival bid on the grid.
+        Bidding your valuation is{" "}
+        <strong>{dominance.weaklyDominant ? "weakly dominant" : "not dominant"}</strong>: it never
+        does worse, and sometimes strictly better.
       </p>
       {dominance.overbidWitness ? (
         <p>
-          Overbidding can backfire. At valuation{" "}
-          {dominance.overbidWitness.value}, bidding{" "}
+          Overbidding can backfire. At valuation {dominance.overbidWitness.value}, bidding{" "}
           {dominance.overbidWitness.alternativeBid} against a rival bid of{" "}
           {dominance.overbidWitness.rivalBid} earns{" "}
-          <strong>
-            {formatRational(dominance.overbidWitness.alternativePayoff)}
-          </strong>{" "}
-          — versus {formatRational(dominance.overbidWitness.truthfulPayoff)} for
-          the truthful bid. You can win at a loss.
+          <strong>{formatRational(dominance.overbidWitness.alternativePayoff)}</strong> — versus{" "}
+          {formatRational(dominance.overbidWitness.truthfulPayoff)} for the truthful bid. You can
+          win at a loss.
         </p>
       ) : null}
       {dominance.underbidWitness ? (
         <p>
           Underbidding only costs you wins you would have wanted: at valuation{" "}
-          {dominance.underbidWitness.value}, bidding{" "}
-          {dominance.underbidWitness.alternativeBid} forfeits a{" "}
-          {formatRational(dominance.underbidWitness.truthfulPayoff)} profit.
+          {dominance.underbidWitness.value}, bidding {dominance.underbidWitness.alternativeBid}{" "}
+          forfeits a {formatRational(dominance.underbidWitness.truthfulPayoff)} profit.
         </p>
       ) : null}
     </div>
@@ -92,24 +84,21 @@ function SecondPriceReveal() {
 
 function CommonValueReveal() {
   const analysis = analyzeCommonValue(10);
-  const rows = analysis.rows.filter(
-    (row) => row.signal >= 3 && row.signal <= 8,
-  );
+  const rows = analysis.rows.filter((row) => row.signal >= 3 && row.signal <= 8);
   return (
     <div className="auction-reveal">
       <h3>
         The <GlossaryTerm term="winners-curse" />
       </h3>
       <p>
-        Bidding your own signal loses money on average: the exact expected
-        profit is{" "}
-        <strong>{formatRational(analysis.expectedNaiveProfit)}</strong>. Winning
-        is bad news — it means your signal was probably the higher one.
+        Bidding your own signal loses money on average: the exact expected profit is{" "}
+        <strong>{formatRational(analysis.expectedNaiveProfit)}</strong>. Winning is bad news — it
+        means your signal was probably the higher one.
       </p>
       <table className="auction-curse-table">
         <caption>
-          For each signal: your face-value estimate of the common value, versus
-          the exact expected value once you condition on winning.
+          For each signal: your face-value estimate of the common value, versus the exact expected
+          value once you condition on winning.
         </caption>
         <thead>
           <tr>
@@ -132,17 +121,11 @@ function CommonValueReveal() {
   );
 }
 
-export function AuctionPlayExperience({
-  format,
-}: {
-  readonly format: AuctionFormat;
-}) {
+export function AuctionPlayExperience({ format }: { readonly format: AuctionFormat }) {
   const content = auctionFormatContent[format];
   const personas = auctionPersonasForFormat(format);
-  const [state, dispatch] = useReducer(
-    reduceAuctionSession,
-    format,
-    (initial) => createAuctionSession(initial),
+  const [state, dispatch] = useReducer(reduceAuctionSession, format, (initial) =>
+    createAuctionSession(initial),
   );
   const [bid, setBid] = useState(0);
 
@@ -174,9 +157,7 @@ export function AuctionPlayExperience({
         : `Round ${state.rounds.length + 1} of ${state.roundLimit}. ${content.observationLabel} is ${state.current.yourObservation}. Choose a bid.`;
 
   const downloadExport = () => {
-    const json = serializeSessionExport(
-      auctionSessionToExport(state, content.title),
-    );
+    const json = serializeSessionExport(auctionSessionToExport(state, content.title));
     const blob = new Blob([json], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
@@ -189,11 +170,7 @@ export function AuctionPlayExperience({
   };
 
   return (
-    <section
-      aria-labelledby="auction-title"
-      className="auction"
-      data-format={format}
-    >
+    <section aria-labelledby="auction-title" className="auction" data-format={format}>
       <header className="auction__header">
         <p className="eyebrow">{content.eyebrow}</p>
         <h1 className="display" id="auction-title">
@@ -210,8 +187,7 @@ export function AuctionPlayExperience({
         <p>
           <span>Round</span>
           <strong>
-            {Math.min(state.rounds.length + 1, state.roundLimit)} /{" "}
-            {state.roundLimit}
+            {Math.min(state.rounds.length + 1, state.roundLimit)} / {state.roundLimit}
           </strong>
         </p>
         <p>
@@ -245,8 +221,7 @@ export function AuctionPlayExperience({
           </label>
 
           <p className="auction__observation" data-testid="auction-observation">
-            {content.observationLabel}:{" "}
-            <strong>{state.current.yourObservation}</strong>
+            {content.observationLabel}: <strong>{state.current.yourObservation}</strong>
           </p>
           <p className="auction__help">{content.observationHelp}</p>
 
@@ -283,8 +258,7 @@ export function AuctionPlayExperience({
               </p>
               {latest.commonValue !== undefined ? (
                 <p>
-                  The item&apos;s true value was{" "}
-                  <strong>{latest.commonValue}</strong>.
+                  The item&apos;s true value was <strong>{latest.commonValue}</strong>.
                 </p>
               ) : null}
               <p className="auction__result-line">
@@ -298,9 +272,7 @@ export function AuctionPlayExperience({
                 ref={continueRef}
                 type="button"
               >
-                {state.rounds.length + 1 === state.roundLimit
-                  ? "Finish session"
-                  : "Next round"}
+                {state.rounds.length + 1 === state.roundLimit ? "Finish session" : "Next round"}
               </button>
             </div>
           ) : null}
@@ -309,10 +281,7 @@ export function AuctionPlayExperience({
             {narration}
           </p>
 
-          <section
-            aria-labelledby="auction-history"
-            className="auction__history"
-          >
+          <section aria-labelledby="auction-history" className="auction__history">
             <h3 id="auction-history">History</h3>
             {state.rounds.length === 0 ? (
               <p>No auctions completed yet.</p>
@@ -324,11 +293,7 @@ export function AuctionPlayExperience({
                     <span>
                       you bid {round.yourBid}; rival {round.rivalBid}
                     </span>
-                    <strong>
-                      {round.youWin
-                        ? `+${formatRational(round.yourPayoff)}`
-                        : "0"}
-                    </strong>
+                    <strong>{round.youWin ? `+${formatRational(round.yourPayoff)}` : "0"}</strong>
                   </li>
                 ))}
               </ol>
@@ -347,11 +312,7 @@ export function AuctionPlayExperience({
                 >
                   Play again
                 </button>
-                <button
-                  className="hot-seat-export"
-                  onClick={downloadExport}
-                  type="button"
-                >
+                <button className="hot-seat-export" onClick={downloadExport} type="button">
                   Download session
                 </button>
               </div>
@@ -370,8 +331,7 @@ export function AuctionPlayExperience({
           {format === "second-price" ? <SecondPriceReveal /> : null}
           {format === "common-value" ? <CommonValueReveal /> : null}
           <p className="auction__personas">
-            Rivals available:{" "}
-            {personas.map((id) => auctionPersonas[id].name).join(", ")}.
+            Rivals available: {personas.map((id) => auctionPersonas[id].name).join(", ")}.
           </p>
         </section>
       </div>

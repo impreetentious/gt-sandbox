@@ -1,7 +1,4 @@
-import {
-  ipdStrategies,
-  type IpdStrategyId,
-} from "@/engine/repeated/strategies";
+import { ipdStrategies, type IpdStrategyId } from "@/engine/repeated/strategies";
 import {
   resolveHumanIpdRound,
   sampleIpdMatchLength,
@@ -65,8 +62,7 @@ function createConfig(
   continuationProbability = 0.95,
   noise = 0,
 ): Readonly<IpdMatchConfig> {
-  const opponentStrategy =
-    opponent === "mystery" ? mysteryStrategyForSeed(seed) : opponent;
+  const opponentStrategy = opponent === "mystery" ? mysteryStrategyForSeed(seed) : opponent;
 
   return {
     rowStrategy: "tft",
@@ -106,10 +102,7 @@ export function nextIpdSessionSeed(seed: number): number {
   return (seed + 0x9e37_79b9) >>> 0;
 }
 
-function stageRound(
-  state: IpdSessionState,
-  playerAction: BinaryAction,
-): IpdMatchRound {
+function stageRound(state: IpdSessionState, playerAction: BinaryAction): IpdMatchRound {
   return resolveHumanIpdRound(state.config, state.rounds, playerAction);
 }
 

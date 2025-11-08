@@ -82,10 +82,7 @@ export interface DominanceAnalysis {
 function initiallyAvailable(game: NormalFormGame): AvailableStrategies {
   return {
     row: Array.from({ length: game.rowActions.length }, (_, index) => index),
-    column: Array.from(
-      { length: game.columnActions.length },
-      (_, index) => index,
-    ),
+    column: Array.from({ length: game.columnActions.length }, (_, index) => index),
   };
 }
 
@@ -208,8 +205,7 @@ export function mixedDominanceRelations(
   available = initiallyAvailable(game),
 ): MixedDominanceRelation[] {
   const relations: MixedDominanceRelation[] = [];
-  const decide =
-    kind === "strict" ? strictlyDominatedByMixture : weaklyDominatedByMixture;
+  const decide = kind === "strict" ? strictlyDominatedByMixture : weaklyDominatedByMixture;
 
   for (const player of ["row", "column"] as const) {
     const actions = available[player];
@@ -237,9 +233,7 @@ export function mixedDominanceRelations(
         continue;
       }
 
-      relations.push(
-        expand(game, player, dominated, kind, candidates, verdict.certificate),
-      );
+      relations.push(expand(game, player, dominated, kind, candidates, verdict.certificate));
     }
   }
 

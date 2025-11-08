@@ -33,9 +33,7 @@ function complement(value: Rational): Rational {
  * Closed-form, full-support 2×2 mixed equilibrium. This is deliberately
  * separate from support enumeration so the two paths can cross-check.
  */
-export function twoByTwoMixedEquilibrium(
-  game: NormalFormGame,
-): MixedNashEquilibrium | null {
+export function twoByTwoMixedEquilibrium(game: NormalFormGame): MixedNashEquilibrium | null {
   if (game.rowActions.length !== 2 || game.columnActions.length !== 2) {
     throw new RangeError("The closed-form solver requires a 2×2 game.");
   }
@@ -62,10 +60,7 @@ export function twoByTwoMixedEquilibrium(
     rowDenominator,
   );
 
-  if (
-    !isProbability(rowFirstProbability) ||
-    !isProbability(columnFirstProbability)
-  ) {
+  if (!isProbability(rowFirstProbability) || !isProbability(columnFirstProbability)) {
     return null;
   }
 

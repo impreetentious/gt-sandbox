@@ -14,9 +14,7 @@ export type StrategicStructure =
 
 function assertTwoByTwo(game: NormalFormGame): void {
   if (game.rowActions.length !== 2 || game.columnActions.length !== 2) {
-    throw new RangeError(
-      "The strategic-structure classifier requires a 2×2 game.",
-    );
+    throw new RangeError("The strategic-structure classifier requires a 2×2 game.");
   }
 }
 
@@ -50,10 +48,7 @@ function isOffDiagonalPair(first: Profile, second: Profile): boolean {
   return first.row !== first.column && second.row !== second.column;
 }
 
-function equilibriumIsStrictlyDominated(
-  game: NormalFormGame,
-  equilibrium: Profile,
-): boolean {
+function equilibriumIsStrictlyDominated(game: NormalFormGame, equilibrium: Profile): boolean {
   for (let row = 0; row < 2; row += 1) {
     for (let column = 0; column < 2; column += 1) {
       if (strictlyParetoDominates(game, equilibrium, { row, column })) {
@@ -80,9 +75,7 @@ export function classifyTwoByTwo(game: NormalFormGame): StrategicStructure {
   }
 
   if (equilibria.length === 1) {
-    return equilibriumIsStrictlyDominated(game, equilibria[0])
-      ? "dilemma"
-      : "dominance";
+    return equilibriumIsStrictlyDominated(game, equilibria[0]) ? "dilemma" : "dominance";
   }
 
   const [first, second] = equilibria;
@@ -91,10 +84,7 @@ export function classifyTwoByTwo(game: NormalFormGame): StrategicStructure {
     return "anti-coordination";
   }
 
-  const rowPreference = compare(
-    payoffFor(game, first, "row"),
-    payoffFor(game, second, "row"),
-  );
+  const rowPreference = compare(payoffFor(game, first, "row"), payoffFor(game, second, "row"));
   const columnPreference = compare(
     payoffFor(game, first, "column"),
     payoffFor(game, second, "column"),
@@ -104,7 +94,5 @@ export function classifyTwoByTwo(game: NormalFormGame): StrategicStructure {
     return "degenerate";
   }
 
-  return rowPreference === columnPreference
-    ? "coordination (assurance)"
-    : "battle";
+  return rowPreference === columnPreference ? "coordination (assurance)" : "battle";
 }

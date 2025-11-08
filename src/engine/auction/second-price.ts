@@ -21,11 +21,7 @@ export interface SecondPriceDominance {
 }
 
 /** Payoff of bidding `bid` at valuation `value` against `rivalBid`; ties won. */
-export function secondPricePayoff(
-  bid: number,
-  value: number,
-  rivalBid: number,
-): Rational {
+export function secondPricePayoff(bid: number, value: number, rivalBid: number): Rational {
   if (bid < rivalBid) {
     return ZERO; // lose, earn nothing
   }
@@ -33,9 +29,7 @@ export function secondPricePayoff(
   return subtract(rational(BigInt(value)), rational(BigInt(rivalBid)));
 }
 
-export function analyzeSecondPriceDominance(
-  maxValue: number,
-): SecondPriceDominance {
+export function analyzeSecondPriceDominance(maxValue: number): SecondPriceDominance {
   if (!Number.isSafeInteger(maxValue) || maxValue < 1) {
     throw new RangeError("maxValue must be an integer of at least 1.");
   }

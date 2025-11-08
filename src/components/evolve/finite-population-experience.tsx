@@ -2,16 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { GlossaryTerm } from "@/components/ui/glossary-term";
-import {
-  finitePopulationContent,
-  finitePopulationPresets,
-} from "@/content/finite-population";
+import { finitePopulationContent, finitePopulationPresets } from "@/content/finite-population";
 import { classifyESS } from "@/engine/ess";
-import {
-  classifySelection,
-  createMoranConfig,
-  fixationCurve,
-} from "@/engine/moran";
+import { classifySelection, createMoranConfig, fixationCurve } from "@/engine/moran";
 import {
   compare,
   formatRational,
@@ -32,8 +25,7 @@ function percentLabel(value: Rational): string {
   const scaled = multiply(value, rational(100n));
   const whole = scaled.numerator / scaled.denominator;
   const remainder =
-    Number(scaled.numerator - whole * scaled.denominator) /
-    Number(scaled.denominator);
+    Number(scaled.numerator - whole * scaled.denominator) / Number(scaled.denominator);
   return `${(Number(whole) + remainder).toFixed(1)}%`;
 }
 
@@ -43,18 +35,14 @@ export function FinitePopulationExperience() {
   const [selectionStep, setSelectionStep] = useState(2); // 2/20 = 0.1
 
   const preset =
-    finitePopulationPresets.find((option) => option.id === presetId) ??
-    finitePopulationPresets[0];
+    finitePopulationPresets.find((option) => option.id === presetId) ?? finitePopulationPresets[0];
 
   const config = useMemo(
     () =>
       createMoranConfig({
         populationSize,
         payoffs: preset.payoffs,
-        selectionIntensity: rational(
-          BigInt(selectionStep),
-          SELECTION_DENOMINATOR,
-        ),
+        selectionIntensity: rational(BigInt(selectionStep), SELECTION_DENOMINATOR),
       }),
     [populationSize, preset.payoffs, selectionStep],
   );
@@ -63,19 +51,15 @@ export function FinitePopulationExperience() {
   const ess = useMemo(() => classifyESS(preset.payoffs), [preset.payoffs]);
   const curve = useMemo(() => fixationCurve(config), [config]);
 
-  const selectionLabel = formatRational(
-    rational(BigInt(selectionStep), SELECTION_DENOMINATOR),
-  );
+  const selectionLabel = formatRational(rational(BigInt(selectionStep), SELECTION_DENOMINATOR));
 
   // ESS says stable-or-not; the 1/N rule says favoured-or-not. Where a pure
   // strategy is an ESS yet still invadable in this population, say so out loud.
-  const disagreement =
-    (ess.a.isESS && selection.favoursB) || (ess.b.isESS && selection.favoursA);
+  const disagreement = (ess.a.isESS && selection.favoursB) || (ess.b.isESS && selection.favoursA);
 
   const plotWidth = 320;
   const plotHeight = 180;
-  const plotX = (state: number) =>
-    12 + (state / populationSize) * (plotWidth - 24);
+  const plotX = (state: number) => 12 + (state / populationSize) * (plotWidth - 24);
   const plotY = (value: number) => plotHeight - 20 - value * (plotHeight - 36);
 
   const curvePath = curve
@@ -111,10 +95,7 @@ export function FinitePopulationExperience() {
       </section>
 
       <div className="finite__layout">
-        <section
-          aria-labelledby="finite-controls-title"
-          className="finite__controls"
-        >
+        <section aria-labelledby="finite-controls-title" className="finite__controls">
           <h3 id="finite-controls-title">The contest</h3>
 
           <div className="finite__control">
@@ -135,16 +116,13 @@ export function FinitePopulationExperience() {
 
           <div className="finite__control">
             <label htmlFor="finite-size">
-              Population size N
-              <output htmlFor="finite-size">{populationSize}</output>
+              Population size N<output htmlFor="finite-size">{populationSize}</output>
             </label>
             <input
               id="finite-size"
               max={60}
               min={2}
-              onChange={(event) =>
-                setPopulationSize(Number(event.target.value))
-              }
+              onChange={(event) => setPopulationSize(Number(event.target.value))}
               step={1}
               type="range"
               value={populationSize}
@@ -153,8 +131,7 @@ export function FinitePopulationExperience() {
 
           <div className="finite__control">
             <label htmlFor="finite-selection">
-              Selection intensity w
-              <output htmlFor="finite-selection">{selectionLabel}</output>
+              Selection intensity w<output htmlFor="finite-selection">{selectionLabel}</output>
             </label>
             <input
               id="finite-selection"
@@ -166,8 +143,8 @@ export function FinitePopulationExperience() {
               value={selectionStep}
             />
             <p className="finite__control-note">
-              Fitness is 1 − w + w·π, so a small w is near-neutral drift and w =
-              1 makes fitness the raw payoff.
+              Fitness is 1 − w + w·π, so a small w is near-neutral drift and w = 1 makes fitness the
+              raw payoff.
             </p>
           </div>
 
@@ -195,16 +172,13 @@ export function FinitePopulationExperience() {
           </table>
         </section>
 
-        <section
-          aria-labelledby="finite-results-title"
-          className="finite__results"
-        >
+        <section aria-labelledby="finite-results-title" className="finite__results">
           <h3 id="finite-results-title">Fixation from a single mutant</h3>
 
           <table className="finite__fixation" data-testid="finite-fixation">
             <caption>
-              Exact probability that one mutant takes over the whole population,
-              against the neutral benchmark 1/{populationSize}.
+              Exact probability that one mutant takes over the whole population, against the neutral
+              benchmark 1/{populationSize}.
             </caption>
             <thead>
               <tr>
@@ -217,25 +191,19 @@ export function FinitePopulationExperience() {
             <tbody>
               <tr>
                 <th scope="row">{preset.strategyA}</th>
-                <td className="finite__exact">
-                  {formatRational(selection.fixationA)}
-                </td>
+                <td className="finite__exact">{formatRational(selection.fixationA)}</td>
                 <td>{percentLabel(selection.fixationA)}</td>
                 <td>{selection.favoursA ? "Yes" : "No"}</td>
               </tr>
               <tr>
                 <th scope="row">{preset.strategyB}</th>
-                <td className="finite__exact">
-                  {formatRational(selection.fixationB)}
-                </td>
+                <td className="finite__exact">{formatRational(selection.fixationB)}</td>
                 <td>{percentLabel(selection.fixationB)}</td>
                 <td>{selection.favoursB ? "Yes" : "No"}</td>
               </tr>
               <tr>
                 <th scope="row">Neutral drift</th>
-                <td className="finite__exact">
-                  {formatRational(selection.neutral)}
-                </td>
+                <td className="finite__exact">{formatRational(selection.neutral)}</td>
                 <td>{percentLabel(selection.neutral)}</td>
                 <td>—</td>
               </tr>
@@ -257,32 +225,22 @@ export function FinitePopulationExperience() {
                 y1={plotHeight - 20}
                 y2={plotHeight - 20}
               />
-              <line
-                className="finite__axis"
-                x1={12}
-                x2={12}
-                y1={16}
-                y2={plotHeight - 20}
-              />
+              <line className="finite__axis" x1={12} x2={12} y1={16} y2={plotHeight - 20} />
               <path className="finite__neutral-line" d={neutralPath} />
               <path className="finite__curve" d={curvePath} />
             </svg>
             <figcaption>
-              Solid: fixation probability for {preset.strategyA} from each
-              starting count. Dashed: the neutral drift line i/N. Curving above
-              it means selection is helping.
+              Solid: fixation probability for {preset.strategyA} from each starting count. Dashed:
+              the neutral drift line i/N. Curving above it means selection is helping.
             </figcaption>
           </figure>
 
           <details className="finite__table-fallback">
-            <summary>
-              View the fixation curve as an accessible data table
-            </summary>
+            <summary>View the fixation curve as an accessible data table</summary>
             <div className="finite__table-scroll" tabIndex={0}>
               <table>
                 <caption>
-                  Exact fixation probability for {preset.strategyA} from every
-                  starting count.
+                  Exact fixation probability for {preset.strategyA} from every starting count.
                 </caption>
                 <thead>
                   <tr>
@@ -306,8 +264,7 @@ export function FinitePopulationExperience() {
 
       <section aria-labelledby="finite-ess-title" className="finite__ess">
         <h3 id="finite-ess-title">
-          The formal <GlossaryTerm term="evolutionarily-stable-strategy" />{" "}
-          verdict
+          The formal <GlossaryTerm term="evolutionarily-stable-strategy" /> verdict
         </h3>
         <ul className="finite__ess-list">
           <li data-testid="finite-ess-a">
@@ -329,8 +286,7 @@ export function FinitePopulationExperience() {
         </ul>
         {ess.mixed ? (
           <p data-testid="finite-mixed">
-            An interior rest point sits at{" "}
-            <strong>{formatRational(ess.mixed.shareOfA)}</strong>{" "}
+            An interior rest point sits at <strong>{formatRational(ess.mixed.shareOfA)}</strong>{" "}
             {preset.strategyA}
             {ess.mixed.isStable
               ? " — and it is an attractor, so this mixture is the stable outcome and neither pure strategy is an ESS."
@@ -340,8 +296,7 @@ export function FinitePopulationExperience() {
 
         {disagreement ? (
           <p className="finite__disagreement" data-testid="finite-disagreement">
-            <strong>The two tests disagree here.</strong>{" "}
-            {finitePopulationContent.disagreement}
+            <strong>The two tests disagree here.</strong> {finitePopulationContent.disagreement}
           </p>
         ) : null}
       </section>
@@ -350,10 +305,9 @@ export function FinitePopulationExperience() {
         <summary>Why these are fractions and not decimals</summary>
         <p>{finitePopulationContent.exactness}</p>
         <p>
-          At N = {populationSize}, drift alone would fix a {preset.strategyA}{" "}
-          mutant with probability {formatRational(selection.neutral)}. Selection
-          moves that to {formatRational(selection.fixationA)} — a margin of
-          exactly{" "}
+          At N = {populationSize}, drift alone would fix a {preset.strategyA} mutant with
+          probability {formatRational(selection.neutral)}. Selection moves that to{" "}
+          {formatRational(selection.fixationA)} — a margin of exactly{" "}
           <code data-testid="finite-margin">
             {formatRational(subtract(selection.fixationA, selection.neutral))}
           </code>

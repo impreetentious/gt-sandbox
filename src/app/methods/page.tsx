@@ -42,57 +42,47 @@ export default function MethodsPage() {
         <p className="eyebrow">Methods / Inspectable confidence</p>
         <h1 className="display">Correctness is the product.</h1>
         <p className="lede">
-          The interface is allowed to be inviting because the claims underneath
-          it are deliberately hard to fake: exact arithmetic, disjoint checks,
-          frozen evidence, and an honest boundary around what v1 can prove.
+          The interface is allowed to be inviting because the claims underneath it are deliberately
+          hard to fake: exact arithmetic, disjoint checks, frozen evidence, and an honest boundary
+          around what v1 can prove.
         </p>
       </header>
 
-      <section
-        aria-labelledby="scope-title"
-        className="methods__section methods__scope"
-      >
+      <section aria-labelledby="scope-title" className="methods__section methods__scope">
         <div>
           <p className="eyebrow">Scope</p>
           <h2 id="scope-title">Finite two-player normal-form games.</h2>
         </div>
         <div>
           <p>
-            The solver accepts two to four actions per player and represents
-            every payoff and equilibrium probability as a normalized bigint
-            fraction. Floating point does not enter an equilibrium or
-            best-response correctness path.
+            The solver accepts two to four actions per player and represents every payoff and
+            equilibrium probability as a normalized bigint fraction. Floating point does not enter
+            an equilibrium or best-response correctness path.
           </p>
           <p>
-            Equal-size support enumeration returns all equilibria of a
-            nondegenerate bimatrix game within that bound. Degenerate games can
-            contain equilibrium components; the engine detects an exact
-            support-size witness, reports pure equilibria and verified mixed
+            Equal-size support enumeration returns all equilibria of a nondegenerate bimatrix game
+            within that bound. Degenerate games can contain equilibrium components; the engine
+            detects an exact support-size witness, reports pure equilibria and verified mixed
             samples, and does not call that sample complete.
           </p>
           <p>
-            Dominance is decided against <em>mixed</em> dominators, not only
-            pure ones. From three actions upwards a strategy can be beaten by a
-            randomization over others while losing to none of them alone, and a
-            pure-only test reports no dominance in exactly that case. The
-            question is a linear program; it is solved by a two-phase simplex
-            over the same bigint fractions, using Bland&apos;s pivot rule
-            because dominance programs are routinely degenerate and the usual
-            rule can cycle on them.
+            Dominance is decided against <em>mixed</em> dominators, not only pure ones. From three
+            actions upwards a strategy can be beaten by a randomization over others while losing to
+            none of them alone, and a pure-only test reports no dominance in exactly that case. The
+            question is a linear program; it is solved by a two-phase simplex over the same bigint
+            fractions, using Bland&apos;s pivot rule because dominance programs are routinely
+            degenerate and the usual rule can cycle on them.
           </p>
         </div>
       </section>
 
-      <section
-        aria-labelledby="verification-title"
-        className="methods__section"
-      >
+      <section aria-labelledby="verification-title" className="methods__section">
         <div className="methods__section-heading">
           <p className="eyebrow">Verification spine</p>
           <h2 id="verification-title">Six layers that fail differently.</h2>
           <p>
-            Agreement matters most when the implementations and evidence do not
-            share the same likely mistake.
+            Agreement matters most when the implementations and evidence do not share the same
+            likely mistake.
           </p>
         </div>
         <ol className="methods__layers">
@@ -108,34 +98,26 @@ export default function MethodsPage() {
         </ol>
       </section>
 
-      <section
-        aria-labelledby="simulation-title"
-        className="methods__section methods__split"
-      >
+      <section aria-labelledby="simulation-title" className="methods__section methods__split">
         <div>
           <p className="eyebrow">Simulation boundary</p>
           <h2 id="simulation-title">Reproducible, not relabelled as proof.</h2>
         </div>
         <div>
           <p>
-            Match length, policy decisions, and action noise each receive an
-            event-addressed stream derived from the master seed. Changing one
-            policy therefore does not silently shift an opponent&apos;s future
-            random draws.
+            Match length, policy decisions, and action noise each receive an event-addressed stream
+            derived from the master seed. Changing one policy therefore does not silently shift an
+            opponent&apos;s future random draws.
           </p>
           <p>
-            Evolution shares use guarded floating-point replicator updates.
-            Those shares are simulation state, not solver claims. A zero or
-            non-finite mean-fitness denominator returns a typed failure before
-            division.
+            Evolution shares use guarded floating-point replicator updates. Those shares are
+            simulation state, not solver claims. A zero or non-finite mean-fitness denominator
+            returns a typed failure before division.
           </p>
         </div>
       </section>
 
-      <section
-        aria-labelledby="zd-title"
-        className="methods__section methods__zd"
-      >
+      <section aria-labelledby="zd-title" className="methods__section methods__zd">
         <div>
           <p className="eyebrow">Worked demonstration</p>
           <h2 id="zd-title">One player can fix the scoreboard.</h2>
@@ -147,51 +129,41 @@ export default function MethodsPage() {
         </div>
       </section>
 
-      <section
-        aria-labelledby="privacy-title"
-        className="methods__section methods__privacy"
-      >
+      <section aria-labelledby="privacy-title" className="methods__section methods__privacy">
         <div>
           <p className="eyebrow">Privacy and state</p>
           <h2 id="privacy-title">Static and quiet by construction.</h2>
         </div>
         <div>
           <ul>
+            <li>No account, backend, analytics, cookies, telemetry, or runtime API calls.</li>
             <li>
-              No account, backend, analytics, cookies, telemetry, or runtime API
-              calls.
+              Initial loads and navigation request only same-origin static documents, scripts,
+              styles, images, and build-emitted route data.
             </li>
             <li>
-              Initial loads and navigation request only same-origin static
-              documents, scripts, styles, images, and build-emitted route data.
+              An optional service worker caches those same files so the sandbox keeps working
+              offline. It refuses any request that is not on this origin, and its cache is keyed to
+              the release version, so a new version discards the previous one instead of
+              accumulating.
             </li>
             <li>
-              An optional service worker caches those same files so the sandbox
-              keeps working offline. It refuses any request that is not on this
-              origin, and its cache is keyed to the release version, so a new
-              version discards the previous one instead of accumulating.
-            </li>
-            <li>
-              A Build link can encode its bounded title, action labels, exact
-              payoffs, persona, seed, continuation probability, and noise. Read
-              the URL before sharing it if those labels are sensitive.
+              A Build link can encode its bounded title, action labels, exact payoffs, persona,
+              seed, continuation probability, and noise. Read the URL before sharing it if those
+              labels are sensitive.
             </li>
             <li>
               Local storage contains three optional keys and nothing else:{" "}
-              <code>seenOnboarding</code>, which hides the first-visit hint
-              after dismissal; <code>theme</code>, written only if you pin light
-              or dark rather than following your system; and{" "}
-              <code>curriculum</code>, written only if you use the Learn path,
-              holding which stops you marked done and whether its gate is on.
+              <code>seenOnboarding</code>, which hides the first-visit hint after dismissal;{" "}
+              <code>theme</code>, written only if you pin light or dark rather than following your
+              system; and <code>curriculum</code>, written only if you use the Learn path, holding
+              which stops you marked done and whether its gate is on.
             </li>
           </ul>
         </div>
       </section>
 
-      <section
-        aria-labelledby="prior-art-title"
-        className="methods__section methods__references"
-      >
+      <section aria-labelledby="prior-art-title" className="methods__section methods__references">
         <div className="methods__section-heading">
           <p className="eyebrow">References and prior art</p>
           <h2 id="prior-art-title">Built in a visible lineage.</h2>
@@ -200,28 +172,24 @@ export default function MethodsPage() {
           <section>
             <h3>Definitions and selection</h3>
             <p>
-              Martin J. Osborne, <cite>An Introduction to Game Theory</cite>;
-              John Harsanyi and Reinhard Selten,{" "}
-              <cite>A General Theory of Equilibrium Selection in Games</cite>.
+              Martin J. Osborne, <cite>An Introduction to Game Theory</cite>; John Harsanyi and
+              Reinhard Selten, <cite>A General Theory of Equilibrium Selection in Games</cite>.
             </p>
           </section>
           <section>
             <h3>Repeated play and evolution</h3>
             <p>
-              Robert Axelrod, <cite>The Evolution of Cooperation</cite>; Martin
-              Nowak, “Five Rules for the Evolution of Cooperation”; Josef
-              Hofbauer and Karl Sigmund,{" "}
+              Robert Axelrod, <cite>The Evolution of Cooperation</cite>; Martin Nowak, “Five Rules
+              for the Evolution of Cooperation”; Josef Hofbauer and Karl Sigmund,{" "}
               <cite>Evolutionary Games and Population Dynamics</cite>.
             </p>
           </section>
           <section>
             <h3>Independent computation</h3>
             <p>
-              <a href="https://gambitproject.readthedocs.io/en/latest/">
-                Gambit 16.3.0
-              </a>{" "}
-              provides the external equilibrium corpus. Its fixture inputs,
-              output, manifest, and digest are committed in the repository.
+              <a href="https://gambitproject.readthedocs.io/en/latest/">Gambit 16.3.0</a> provides
+              the external equilibrium corpus. Its fixture inputs, output, manifest, and digest are
+              committed in the repository.
             </p>
           </section>
           <section>
@@ -231,9 +199,8 @@ export default function MethodsPage() {
               <a href="https://ncase.me/trust/">
                 <cite>The Evolution of Trust</cite>
               </a>{" "}
-              remains the benchmark linear explorable for repeated cooperation.
-              This sandbox complements it with editable games and a live exact
-              analytical engine.
+              remains the benchmark linear explorable for repeated cooperation. This sandbox
+              complements it with editable games and a live exact analytical engine.
             </p>
           </section>
         </div>

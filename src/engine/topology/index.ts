@@ -1,8 +1,5 @@
 import { createNormalFormGame, type NormalFormGame } from "@/engine/game";
-import {
-  classifyTwoByTwo,
-  type StrategicStructure,
-} from "@/engine/solve/classify";
+import { classifyTwoByTwo, type StrategicStructure } from "@/engine/solve/classify";
 
 export interface OrdinalTopologyGame {
   readonly id: string;
@@ -15,19 +12,16 @@ export interface OrdinalTopologyGame {
 function permutations(values: readonly number[]): number[][] {
   if (values.length === 0) return [[]];
   return values.flatMap((value, index) =>
-    permutations([...values.slice(0, index), ...values.slice(index + 1)]).map(
-      (tail) => [value, ...tail],
-    ),
+    permutations([...values.slice(0, index), ...values.slice(index + 1)]).map((tail) => [
+      value,
+      ...tail,
+    ]),
   );
 }
 
 const RANKINGS = permutations([1, 2, 3, 4]);
 
-function transform(
-  ranks: readonly number[],
-  rowSwap: boolean,
-  columnSwap: boolean,
-): number[] {
+function transform(ranks: readonly number[], rowSwap: boolean, columnSwap: boolean): number[] {
   const result: number[] = [];
   for (let row = 0; row < 2; row += 1) {
     for (let column = 0; column < 2; column += 1) {
@@ -39,10 +33,7 @@ function transform(
   return result;
 }
 
-function canonicalKey(
-  rowRanks: readonly number[],
-  columnRanks: readonly number[],
-): string {
+function canonicalKey(rowRanks: readonly number[], columnRanks: readonly number[]): string {
   const variants: string[] = [];
   for (const rowSwap of [false, true]) {
     for (const columnSwap of [false, true]) {
@@ -78,8 +69,7 @@ function gameFor(key: string, id: string): NormalFormGame {
 
 function conceptTerms(structure: StrategicStructure): readonly string[] {
   const terms = structure.replaceAll(/[()]/g, "").split(/\s+/);
-  if (structure === "coordination (assurance)")
-    return [...terms, "stag hunt", "coordination"];
+  if (structure === "coordination (assurance)") return [...terms, "stag hunt", "coordination"];
   if (structure === "anti-coordination") return [...terms, "chicken"];
   if (structure === "dilemma") return [...terms, "prisoners dilemma"];
   if (structure === "battle") return [...terms, "battle of the sexes"];
@@ -95,8 +85,7 @@ function conceptTerms(structure: StrategicStructure): readonly string[] {
 export function enumerateOrdinalTopology(): readonly OrdinalTopologyGame[] {
   const canonical = new Set<string>();
   for (const rowRanks of RANKINGS) {
-    for (const columnRanks of RANKINGS)
-      canonical.add(canonicalKey(rowRanks, columnRanks));
+    for (const columnRanks of RANKINGS) canonical.add(canonicalKey(rowRanks, columnRanks));
   }
 
   return [...canonical].sort().map((key, index) => {
@@ -121,15 +110,11 @@ function fuzzyMatch(query: string, candidate: string): boolean {
   return false;
 }
 
-export function filterOrdinalTopology(
-  query: string,
-): readonly OrdinalTopologyGame[] {
+export function filterOrdinalTopology(query: string): readonly OrdinalTopologyGame[] {
   const normalized = query.trim().toLocaleLowerCase();
   if (normalized === "") return ordinalTopology;
   return ordinalTopology.filter((entry) => {
-    const candidate = [entry.id, entry.structure, ...entry.concepts]
-      .join(" ")
-      .toLocaleLowerCase();
+    const candidate = [entry.id, entry.structure, ...entry.concepts].join(" ").toLocaleLowerCase();
     return fuzzyMatch(normalized, candidate);
   });
 }

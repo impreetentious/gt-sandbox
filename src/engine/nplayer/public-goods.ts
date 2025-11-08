@@ -1,12 +1,4 @@
-import {
-  add,
-  compare,
-  multiply,
-  rational,
-  subtract,
-  ZERO,
-  type Rational,
-} from "@/engine/rational";
+import { add, compare, multiply, rational, subtract, ZERO, type Rational } from "@/engine/rational";
 
 /**
  * Exact n-player voluntary-contribution mechanism (VCM), the canonical
@@ -46,9 +38,7 @@ export interface PublicGoodsConfig {
   readonly mpcr: Rational;
 }
 
-export function createPublicGoodsConfig(
-  config: PublicGoodsConfig,
-): PublicGoodsConfig {
+export function createPublicGoodsConfig(config: PublicGoodsConfig): PublicGoodsConfig {
   if (!Number.isSafeInteger(config.playerCount) || config.playerCount < 2) {
     throw new RangeError("playerCount must be an integer ≥ 2.");
   }
@@ -63,9 +53,7 @@ export function createPublicGoodsConfig(
 
 function assertContribution(value: number, endowment: number): void {
   if (!Number.isSafeInteger(value) || value < 0 || value > endowment) {
-    throw new RangeError(
-      `Contribution must be an integer in 0..${endowment}; received ${value}.`,
-    );
+    throw new RangeError(`Contribution must be an integer in 0..${endowment}; received ${value}.`);
   }
 }
 
@@ -106,18 +94,13 @@ export function evaluateProfile(
     assertContribution(contribution, config.endowment);
   }
   const groupTotal = contributions.reduce((sum, value) => sum + value, 0);
-  const payoffs = contributions.map((own) =>
-    payoffFor(config, own, groupTotal),
-  );
+  const payoffs = contributions.map((own) => payoffFor(config, own, groupTotal));
   const welfare = payoffs.reduce((sum, value) => add(sum, value), ZERO);
   return { contributions, groupTotal, payoffs, welfare };
 }
 
 /** Convenience: the profile in which every player contributes `amount`. */
-export function uniformProfile(
-  config: PublicGoodsConfig,
-  amount: number,
-): number[] {
+export function uniformProfile(config: PublicGoodsConfig, amount: number): number[] {
   assertContribution(amount, config.endowment);
   return Array.from({ length: config.playerCount }, () => amount);
 }
@@ -135,10 +118,7 @@ export function privateMarginalReturn(config: PublicGoodsConfig): Rational {
  * Positive whenever the pot multiplies faster than it is split.
  */
 export function socialMarginalReturn(config: PublicGoodsConfig): Rational {
-  return subtract(
-    multiply(config.mpcr, rational(BigInt(config.playerCount))),
-    rational(1n),
-  );
+  return subtract(multiply(config.mpcr, rational(BigInt(config.playerCount))), rational(1n));
 }
 
 export interface DilemmaVerdict {
@@ -226,10 +206,7 @@ export interface DeviationRow {
  * player is held at `othersEach`. This is the exact arithmetic behind the
  * dominance claim: `ownPayoff` falls monotonically while `welfare` rises.
  */
-export function deviationSweep(
-  config: PublicGoodsConfig,
-  othersEach: number,
-): DeviationRow[] {
+export function deviationSweep(config: PublicGoodsConfig, othersEach: number): DeviationRow[] {
   assertContribution(othersEach, config.endowment);
   const otherCount = config.playerCount - 1;
   const rows: DeviationRow[] = [];
@@ -237,10 +214,7 @@ export function deviationSweep(
     const groupTotal = own + othersEach * otherCount;
     const ownPayoff = payoffFor(config, own, groupTotal);
     const otherPayoff = payoffFor(config, othersEach, groupTotal);
-    const welfare = add(
-      ownPayoff,
-      multiply(otherPayoff, rational(BigInt(otherCount))),
-    );
+    const welfare = add(ownPayoff, multiply(otherPayoff, rational(BigInt(otherCount))));
     rows.push({ contribution: own, ownPayoff, otherPayoff, welfare });
   }
   return rows;
@@ -252,9 +226,6 @@ export function deviationSweep(
  */
 export function cooperationDividend(config: PublicGoodsConfig): Rational {
   const allDefect = evaluateProfile(config, uniformProfile(config, 0));
-  const allCooperate = evaluateProfile(
-    config,
-    uniformProfile(config, config.endowment),
-  );
+  const allCooperate = evaluateProfile(config, uniformProfile(config, config.endowment));
   return subtract(allCooperate.payoffs[0], allDefect.payoffs[0]);
 }

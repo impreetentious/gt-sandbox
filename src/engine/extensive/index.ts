@@ -17,8 +17,4 @@ export {
   type PureStrategy,
   type SPNEResult,
 } from "@/engine/extensive/backward-induction";
-export {
-  payoffsUnder,
-  verifySubgamePerfect,
-  type SPNEVerdict,
-} from "@/engine/extensive/verify";
+export { payoffsUnder, verifySubgamePerfect, type SPNEVerdict } from "@/engine/extensive/verify";

@@ -35,10 +35,7 @@ describe("V2-P10 curriculum progression", () => {
     // This is the acceptance the phase turns on: one control, and the locks are
     // gone. Progress has to survive it, or turning the gate off would read as a
     // punishment for having asked.
-    const progress = withGating(
-      withCompleted(initialProgress, firstId, true),
-      false,
-    );
+    const progress = withGating(withCompleted(initialProgress, firstId, true), false);
 
     expect(progress.completed).toEqual([firstId]);
     for (const step of curriculum) {
@@ -62,21 +59,13 @@ describe("V2-P10 curriculum progression", () => {
   });
 
   it("keeps completed stops in curriculum order regardless of when they landed", () => {
-    const progress = withCompleted(
-      withCompleted(initialProgress, secondId, true),
-      firstId,
-      true,
-    );
+    const progress = withCompleted(withCompleted(initialProgress, secondId, true), firstId, true);
 
     expect(progress.completed).toEqual([firstId, secondId]);
   });
 
   it("un-marks a stop without disturbing the others", () => {
-    const both = withCompleted(
-      withCompleted(initialProgress, firstId, true),
-      secondId,
-      true,
-    );
+    const both = withCompleted(withCompleted(initialProgress, firstId, true), secondId, true);
     const undone = withCompleted(both, firstId, false);
 
     expect(undone.completed).toEqual([secondId]);
@@ -84,17 +73,12 @@ describe("V2-P10 curriculum progression", () => {
   });
 
   it("ignores an id that is not part of the curriculum", () => {
-    expect(withCompleted(initialProgress, "not-a-stop", true)).toEqual(
-      initialProgress,
-    );
+    expect(withCompleted(initialProgress, "not-a-stop", true)).toEqual(initialProgress);
     expect(isUnlocked(initialProgress, "not-a-stop")).toBe(false);
   });
 
   it("round-trips through storage", () => {
-    const progress = withGating(
-      withCompleted(initialProgress, firstId, true),
-      false,
-    );
+    const progress = withGating(withCompleted(initialProgress, firstId, true), false);
 
     expect(parseProgress(serializeProgress(progress))).toEqual(progress);
   });
@@ -138,12 +122,8 @@ describe("V2-P10 curriculum progression", () => {
   });
 
   it("points every stop at a distinct route with a single concept", () => {
-    expect(new Set(curriculum.map((step) => step.id)).size).toBe(
-      curriculum.length,
-    );
-    expect(new Set(curriculum.map((step) => step.href)).size).toBe(
-      curriculum.length,
-    );
+    expect(new Set(curriculum.map((step) => step.id)).size).toBe(curriculum.length);
+    expect(new Set(curriculum.map((step) => step.href)).size).toBe(curriculum.length);
 
     for (const step of curriculum) {
       expect(step.href.startsWith("/")).toBe(true);

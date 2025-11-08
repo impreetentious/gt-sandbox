@@ -7,11 +7,7 @@ import {
   type HotSeatState,
 } from "@/state/hot-seat-session";
 
-function playRound(
-  state: HotSeatState,
-  rowAction: 0 | 1,
-  columnAction: 0 | 1,
-): HotSeatState {
+function playRound(state: HotSeatState, rowAction: 0 | 1, columnAction: 0 | 1): HotSeatState {
   let next = reduceHotSeatSession(state, {
     type: "commit-row",
     action: rowAction,
@@ -56,9 +52,7 @@ describe("hot-seat session reducer", () => {
   it("ignores out-of-phase actions so a hidden choice cannot be skipped", () => {
     const start = createHotSeatSession("pd");
     // Column cannot commit before row.
-    expect(
-      reduceHotSeatSession(start, { type: "commit-column", action: 0 }),
-    ).toBe(start);
+    expect(reduceHotSeatSession(start, { type: "commit-column", action: 0 })).toBe(start);
     // Advancing before a reveal is a no-op.
     expect(reduceHotSeatSession(start, { type: "advance" })).toBe(start);
 
@@ -67,9 +61,7 @@ describe("hot-seat session reducer", () => {
       action: 0,
     });
     // A second row commit during handover is rejected.
-    expect(
-      reduceHotSeatSession(committed, { type: "commit-row", action: 1 }),
-    ).toBe(committed);
+    expect(reduceHotSeatSession(committed, { type: "commit-row", action: 1 })).toBe(committed);
   });
 
   it("completes exactly at the round limit and restarts fresh", () => {

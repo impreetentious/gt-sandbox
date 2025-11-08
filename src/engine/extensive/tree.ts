@@ -47,14 +47,10 @@ function collectIds(node: GameNode, out: Set<string>): void {
       );
     }
     if (node.actions.length === 0) {
-      throw new RangeError(
-        `Decision node ${node.id} must have at least one action.`,
-      );
+      throw new RangeError(`Decision node ${node.id} must have at least one action.`);
     }
     if (new Set(node.actions).size !== node.actions.length) {
-      throw new TypeError(
-        `Decision node ${node.id} action labels must be unique.`,
-      );
+      throw new TypeError(`Decision node ${node.id} action labels must be unique.`);
     }
     for (const child of node.children) {
       collectIds(child, out);
@@ -65,9 +61,7 @@ function collectIds(node: GameNode, out: Set<string>): void {
 /** Validates an extensive-form game and returns it unchanged if it passes. */
 export function createExtensiveGame(input: ExtensiveGame): ExtensiveGame {
   if (input.id.trim() === "" || input.title.trim() === "") {
-    throw new TypeError(
-      "Extensive-form games require a non-empty id and title.",
-    );
+    throw new TypeError("Extensive-form games require a non-empty id and title.");
   }
   if (input.players.length < 1) {
     throw new RangeError("Extensive-form games require at least one player.");
@@ -99,9 +93,7 @@ function validatePlayersAndPayoffs(
     return;
   }
   if (!knownPlayers.has(node.player)) {
-    throw new TypeError(
-      `Decision node ${node.id} references unknown player ${node.player}.`,
-    );
+    throw new TypeError(`Decision node ${node.id} references unknown player ${node.player}.`);
   }
   for (const child of node.children) {
     validatePlayersAndPayoffs(child, knownPlayers, playerCount);

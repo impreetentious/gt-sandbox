@@ -26,9 +26,7 @@ function cspFromConfig(filename) {
     .find((entry) => entry.key === "Content-Security-Policy");
 
   if (!header) {
-    throw new Error(
-      `${filename} does not define a Content-Security-Policy header.`,
-    );
+    throw new Error(`${filename} does not define a Content-Security-Policy header.`);
   }
 
   return header.value;

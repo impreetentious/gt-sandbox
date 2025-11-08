@@ -33,9 +33,7 @@ import {
 
 function feasible(construction: ZdConstruction) {
   if (construction.kind !== "feasible") {
-    throw new Error(
-      `Expected a feasible construction: ${construction.witness}`,
-    );
+    throw new Error(`Expected a feasible construction: ${construction.witness}`);
   }
   return construction;
 }
@@ -45,12 +43,7 @@ function show(strategy: MemoryOneStrategy): string[] {
 }
 
 /** An interior memory-one opponent — every probability strictly in (0, 1). */
-function interior(
-  p: number,
-  q: number,
-  r: number,
-  s: number,
-): MemoryOneStrategy {
+function interior(p: number, q: number, r: number, s: number): MemoryOneStrategy {
   return [
     rational(BigInt(p), 12n),
     rational(BigInt(q), 12n),
@@ -113,27 +106,21 @@ describe("extortionate strategies", () => {
   it("produces exact fractions for a χ that is itself a fraction", () => {
     // χ = 3/2 gives f = (−1, −7, 11/2, 0), so φ is capped at 1/7 by the CD
     // component and p₃ = 11/14 — a value with no finite decimal expansion.
-    const built = feasible(
-      extortionateStrategy(CANONICAL_PD, rational(3n, 2n)),
-    );
+    const built = feasible(extortionateStrategy(CANONICAL_PD, rational(3n, 2n)));
 
     expect(show(built.strategy)).toEqual(["6/7", "0", "11/14", "0"]);
     expect(formatRational(built.phi.max)).toBe("1/7");
   });
 
   it("rejects an extortion factor below 1", () => {
-    expect(() => extortionateStrategy(CANONICAL_PD, rational(1n, 2n))).toThrow(
-      RangeError,
-    );
+    expect(() => extortionateStrategy(CANONICAL_PD, rational(1n, 2n))).toThrow(RangeError);
   });
 
   it("rejects a φ outside the admissible interval", () => {
-    expect(() =>
-      extortionateStrategy(CANONICAL_PD, rational(2n), rational(1n)),
-    ).toThrow(RangeError);
-    expect(() =>
-      extortionateStrategy(CANONICAL_PD, rational(2n), ZERO),
-    ).toThrow(RangeError);
+    expect(() => extortionateStrategy(CANONICAL_PD, rational(2n), rational(1n))).toThrow(
+      RangeError,
+    );
+    expect(() => extortionateStrategy(CANONICAL_PD, rational(2n), ZERO)).toThrow(RangeError);
   });
 });
 
@@ -155,9 +142,7 @@ describe("generous strategies", () => {
   });
 
   it("differs from extortion as soon as χ leaves 1", () => {
-    const extortion = feasible(
-      extortionateStrategy(CANONICAL_PD, rational(2n)),
-    );
+    const extortion = feasible(extortionateStrategy(CANONICAL_PD, rational(2n)));
     const generous = feasible(generousStrategy(CANONICAL_PD, rational(2n)));
 
     expect(show(extortion.strategy)).not.toEqual(show(generous.strategy));
@@ -169,11 +154,7 @@ describe("generous strategies", () => {
 describe("equalizers", () => {
   it("pins the opponent's score anywhere between P and R", () => {
     const built = feasible(equalizerStrategy(CANONICAL_PD, rational(2n)));
-    const outcome = stationaryOutcome(
-      CANONICAL_PD,
-      built.strategy,
-      interior(5, 9, 2, 7),
-    );
+    const outcome = stationaryOutcome(CANONICAL_PD, built.strategy, interior(5, 9, 2, 7));
 
     expect(outcome).not.toBeNull();
     expect(formatRational(outcome!.opponentPayoff)).toBe("2");
@@ -228,20 +209,14 @@ describe("the enforced relation actually binds", () => {
     ]) {
       const outcome = stationaryOutcome(CANONICAL_PD, built.strategy, opponent);
       expect(outcome).not.toBeNull();
-      expect(equals(relationResidual(built.relation, outcome!), ZERO)).toBe(
-        true,
-      );
+      expect(equals(relationResidual(built.relation, outcome!), ZERO)).toBe(true);
     }
   });
 
   it("gives the extortioner χ times the opponent's surplus over P", () => {
     const chi = rational(3n);
     const built = feasible(extortionateStrategy(CANONICAL_PD, chi));
-    const outcome = stationaryOutcome(
-      CANONICAL_PD,
-      built.strategy,
-      interior(9, 3, 7, 2),
-    )!;
+    const outcome = stationaryOutcome(CANONICAL_PD, built.strategy, interior(9, 3, 7, 2))!;
 
     // (sX − P) = χ·(sY − P), written as an identity rather than a ratio so the
     // sY = P case does not divide by zero.
@@ -263,24 +238,15 @@ describe("the enforced relation actually binds", () => {
         fc.integer({ min: 1, max: 11 }),
         fc.integer({ min: 1, max: 11 }),
         (chiTenths, a, b, c, d) => {
-          const built = extortionateStrategy(
-            CANONICAL_PD,
-            rational(BigInt(chiTenths), 10n),
-          );
+          const built = extortionateStrategy(CANONICAL_PD, rational(BigInt(chiTenths), 10n));
           if (built.kind !== "feasible") {
             return;
           }
-          const outcome = stationaryOutcome(
-            CANONICAL_PD,
-            built.strategy,
-            interior(a, b, c, d),
-          );
+          const outcome = stationaryOutcome(CANONICAL_PD, built.strategy, interior(a, b, c, d));
           if (outcome === null) {
             return;
           }
-          expect(equals(relationResidual(built.relation, outcome), ZERO)).toBe(
-            true,
-          );
+          expect(equals(relationResidual(built.relation, outcome), ZERO)).toBe(true);
         },
       ),
       { numRuns: 60 },
@@ -295,11 +261,7 @@ describe("the enforced relation actually binds", () => {
       p: rational(2n),
     });
     const built = feasible(generousStrategy(stagHunt, rational(2n)));
-    const outcome = stationaryOutcome(
-      stagHunt,
-      built.strategy,
-      interior(7, 4, 9, 2),
-    )!;
+    const outcome = stationaryOutcome(stagHunt, built.strategy, interior(7, 4, 9, 2))!;
 
     expect(equals(relationResidual(built.relation, outcome), ZERO)).toBe(true);
   });
@@ -313,18 +275,14 @@ describe("classifying an arbitrary strategy", () => {
     if (verdict.kind === "zero-determinant") {
       // α = −β and γ = 0, in whatever normalisation elimination lands on.
       expect(formatRational(verdict.relation.gamma)).toBe("0");
-      expect(
-        equals(verdict.relation.alpha, negate(verdict.relation.beta)),
-      ).toBe(true);
+      expect(equals(verdict.relation.alpha, negate(verdict.relation.beta))).toBe(true);
     }
   });
 
   it("recognises a strategy it built itself", () => {
     for (const chi of [2n, 3n, 5n]) {
       const built = feasible(extortionateStrategy(CANONICAL_PD, rational(chi)));
-      expect(classifyZd(CANONICAL_PD, built.strategy).kind).toBe(
-        "zero-determinant",
-      );
+      expect(classifyZd(CANONICAL_PD, built.strategy).kind).toBe("zero-determinant");
     }
   });
 
@@ -354,20 +312,13 @@ describe("classifying an arbitrary strategy", () => {
   });
 
   it("rejects Always Cooperate for the same structural reason", () => {
-    expect(classifyZd(CANONICAL_PD, ALWAYS_COOPERATE).kind).toBe(
-      "not-zero-determinant",
-    );
+    expect(classifyZd(CANONICAL_PD, ALWAYS_COOPERATE).kind).toBe("not-zero-determinant");
   });
 
   it("reports the vacuous relation rather than calling it zero-determinant", () => {
     // p̃ = 0 means p = (1, 1, 0, 0) — cooperate iff you cooperated last round,
     // regardless of the opponent. It satisfies 0 = 0 and constrains nothing.
-    const verdict = classifyZd(CANONICAL_PD, [
-      rational(1n),
-      rational(1n),
-      ZERO,
-      ZERO,
-    ]);
+    const verdict = classifyZd(CANONICAL_PD, [rational(1n), rational(1n), ZERO, ZERO]);
 
     expect(verdict.kind).toBe("not-zero-determinant");
     if (verdict.kind === "not-zero-determinant") {
@@ -378,10 +329,7 @@ describe("classifying an arbitrary strategy", () => {
   it("round-trips: every constructed strategy classifies back to its relation", () => {
     fc.assert(
       fc.property(fc.integer({ min: 10, max: 60 }), (chiTenths) => {
-        const built = extortionateStrategy(
-          CANONICAL_PD,
-          rational(BigInt(chiTenths), 10n),
-        );
+        const built = extortionateStrategy(CANONICAL_PD, rational(BigInt(chiTenths), 10n));
         if (built.kind !== "feasible") {
           return;
         }
@@ -392,10 +340,7 @@ describe("classifying an arbitrary strategy", () => {
           const original = built.relation;
           const found = verdict.relation;
           expect(
-            equals(
-              multiply(original.alpha, found.beta),
-              multiply(original.beta, found.alpha),
-            ),
+            equals(multiply(original.alpha, found.beta), multiply(original.beta, found.alpha)),
           ).toBe(true);
         }
       }),
@@ -434,20 +379,11 @@ describe("infeasible constructions", () => {
 
 describe("stationary distribution", () => {
   it("puts a pair of interior players on a normalised distribution", () => {
-    const outcome = stationaryOutcome(
-      CANONICAL_PD,
-      interior(6, 6, 6, 6),
-      interior(6, 6, 6, 6),
-    )!;
+    const outcome = stationaryOutcome(CANONICAL_PD, interior(6, 6, 6, 6), interior(6, 6, 6, 6))!;
 
     // Coin-flippers on both sides: each of the four states a quarter of the
     // time, and both average (R + S + T + P) / 4 = 9/4.
-    expect(outcome.distribution.map(formatRational)).toEqual([
-      "1/4",
-      "1/4",
-      "1/4",
-      "1/4",
-    ]);
+    expect(outcome.distribution.map(formatRational)).toEqual(["1/4", "1/4", "1/4", "1/4"]);
     expect(formatRational(outcome.ownPayoff)).toBe("9/4");
     expect(formatRational(outcome.opponentPayoff)).toBe("9/4");
   });
@@ -459,12 +395,8 @@ describe("stationary distribution", () => {
     const forward = stationaryOutcome(CANONICAL_PD, x, y)!;
     const backward = stationaryOutcome(CANONICAL_PD, y, x)!;
 
-    expect(formatRational(forward.ownPayoff)).toBe(
-      formatRational(backward.opponentPayoff),
-    );
-    expect(formatRational(forward.opponentPayoff)).toBe(
-      formatRational(backward.ownPayoff),
-    );
+    expect(formatRational(forward.ownPayoff)).toBe(formatRational(backward.opponentPayoff));
+    expect(formatRational(forward.opponentPayoff)).toBe(formatRational(backward.ownPayoff));
   });
 
   it("keeps exactness where floating point would not", () => {
@@ -476,19 +408,14 @@ describe("stationary distribution", () => {
       interior(11, 1, 11, 1),
     )!;
 
-    const total = outcome.distribution.reduce(
-      (sum: Rational, value) => add(sum, value),
-      ZERO,
-    );
+    const total = outcome.distribution.reduce((sum: Rational, value) => add(sum, value), ZERO);
     expect(formatRational(total)).toBe("1");
   });
 
   it("declines a chain with no unique stationary distribution", () => {
     // Two Tit-for-Tat players started anywhere never mix; the chain is not
     // irreducible, and a single vector cannot describe the time average.
-    expect(
-      stationaryOutcome(CANONICAL_PD, TIT_FOR_TAT, TIT_FOR_TAT),
-    ).toBeNull();
+    expect(stationaryOutcome(CANONICAL_PD, TIT_FOR_TAT, TIT_FOR_TAT)).toBeNull();
   });
 });
 

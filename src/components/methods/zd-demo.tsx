@@ -38,9 +38,7 @@ const HOUSE_OPPONENT: MemoryOneStrategy = [
 ];
 
 export function ZeroDeterminantDemo() {
-  const [family, setFamily] = useState<"extortionate" | "generous">(
-    "extortionate",
-  );
+  const [family, setFamily] = useState<"extortionate" | "generous">("extortionate");
   const [chiStep, setChiStep] = useState(20);
 
   const chi = rational(BigInt(chiStep), CHI_DENOMINATOR);
@@ -63,9 +61,7 @@ export function ZeroDeterminantDemo() {
 
   const isTitForTat =
     construction.kind === "feasible" &&
-    construction.strategy.every((value, index) =>
-      equals(value, TIT_FOR_TAT[index]),
-    );
+    construction.strategy.every((value, index) => equals(value, TIT_FOR_TAT[index]));
 
   const allDefectVerdict = classifyZd(CANONICAL_PD, ALWAYS_DEFECT);
 
@@ -79,12 +75,8 @@ export function ZeroDeterminantDemo() {
             onChange={(event) => setFamily(event.target.value as typeof family)}
             value={family}
           >
-            <option value="extortionate">
-              Extortionate — baseline is mutual defection
-            </option>
-            <option value="generous">
-              Generous — baseline is mutual cooperation
-            </option>
+            <option value="extortionate">Extortionate — baseline is mutual defection</option>
+            <option value="generous">Generous — baseline is mutual cooperation</option>
           </select>
         </div>
 
@@ -117,9 +109,9 @@ export function ZeroDeterminantDemo() {
         <>
           <table className="zd-demo__strategy" data-testid="zd-strategy">
             <caption>
-              The resulting memory-one strategy: probability of cooperating in
-              each of the four situations, at the largest admissible scale
-              factor φ = {formatRational(construction.phi.max)}.
+              The resulting memory-one strategy: probability of cooperating in each of the four
+              situations, at the largest admissible scale factor φ ={" "}
+              {formatRational(construction.phi.max)}.
             </caption>
             <thead>
               <tr>
@@ -139,8 +131,7 @@ export function ZeroDeterminantDemo() {
 
           {isTitForTat ? (
             <p className="zd-demo__callout" data-testid="zd-tft">
-              <strong>That is Tit for Tat, exactly.</strong>{" "}
-              {zdContent.titForTat}
+              <strong>That is Tit for Tat, exactly.</strong> {zdContent.titForTat}
             </p>
           ) : null}
 
@@ -156,8 +147,8 @@ export function ZeroDeterminantDemo() {
           {outcome ? (
             <table className="zd-demo__outcome" data-testid="zd-outcome">
               <caption>
-                Exact long-run payoffs against a fixed memory-one opponent that
-                never agreed to any of this.
+                Exact long-run payoffs against a fixed memory-one opponent that never agreed to any
+                of this.
               </caption>
               <tbody>
                 <tr>
@@ -171,9 +162,7 @@ export function ZeroDeterminantDemo() {
                 <tr>
                   <th scope="row">Residual of the relation</th>
                   <td data-testid="zd-residual">
-                    {formatRational(
-                      relationResidual(construction.relation, outcome),
-                    )}
+                    {formatRational(relationResidual(construction.relation, outcome))}
                   </td>
                 </tr>
               </tbody>
@@ -191,11 +180,10 @@ export function ZeroDeterminantDemo() {
       </details>
 
       <p className="zd-demo__note">
-        The payoffs above come from solving the four-state chain directly, with
-        no reference to the determinant identity that produced the strategy — so
-        a residual of exactly 0 is a check on the construction, not a
-        restatement of it. See <GlossaryTerm term="zero-determinant-strategy" />
-        .
+        The payoffs above come from solving the four-state chain directly, with no reference to the
+        determinant identity that produced the strategy — so a residual of exactly 0 is a check on
+        the construction, not a restatement of it. See{" "}
+        <GlossaryTerm term="zero-determinant-strategy" />.
       </p>
     </div>
   );

@@ -1,10 +1,4 @@
-import {
-  act,
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-} from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { IpdPlayExperience } from "@/components/arena/ipd-play";
 
@@ -28,17 +22,11 @@ describe("P6 interactive IPD arena", () => {
 
     fireEvent.click(defect);
     commitOutcome();
-    expect(screen.getByTestId("ipd-matrix-cell-1-0")).toHaveAttribute(
-      "data-highlight",
-      "current",
-    );
+    expect(screen.getByTestId("ipd-matrix-cell-1-0")).toHaveAttribute("data-highlight", "current");
 
     fireEvent.click(cooperate);
     commitOutcome();
-    expect(screen.getByTestId("ipd-matrix-cell-0-1")).toHaveAttribute(
-      "data-highlight",
-      "current",
-    );
+    expect(screen.getByTestId("ipd-matrix-cell-0-1")).toHaveAttribute("data-highlight", "current");
   });
 
   it("keeps a mystery rival hidden until the reveal and gives a seeded TFT counterfactual", () => {
@@ -64,12 +52,8 @@ describe("P6 interactive IPD arena", () => {
     }
 
     expect(screen.getByRole("button", { name: "Play again" })).toBeVisible();
-    expect(
-      screen.getByText(/Tit for Tat in your seat would have scored/),
-    ).toBeVisible();
-    expect(
-      screen.getByRole("heading", { name: "Always Defect" }),
-    ).toBeVisible();
+    expect(screen.getByText(/Tit for Tat in your seat would have scored/)).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Always Defect" })).toBeVisible();
     expect(screen.getByLabelText(/Always Defect state diagram/)).toBeVisible();
   });
 });

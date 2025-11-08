@@ -28,13 +28,9 @@ function row(...values: number[]): Rational[] {
   return values.map((value) => r(value));
 }
 
-function objectiveAt(
-  program: LinearProgram,
-  candidate: readonly Rational[],
-): Rational {
+function objectiveAt(program: LinearProgram, candidate: readonly Rational[]): Rational {
   return program.objective.reduce(
-    (total, coefficient, index) =>
-      add(total, multiply(coefficient, candidate[index])),
+    (total, coefficient, index) => add(total, multiply(coefficient, candidate[index])),
     ZERO,
   );
 }
@@ -58,19 +54,18 @@ function solveByVertexEnumeration(program: LinearProgram): LpResult {
 
   // Every constraint may be tight, and every variable may sit at its own zero
   // bound. A basic solution chooses `variables` of those to hold with equality.
-  const equations: { coefficients: readonly Rational[]; constant: Rational }[] =
-    [
-      ...program.constraints.map((constraint) => ({
-        coefficients: constraint.coefficients,
-        constant: constraint.constant,
-      })),
-      ...Array.from({ length: variables }, (_, index) => ({
-        coefficients: Array.from({ length: variables }, (_, other) =>
-          other === index ? r(1) : ZERO,
-        ),
-        constant: ZERO,
-      })),
-    ];
+  const equations: { coefficients: readonly Rational[]; constant: Rational }[] = [
+    ...program.constraints.map((constraint) => ({
+      coefficients: constraint.coefficients,
+      constant: constraint.constant,
+    })),
+    ...Array.from({ length: variables }, (_, index) => ({
+      coefficients: Array.from({ length: variables }, (_, other) =>
+        other === index ? r(1) : ZERO,
+      ),
+      constant: ZERO,
+    })),
+  ];
 
   let best: { value: Rational; variables: readonly Rational[] } | null = null;
   let feasibleFound = false;
@@ -131,10 +126,7 @@ function solveSquare(
   constants: readonly Rational[],
 ): Rational[] | null {
   const size = constants.length;
-  const matrix = coefficients.map((line, index) => [
-    ...line,
-    constants[index],
-  ]) as Rational[][];
+  const matrix = coefficients.map((line, index) => [...line, constants[index]]) as Rational[][];
 
   for (let column = 0; column < size; column++) {
     let selected = -1;
@@ -238,9 +230,7 @@ describe("exact simplex", () => {
     const flippedToLessThan = optimal(
       solveLinearProgram({
         objective: row(1),
-        constraints: [
-          { coefficients: row(-1), relation: ">=", constant: r(-5) },
-        ],
+        constraints: [{ coefficients: row(-1), relation: ">=", constant: r(-5) }],
       }),
     );
     expect(formatRational(flippedToLessThan.value)).toBe("5");
@@ -249,9 +239,7 @@ describe("exact simplex", () => {
     const flippedToGreaterThan = optimal(
       solveLinearProgram({
         objective: row(-1),
-        constraints: [
-          { coefficients: row(-1), relation: "<=", constant: r(-5) },
-        ],
+        constraints: [{ coefficients: row(-1), relation: "<=", constant: r(-5) }],
       }),
     );
     expect(formatRational(flippedToGreaterThan.value)).toBe("-5");
@@ -260,9 +248,7 @@ describe("exact simplex", () => {
     const flippedEquality = optimal(
       solveLinearProgram({
         objective: row(1, 0),
-        constraints: [
-          { coefficients: row(-1, -2), relation: "=", constant: r(-6) },
-        ],
+        constraints: [{ coefficients: row(-1, -2), relation: "=", constant: r(-6) }],
       }),
     );
     expect(formatRational(flippedEquality.value)).toBe("6");
@@ -283,22 +269,16 @@ describe("exact simplex", () => {
   it("reports an unbounded objective rather than a wrong number", () => {
     const program: LinearProgram = {
       objective: row(1, 1),
-      constraints: [
-        { coefficients: row(1, -1), relation: "<=", constant: r(2) },
-      ],
+      constraints: [{ coefficients: row(1, -1), relation: "<=", constant: r(2) }],
     };
 
     expect(solveLinearProgram(program).kind).toBe("unbounded");
   });
 
   it("treats a program with no constraints honestly in both directions", () => {
-    expect(
-      solveLinearProgram({ objective: row(1), constraints: [] }).kind,
-    ).toBe("unbounded");
+    expect(solveLinearProgram({ objective: row(1), constraints: [] }).kind).toBe("unbounded");
 
-    const bounded = optimal(
-      solveLinearProgram({ objective: row(-1, 0), constraints: [] }),
-    );
+    const bounded = optimal(solveLinearProgram({ objective: row(-1, 0), constraints: [] }));
     expect(formatRational(bounded.value)).toBe("0");
     expect(bounded.variables.map(formatRational)).toEqual(["0", "0"]);
   });
@@ -357,9 +337,7 @@ describe("exact simplex", () => {
   });
 
   it("rejects malformed programs", () => {
-    expect(() =>
-      solveLinearProgram({ objective: [], constraints: [] }),
-    ).toThrow(RangeError);
+    expect(() => solveLinearProgram({ objective: [], constraints: [] })).toThrow(RangeError);
     expect(() =>
       solveLinearProgram({
         objective: row(1, 1),
@@ -369,9 +347,7 @@ describe("exact simplex", () => {
   });
 
   it("agrees with vertex enumeration on random bounded programs", () => {
-    const smallRational = fc
-      .integer({ min: -4, max: 4 })
-      .map((value) => r(value));
+    const smallRational = fc.integer({ min: -4, max: 4 }).map((value) => r(value));
 
     fc.assert(
       fc.property(
@@ -387,9 +363,10 @@ describe("exact simplex", () => {
         ),
         fc.array(smallRational, { minLength: 3, maxLength: 3 }),
         (rawConstraints, objective) => {
-          const constraints: LinearConstraint[] = rawConstraints.map(
-            (constraint) => ({ ...constraint, relation: "<=" as const }),
-          );
+          const constraints: LinearConstraint[] = rawConstraints.map((constraint) => ({
+            ...constraint,
+            relation: "<=" as const,
+          }));
 
           // Box the region so the comparison is against a bounded optimum; the
           // enumerator finds vertices, not improving rays.
@@ -409,10 +386,7 @@ describe("exact simplex", () => {
 
           expect(bySimplex.kind).toBe(byEnumeration.kind);
 
-          if (
-            bySimplex.kind === "optimal" &&
-            byEnumeration.kind === "optimal"
-          ) {
+          if (bySimplex.kind === "optimal" && byEnumeration.kind === "optimal") {
             expect(satisfiesProgram(program, bySimplex.variables)).toBe(true);
             expect(equals(bySimplex.value, byEnumeration.value)).toBe(true);
           }
@@ -448,10 +422,7 @@ describe("exact simplex", () => {
 
           expect(bySimplex.kind).toBe(byEnumeration.kind);
 
-          if (
-            bySimplex.kind === "optimal" &&
-            byEnumeration.kind === "optimal"
-          ) {
+          if (bySimplex.kind === "optimal" && byEnumeration.kind === "optimal") {
             expect(satisfiesProgram(program, bySimplex.variables)).toBe(true);
             expect(equals(bySimplex.value, byEnumeration.value)).toBe(true);
           }

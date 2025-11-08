@@ -1,9 +1,6 @@
 import { defaultEvolutionPreset } from "@/content/evolution-presets";
 import type { IpdEvolutionConfig } from "@/engine/repeated/replicator";
-import {
-  ipdStrategyById,
-  type IpdStrategyId,
-} from "@/engine/repeated/strategies";
+import { ipdStrategyById, type IpdStrategyId } from "@/engine/repeated/strategies";
 
 export const EVOLUTION_URL_VERSION = "1";
 export const EVOLUTION_URL_MAX_LENGTH = 8 * 1024;
@@ -44,12 +41,7 @@ function parseInteger(source: string | null, label: string): number {
   return value;
 }
 
-function inRange(
-  value: number,
-  minimum: number,
-  maximum: number,
-  label: string,
-): number {
+function inRange(value: number, minimum: number, maximum: number, label: string): number {
   if (value < minimum || value > maximum) {
     throw new RangeError(`${label} must be from ${minimum} to ${maximum}.`);
   }
@@ -70,9 +62,7 @@ function parseStrategies(source: string | null): readonly IpdStrategyId[] {
     new Set(strategies).size !== strategies.length ||
     strategies.some((strategy) => !(strategy in ipdStrategyById))
   ) {
-    throw new RangeError(
-      "Strategies must be a unique two-to-eight strategy roster.",
-    );
+    throw new RangeError("Strategies must be a unique two-to-eight strategy roster.");
   }
 
   return strategies as readonly IpdStrategyId[];
@@ -83,18 +73,14 @@ function parseShares(source: string | null, length: number): readonly number[] {
     throw new TypeError("Population shares are missing.");
   }
 
-  const shares = source
-    .split(",")
-    .map((entry) => parseNumber(entry, "A share"));
+  const shares = source.split(",").map((entry) => parseNumber(entry, "A share"));
 
   if (
     shares.length !== length ||
     shares.some((share) => share < 0 || share > 1) ||
     shares.reduce((total, share) => total + share, 0) <= 0
   ) {
-    throw new RangeError(
-      "Population shares must be nonnegative values from 0 to 1.",
-    );
+    throw new RangeError("Population shares must be nonnegative values from 0 to 1.");
   }
 
   return shares;
@@ -105,9 +91,7 @@ function compactNumber(value: number): string {
 }
 
 /** Serialises every evolution input; the fixed tournament environment is explicit. */
-export function encodeEvolutionConfig(
-  config: Required<IpdEvolutionConfig>,
-): string {
+export function encodeEvolutionConfig(config: Required<IpdEvolutionConfig>): string {
   const params = new URLSearchParams({
     ev: EVOLUTION_URL_VERSION,
     s: config.strategies.join(","),
@@ -133,9 +117,7 @@ export function decodeEvolutionSearch(search: string): EvolutionUrlState {
   }
 
   if (search.length > EVOLUTION_URL_MAX_LENGTH) {
-    return fallback(
-      "This evolution link is too long, so the default run is shown.",
-    );
+    return fallback("This evolution link is too long, so the default run is shown.");
   }
 
   try {
@@ -156,24 +138,9 @@ export function decodeEvolutionSearch(search: string): EvolutionUrlState {
       0.995,
       "Continuation probability",
     );
-    const noise = inRange(
-      parseNumber(params.get("n"), "Noise"),
-      0,
-      0.1,
-      "Noise",
-    );
-    const repetitions = inRange(
-      parseInteger(params.get("r"), "Repetitions"),
-      1,
-      20,
-      "Repetitions",
-    );
-    const roundCap = inRange(
-      parseInteger(params.get("cap"), "Round cap"),
-      1,
-      1000,
-      "Round cap",
-    );
+    const noise = inRange(parseNumber(params.get("n"), "Noise"), 0, 0.1, "Noise");
+    const repetitions = inRange(parseInteger(params.get("r"), "Repetitions"), 1, 20, "Repetitions");
+    const roundCap = inRange(parseInteger(params.get("cap"), "Round cap"), 1, 1000, "Round cap");
     const generations = inRange(
       parseInteger(params.get("g"), "Generations"),
       1,
@@ -194,8 +161,6 @@ export function decodeEvolutionSearch(search: string): EvolutionUrlState {
       },
     };
   } catch {
-    return fallback(
-      "This evolution link is invalid, so the default run is shown.",
-    );
+    return fallback("This evolution link is invalid, so the default run is shown.");
   }
 }

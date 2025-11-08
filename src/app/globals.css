@@ -1719,11 +1719,7 @@ main {
    * endpoints are palette tokens, so the scale re-anchors in dark mode and
    * `--ink` clears 4.5:1 against both ends of it in either theme (V2-P8).
    */
-  background: color-mix(
-    in srgb,
-    var(--heat-high) calc(var(--heat, 0) * 100%),
-    var(--heat-low)
-  );
+  background: color-mix(in srgb, var(--heat-high) calc(var(--heat, 0) * 100%), var(--heat-low));
   color: var(--ink);
   font: inherit;
   font-variant-numeric: tabular-nums;

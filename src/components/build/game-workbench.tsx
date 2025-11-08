@@ -2,15 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { AnalysisDrawer } from "@/components/analysis/analysis-drawer";
-import {
-  createNormalFormGame,
-  profileKey,
-  type NormalFormGame,
-} from "@/engine/game";
-import {
-  classifyTwoByTwo,
-  type StrategicStructure,
-} from "@/engine/solve/classify";
+import { createNormalFormGame, profileKey, type NormalFormGame } from "@/engine/game";
+import { classifyTwoByTwo, type StrategicStructure } from "@/engine/solve/classify";
 import { analyzeMixedEquilibria } from "@/engine/solve/mixed";
 import { paretoEfficientProfiles } from "@/engine/solve/pareto";
 import { bestResponses, pureNashEquilibria } from "@/engine/solve/pure";
@@ -121,15 +114,11 @@ export function GameWorkbench({
   extras = emptyExtras,
   variant = "page",
 }: GameWorkbenchProps) {
-  const [draft, setDraft] = useState<EditableGameDraft>(() =>
-    gameToDraft(defaultGame),
-  );
+  const [draft, setDraft] = useState<EditableGameDraft>(() => gameToDraft(defaultGame));
   const [game, setGame] = useState(defaultGame);
   const [shareExtras, setShareExtras] = useState(extras);
   const [notice, setNotice] = useState<string | null>(null);
-  const [announcement, setAnnouncement] = useState(
-    structureSentence(structureFor(defaultGame)),
-  );
+  const [announcement, setAnnouncement] = useState(structureSentence(structureFor(defaultGame)));
   const [paretoMode, setParetoMode] = useState(false);
   const [copied, setCopied] = useState(false);
   const [manualCopy, setManualCopy] = useState(false);
@@ -155,9 +144,7 @@ export function GameWorkbench({
       } else if (decoded.kind === "invalid") {
         setNotice(decoded.notice);
       }
-      setAnnotationText(
-        decodeAnnotation(new URLSearchParams(initialSearch)) ?? "",
-      );
+      setAnnotationText(decodeAnnotation(new URLSearchParams(initialSearch)) ?? "");
     }, 0);
 
     return () => window.clearTimeout(timer);
@@ -175,9 +162,7 @@ export function GameWorkbench({
       const result = draftToGame(draft, defaultGame.id);
 
       if (!result.ok) {
-        setNotice(
-          `${result.notice} The last valid analysis remains on screen.`,
-        );
+        setNotice(`${result.notice} The last valid analysis remains on screen.`);
         return;
       }
 
@@ -204,9 +189,7 @@ export function GameWorkbench({
   }, [defaultGame.id, draft]);
 
   const shareSearch = useMemo(() => {
-    const params = new URLSearchParams(
-      encodeGameSearch({ game, extras: shareExtras }),
-    );
+    const params = new URLSearchParams(encodeGameSearch({ game, extras: shareExtras }));
     return setAnnotation(params, annotation).toString();
   }, [annotation, game, shareExtras]);
   const shareUrl =
@@ -216,11 +199,7 @@ export function GameWorkbench({
 
   useEffect(() => {
     if (dirty) {
-      window.history.replaceState(
-        null,
-        "",
-        `${window.location.pathname}?${shareSearch}`,
-      );
+      window.history.replaceState(null, "", `${window.location.pathname}?${shareSearch}`);
     }
   }, [dirty, shareSearch]);
 
@@ -232,19 +211,13 @@ export function GameWorkbench({
   }, [manualCopy]);
 
   const analysis = useMemo(() => analyzeMixedEquilibria(game), [game]);
-  const equilibria = useMemo(
-    () => new Set(pureNashEquilibria(game).map(profileKey)),
-    [game],
-  );
+  const equilibria = useMemo(() => new Set(pureNashEquilibria(game).map(profileKey)), [game]);
   const paretoEfficient = useMemo(
     () => new Set(paretoEfficientProfiles(game).map(profileKey)),
     [game],
   );
 
-  const setDimension = (
-    player: "row" | "column",
-    event: ChangeEvent<HTMLSelectElement>,
-  ) => {
+  const setDimension = (player: "row" | "column", event: ChangeEvent<HTMLSelectElement>) => {
     const count = Number(event.target.value);
     setDirty(true);
     setDraft((current) =>
@@ -279,9 +252,7 @@ export function GameWorkbench({
       <header className="game-workbench__header">
         <div>
           <p className="eyebrow">
-            {variant === "page"
-              ? "Build / Live solver"
-              : "Build / Edit this game"}
+            {variant === "page" ? "Build / Live solver" : "Build / Edit this game"}
           </p>
           {variant === "page" ? (
             <h1 className="display" id={`${defaultGame.id}-workbench-title`}>
@@ -294,8 +265,8 @@ export function GameWorkbench({
           )}
         </div>
         <p>
-          Every valid edit is solved with exact fractions. The last valid game
-          stays visible while an incomplete input is corrected.
+          Every valid edit is solved with exact fractions. The last valid game stays visible while
+          an incomplete input is corrected.
         </p>
       </header>
 
@@ -355,11 +326,7 @@ export function GameWorkbench({
       </div>
 
       {notice ? (
-        <p
-          aria-live="assertive"
-          className="game-workbench__notice"
-          role="alert"
-        >
+        <p aria-live="assertive" className="game-workbench__notice" role="alert">
           {notice}
         </p>
       ) : null}
@@ -374,8 +341,8 @@ export function GameWorkbench({
       >
         <table className="game-workbench__matrix">
           <caption>
-            Editable payoff matrix. Each cell contains your payoff first, then
-            the rival&apos;s payoff.
+            Editable payoff matrix. Each cell contains your payoff first, then the rival&apos;s
+            payoff.
           </caption>
           <thead>
             <tr>
@@ -390,12 +357,7 @@ export function GameWorkbench({
                       onChange={(event) => {
                         setDirty(true);
                         setDraft((current) =>
-                          updateAction(
-                            current,
-                            "column",
-                            column,
-                            event.target.value,
-                          ),
+                          updateAction(current, "column", column, event.target.value),
                         );
                       }}
                       value={action}
@@ -427,24 +389,19 @@ export function GameWorkbench({
                 {draft.columnActions.map((_, column) => {
                   const profile = { row, column };
                   const isInAnalyzedGame =
-                    row < game.rowActions.length &&
-                    column < game.columnActions.length;
+                    row < game.rowActions.length && column < game.columnActions.length;
                   const isEquilibrium = equilibria.has(profileKey(profile));
                   const isPareto = paretoEfficient.has(profileKey(profile));
                   const rowBestResponse =
-                    isInAnalyzedGame &&
-                    bestResponses(game, "row", column).includes(row);
+                    isInAnalyzedGame && bestResponses(game, "row", column).includes(row);
                   const columnBestResponse =
-                    isInAnalyzedGame &&
-                    bestResponses(game, "column", row).includes(column);
+                    isInAnalyzedGame && bestResponses(game, "column", row).includes(column);
                   const cell = draft.payoffs[row][column];
 
                   return (
                     <td
                       className={
-                        paretoMode && !isPareto
-                          ? "game-workbench__cell--dominated"
-                          : undefined
+                        paretoMode && !isPareto ? "game-workbench__cell--dominated" : undefined
                       }
                       data-testid={`editable-cell-${row}-${column}`}
                       key={column}
@@ -458,13 +415,7 @@ export function GameWorkbench({
                             onChange={(event) => {
                               setDirty(true);
                               setDraft((current) =>
-                                updatePayoff(
-                                  current,
-                                  row,
-                                  column,
-                                  0,
-                                  event.target.value,
-                                ),
+                                updatePayoff(current, row, column, 0, event.target.value),
                               );
                             }}
                             value={cell[0]}
@@ -478,13 +429,7 @@ export function GameWorkbench({
                             onChange={(event) => {
                               setDirty(true);
                               setDraft((current) =>
-                                updatePayoff(
-                                  current,
-                                  row,
-                                  column,
-                                  1,
-                                  event.target.value,
-                                ),
+                                updatePayoff(current, row, column, 1, event.target.value),
                               );
                             }}
                             value={cell[1]}
@@ -510,19 +455,17 @@ export function GameWorkbench({
         className="game-workbench__verdict"
       >
         <p className="eyebrow">Computed verdict</p>
-        <h2 id={`${defaultGame.id}-verdict-title`}>
-          {structureSentence(structureFor(game))}
-        </h2>
+        <h2 id={`${defaultGame.id}-verdict-title`}>{structureSentence(structureFor(game))}</h2>
         <p>
           {pureNashEquilibria(game).length} pure{" "}
-          {pureNashEquilibria(game).length === 1 ? "equilibrium" : "equilibria"}
-          ; {analysis.equilibria.length} exact equilibrium profile
+          {pureNashEquilibria(game).length === 1 ? "equilibrium" : "equilibria"};{" "}
+          {analysis.equilibria.length} exact equilibrium profile
           {analysis.equilibria.length === 1 ? "" : "s"} enumerated.
         </p>
         {analysis.degeneracyWitness ? (
           <p className="analysis-warning" role="status">
-            Degeneracy detected. The engine shows verified equilibria without
-            claiming that this sample describes every equilibrium component.
+            Degeneracy detected. The engine shows verified equilibria without claiming that this
+            sample describes every equilibrium component.
           </p>
         ) : null}
       </section>
@@ -533,20 +476,16 @@ export function GameWorkbench({
       >
         <div>
           <p className="eyebrow">Annotation</p>
-          <h2 id={`${defaultGame.id}-annotation-title`}>
-            Carry one observation with the game.
-          </h2>
+          <h2 id={`${defaultGame.id}-annotation-title`}>Carry one observation with the game.</h2>
           <p>
-            A bounded plain-text note travels in <code>?a=</code>. It stays in
-            the URL; nothing is stored or sent elsewhere.
+            A bounded plain-text note travels in <code>?a=</code>. It stays in the URL; nothing is
+            stored or sent elsewhere.
           </p>
         </div>
         <label>
           <span className="sr-only">Game annotation</span>
           <textarea
-            aria-describedby={
-              annotationError ? `${defaultGame.id}-annotation-error` : undefined
-            }
+            aria-describedby={annotationError ? `${defaultGame.id}-annotation-error` : undefined}
             onChange={(event) => {
               const next = event.target.value;
               try {
@@ -556,9 +495,7 @@ export function GameWorkbench({
                 setDirty(true);
               } catch (error) {
                 setAnnotationError(
-                  error instanceof Error
-                    ? error.message
-                    : "Annotation is invalid.",
+                  error instanceof Error ? error.message : "Annotation is invalid.",
                 );
               }
             }}
@@ -587,18 +524,13 @@ export function GameWorkbench({
         />
       ) : null}
 
-      <section
-        aria-labelledby={`${defaultGame.id}-share-title`}
-        className="game-workbench__share"
-      >
+      <section aria-labelledby={`${defaultGame.id}-share-title`} className="game-workbench__share">
         <div>
           <p className="eyebrow">Reproduce</p>
-          <h2 id={`${defaultGame.id}-share-title`}>
-            Share the complete game state.
-          </h2>
+          <h2 id={`${defaultGame.id}-share-title`}>Share the complete game state.</h2>
           <p>
-            The link contains the labels, exact payoffs, and any supplied seed
-            or simulation settings. Nothing is uploaded.
+            The link contains the labels, exact payoffs, and any supplied seed or simulation
+            settings. Nothing is uploaded.
           </p>
         </div>
         <button className="analysis-button" onClick={copyLink} type="button">
@@ -616,9 +548,7 @@ export function GameWorkbench({
         ) : null}
         {manualCopy ? (
           <label className="game-workbench__manual-copy">
-            <span>
-              Clipboard access is unavailable. Copy this link manually.
-            </span>
+            <span>Clipboard access is unavailable. Copy this link manually.</span>
             <input readOnly ref={manualCopyRef} value={shareUrl} />
           </label>
         ) : null}

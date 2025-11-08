@@ -8,8 +8,8 @@ export default function NotFound() {
         This payoff does not exist.
       </h1>
       <p className="lede">
-        The requested path is not part of the static game. Choose a known move
-        and the analysis can continue.
+        The requested path is not part of the static game. Choose a known move and the analysis can
+        continue.
       </p>
       <div className="not-found__actions">
         <Link className="home-primary-link" href="/">

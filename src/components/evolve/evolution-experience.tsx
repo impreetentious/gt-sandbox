@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useState,
-  useSyncExternalStore,
-  type CSSProperties,
-} from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore, type CSSProperties } from "react";
 import { GlossaryTerm } from "@/components/ui/glossary-term";
 import {
   evolutionPresetById,
@@ -18,14 +12,8 @@ import {
   type IpdEvolutionConfig,
   type ReplicatorGeneration,
 } from "@/engine/repeated/replicator";
-import {
-  ipdStrategyById,
-  type IpdStrategyId,
-} from "@/engine/repeated/strategies";
-import {
-  decodeEvolutionSearch,
-  encodeEvolutionConfig,
-} from "@/state/evolution-url";
+import { ipdStrategyById, type IpdStrategyId } from "@/engine/repeated/strategies";
+import { decodeEvolutionSearch, encodeEvolutionConfig } from "@/state/evolution-url";
 
 /**
  * Series colours live in `globals.css` as `--series-1` … `--series-8`, not as
@@ -33,17 +21,11 @@ import {
  * roster cap; a ninth strategy would need a ninth token rather than a wrap,
  * because two identical bands would be worse than an ugly one.
  */
-const chartColors = Array.from(
-  { length: 8 },
-  (_, index) => `var(--series-${index + 1})`,
-);
+const chartColors = Array.from({ length: 8 }, (_, index) => `var(--series-${index + 1})`);
 
 type PresetSelection = EvolutionPresetId | "custom";
 
-function sameEvolutionConfig(
-  a: IpdEvolutionConfig,
-  b: IpdEvolutionConfig,
-): boolean {
+function sameEvolutionConfig(a: IpdEvolutionConfig, b: IpdEvolutionConfig): boolean {
   return (
     a.masterSeed === b.masterSeed &&
     a.continuationProbability === b.continuationProbability &&
@@ -93,18 +75,14 @@ function chartAreaPath(
   const xFor = (index: number) =>
     generations.length <= 1 ? 0 : (index / (generations.length - 1)) * width;
   const cumulative = (generation: ReplicatorGeneration, through: number) =>
-    generation.shares
-      .slice(0, through + 1)
-      .reduce((sum, share) => sum + share, 0);
+    generation.shares.slice(0, through + 1).reduce((sum, share) => sum + share, 0);
   const yFor = (share: number) => height - share * height;
   const upper = generations.map(
-    (generation, index) =>
-      `${xFor(index)} ${yFor(cumulative(generation, strategyIndex))}`,
+    (generation, index) => `${xFor(index)} ${yFor(cumulative(generation, strategyIndex))}`,
   );
   const lower = [...generations].reverse().map((generation, reverseIndex) => {
     const index = generations.length - 1 - reverseIndex;
-    const lowerShare =
-      strategyIndex === 0 ? 0 : cumulative(generation, strategyIndex - 1);
+    const lowerShare = strategyIndex === 0 ? 0 : cumulative(generation, strategyIndex - 1);
 
     return `${xFor(index)} ${yFor(lowerShare)}`;
   });
@@ -112,13 +90,8 @@ function chartAreaPath(
   return `M ${upper.join(" L ")} L ${lower.join(" L ")} Z`;
 }
 
-function selectedBandCenter(
-  generation: ReplicatorGeneration,
-  strategyIndex: number,
-): number {
-  const lower = generation.shares
-    .slice(0, strategyIndex)
-    .reduce((sum, share) => sum + share, 0);
+function selectedBandCenter(generation: ReplicatorGeneration, strategyIndex: number): number {
+  const lower = generation.shares.slice(0, strategyIndex).reduce((sum, share) => sum + share, 0);
   const share = generation.shares[strategyIndex] ?? 0;
 
   return lower + share / 2;
@@ -131,12 +104,7 @@ interface PopulationChartProps {
   readonly onIsolate: (strategy: IpdStrategyId | null) => void;
 }
 
-function PopulationChart({
-  strategies,
-  generations,
-  isolated,
-  onIsolate,
-}: PopulationChartProps) {
+function PopulationChart({ strategies, generations, isolated, onIsolate }: PopulationChartProps) {
   const width = 760;
   const height = 260;
   const final = generations.at(-1);
@@ -170,22 +138,11 @@ function PopulationChart({
         role="img"
         viewBox={`0 0 ${width + 160} ${height + 42}`}
       >
-        <line
-          className="evolution-chart__axis"
-          x1="0"
-          x2={width}
-          y1={height}
-          y2={height}
-        />
+        <line className="evolution-chart__axis" x1="0" x2={width} y1={height} y2={height} />
         <text className="evolution-chart__tick" x="0" y={height + 25}>
           0
         </text>
-        <text
-          className="evolution-chart__tick"
-          textAnchor="end"
-          x={width}
-          y={height + 25}
-        >
+        <text className="evolution-chart__tick" textAnchor="end" x={width} y={height + 25}>
           {generations.length - 1}
         </text>
         {strategies.map((strategy, index) => (
@@ -214,18 +171,10 @@ function PopulationChart({
 
 /** P8's deterministic population-evolution surface. */
 export function EvolutionExperience() {
-  const search = useSyncExternalStore(
-    subscribeToBrowserHistory,
-    browserSearch,
-    () => "",
-  );
+  const search = useSyncExternalStore(subscribeToBrowserHistory, browserSearch, () => "");
   const urlState = useMemo(() => decodeEvolutionSearch(search), [search]);
-  const [customConfig, setCustomConfig] = useState<IpdEvolutionConfig | null>(
-    null,
-  );
-  const [selectedPreset, setSelectedPreset] = useState<PresetSelection | null>(
-    null,
-  );
+  const [customConfig, setCustomConfig] = useState<IpdEvolutionConfig | null>(null);
+  const [selectedPreset, setSelectedPreset] = useState<PresetSelection | null>(null);
   const [interactionNotice, setInteractionNotice] = useState("");
   const [generation, setGeneration] = useState(0);
   const [announcement, setAnnouncement] = useState("");
@@ -237,8 +186,7 @@ export function EvolutionExperience() {
   const completeConfig = evolution.config;
   const snapshots = evolution.result.generations;
   const current = snapshots[generation] ?? snapshots.at(-1);
-  const presetDefinition =
-    preset === "custom" ? undefined : evolutionPresetById(preset);
+  const presetDefinition = preset === "custom" ? undefined : evolutionPresetById(preset);
 
   useEffect(() => {
     if (customConfig === null && window.location.search !== search) {
@@ -246,11 +194,7 @@ export function EvolutionExperience() {
     }
 
     const encodedSearch = encodeEvolutionConfig(completeConfig);
-    window.history.replaceState(
-      null,
-      "",
-      `${window.location.pathname}${encodedSearch}`,
-    );
+    window.history.replaceState(null, "", `${window.location.pathname}${encodedSearch}`);
   }, [completeConfig, customConfig, search]);
 
   useEffect(() => {
@@ -258,9 +202,7 @@ export function EvolutionExperience() {
       const snapshot = snapshots[generation];
 
       if (snapshot) {
-        setAnnouncement(
-          `Showing generation ${snapshot.generation} of ${snapshots.length - 1}.`,
-        );
+        setAnnouncement(`Showing generation ${snapshot.generation} of ${snapshots.length - 1}.`);
       }
     }, 250);
 
@@ -272,14 +214,10 @@ export function EvolutionExperience() {
     setCustomConfig(next.config);
     setSelectedPreset(id);
     setGeneration(0);
-    setInteractionNotice(
-      `${next.label} uses its reviewed, frozen configuration.`,
-    );
+    setInteractionNotice(`${next.label} uses its reviewed, frozen configuration.`);
   };
 
-  const updateConfig = (
-    update: (current: Required<IpdEvolutionConfig>) => IpdEvolutionConfig,
-  ) => {
+  const updateConfig = (update: (current: Required<IpdEvolutionConfig>) => IpdEvolutionConfig) => {
     setCustomConfig((currentConfig) =>
       update(runIpdEvolution(currentConfig ?? urlState.config).config),
     );
@@ -305,9 +243,7 @@ export function EvolutionExperience() {
     });
 
     if (shares.every((share) => share === 0)) {
-      setInteractionNotice(
-        "At least one strategy needs a positive population share.",
-      );
+      setInteractionNotice("At least one strategy needs a positive population share.");
       return;
     }
 
@@ -330,22 +266,15 @@ export function EvolutionExperience() {
     >
       <div className="evolution__intro">
         <p className="eyebrow">Evolution</p>
-        <h2 id="evolution-panel-title">
-          Population shares under a fixed environment
-        </h2>
+        <h2 id="evolution-panel-title">Population shares under a fixed environment</h2>
         <p>
-          The pairwise match estimates stay fixed while{" "}
-          <GlossaryTerm term="replicator-dynamics" /> updates the population.
-          Shares use floating point because they are simulation state; the
-          underlying IPD match payoffs remain the seeded, per-round estimates
-          shown below.
+          The pairwise match estimates stay fixed while <GlossaryTerm term="replicator-dynamics" />{" "}
+          updates the population. Shares use floating point because they are simulation state; the
+          underlying IPD match payoffs remain the seeded, per-round estimates shown below.
         </p>
       </div>
 
-      <section
-        aria-labelledby="evolution-preset-title"
-        className="evolution__controls"
-      >
+      <section aria-labelledby="evolution-preset-title" className="evolution__controls">
         <div>
           <p className="eyebrow">Preset</p>
           <h3 id="evolution-preset-title">A reviewed starting condition</h3>
@@ -353,14 +282,10 @@ export function EvolutionExperience() {
         <label className="evolution__select">
           <span>Story</span>
           <select
-            onChange={(event) =>
-              choosePreset(event.target.value as EvolutionPresetId)
-            }
+            onChange={(event) => choosePreset(event.target.value as EvolutionPresetId)}
             value={preset}
           >
-            {preset === "custom" ? (
-              <option value="custom">Custom run</option>
-            ) : null}
+            {preset === "custom" ? <option value="custom">Custom run</option> : null}
             {evolutionPresets.map((entry) => (
               <option key={entry.id} value={entry.id}>
                 {entry.label}
@@ -382,9 +307,7 @@ export function EvolutionExperience() {
           <span>
             <GlossaryTerm term="continuation-probability" /> δ
           </span>
-          <output>
-            {displayNumber(completeConfig.continuationProbability, 3)}
-          </output>
+          <output>{displayNumber(completeConfig.continuationProbability, 3)}</output>
           <input
             aria-label="Continuation probability"
             max="0.995"
@@ -441,32 +364,24 @@ export function EvolutionExperience() {
         </label>
       </section>
 
-      <section
-        aria-labelledby="population-title"
-        className="evolution__controls"
-      >
+      <section aria-labelledby="population-title" className="evolution__controls">
         <div>
           <p className="eyebrow">Population</p>
           <h3 id="population-title">Starting shares</h3>
         </div>
         <p className="evolution__story">
-          Changing one share renormalizes the selected population before the run
-          begins.
+          Changing one share renormalizes the selected population before the run begins.
         </p>
         <div className="evolution__shares">
           {completeConfig.strategies.map((strategy, index) => (
             <label key={strategy}>
               <span>{ipdStrategyById[strategy].name}</span>
-              <output>
-                {percent(completeConfig.initialShares[index] ?? 0)}
-              </output>
+              <output>{percent(completeConfig.initialShares[index] ?? 0)}</output>
               <input
                 aria-label={`${ipdStrategyById[strategy].name} starting share`}
                 max="100"
                 min="0"
-                onChange={(event) =>
-                  updateShare(index, Number(event.target.value))
-                }
+                onChange={(event) => updateShare(index, Number(event.target.value))}
                 step="1"
                 type="range"
                 value={(completeConfig.initialShares[index] ?? 0) * 100}
@@ -476,10 +391,7 @@ export function EvolutionExperience() {
         </div>
       </section>
 
-      <dl
-        aria-label="Fixed evolution environment"
-        className="evolution__config"
-      >
+      <dl aria-label="Fixed evolution environment" className="evolution__config">
         <div>
           <dt>Repetitions</dt>
           <dd>{completeConfig.repetitions} per pair</dd>
@@ -496,24 +408,19 @@ export function EvolutionExperience() {
 
       {evolution.result.status === "zero-mean-fitness" ? (
         <p className="evolution__warning">
-          This run stopped at generation {evolution.result.generation}: every
-          sampled payoff was zero, so there is no population-average fitness to
-          divide by.
+          This run stopped at generation {evolution.result.generation}: every sampled payoff was
+          zero, so there is no population-average fitness to divide by.
         </p>
       ) : null}
 
-      <section
-        aria-labelledby="trajectory-title"
-        className="evolution__trajectory"
-      >
+      <section aria-labelledby="trajectory-title" className="evolution__trajectory">
         <div className="tournament__section-heading">
           <div>
             <p className="eyebrow">Trajectory</p>
             <h2 id="trajectory-title">Who becomes more common</h2>
           </div>
           <p>
-            Hover or focus a name to isolate its band. The final labels carry
-            both name and value.
+            Hover or focus a name to isolate its band. The final labels carry both name and value.
           </p>
         </div>
         <PopulationChart
@@ -537,10 +444,7 @@ export function EvolutionExperience() {
             value={generation}
           />
         </label>
-        <dl
-          aria-label={`Population at generation ${generation}`}
-          className="evolution__current"
-        >
+        <dl aria-label={`Population at generation ${generation}`} className="evolution__current">
           {completeConfig.strategies.map((strategy, index) => (
             <div key={strategy}>
               <dt>{ipdStrategyById[strategy].name}</dt>
@@ -555,10 +459,7 @@ export function EvolutionExperience() {
           <summary>View each generation as an accessible data table</summary>
           <div className="evolution-table__scroll" tabIndex={0}>
             <table>
-              <caption>
-                Population share at every generation for this seeded evolution
-                run.
-              </caption>
+              <caption>Population share at every generation for this seeded evolution run.</caption>
               <thead>
                 <tr>
                   <th scope="col">Generation</th>
@@ -572,16 +473,12 @@ export function EvolutionExperience() {
               <tbody>
                 {snapshots.map((snapshot) => (
                   <tr
-                    aria-current={
-                      snapshot.generation === generation ? "true" : undefined
-                    }
+                    aria-current={snapshot.generation === generation ? "true" : undefined}
                     key={snapshot.generation}
                   >
                     <th scope="row">{snapshot.generation}</th>
                     {snapshot.shares.map((share, index) => (
-                      <td key={completeConfig.strategies[index]}>
-                        {percent(share)}
-                      </td>
+                      <td key={completeConfig.strategies[index]}>{percent(share)}</td>
                     ))}
                   </tr>
                 ))}
@@ -592,10 +489,8 @@ export function EvolutionExperience() {
       </section>
 
       <p className="evolution__link">
-        <a href={encodeEvolutionConfig(completeConfig)}>
-          Open this exact seeded run
-        </a>
-        . Its full bounded configuration is in the URL.
+        <a href={encodeEvolutionConfig(completeConfig)}>Open this exact seeded run</a>. Its full
+        bounded configuration is in the URL.
       </p>
       <p aria-live="polite" className="evolution__notice" role="status">
         {notice}

@@ -13,22 +13,16 @@ describe("seeded quiz experience", () => {
     render(<QuizExperience />);
 
     for (const [index, question] of questions.entries()) {
-      const correct = question.choices.find(
-        (choice) => choice.id === question.correctChoiceId,
-      );
+      const correct = question.choices.find((choice) => choice.id === question.correctChoiceId);
       expect(correct).toBeDefined();
       fireEvent.click(screen.getByRole("button", { name: correct?.label }));
       if (index < QUIZ_LENGTH - 1)
-        fireEvent.click(
-          screen.getByRole("button", { name: "Next question" }),
-        );
+        fireEvent.click(screen.getByRole("button", { name: "Next question" }));
     }
 
     expect(screen.getByRole("status")).toHaveTextContent(
       `Round complete: ${QUIZ_LENGTH} of ${QUIZ_LENGTH}.`,
     );
-    expect(
-      screen.getByRole("button", { name: "Play this seed again" }),
-    ).toBeVisible();
+    expect(screen.getByRole("button", { name: "Play this seed again" })).toBeVisible();
   });
 });

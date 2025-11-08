@@ -110,9 +110,7 @@ interface NormalizedConstraint {
  * Rewrites every constraint to have a nonnegative right-hand side, so that the
  * slack/artificial starting basis is feasible by construction.
  */
-function normalize(
-  constraints: readonly LinearConstraint[],
-): NormalizedConstraint[] {
+function normalize(constraints: readonly LinearConstraint[]): NormalizedConstraint[] {
   return constraints.map((constraint) => {
     if (compare(constraint.constant, ZERO) !== -1) {
       return constraint;
@@ -132,16 +130,9 @@ interface BuiltTableau {
   readonly artificialCount: number;
 }
 
-function build(
-  constraints: readonly NormalizedConstraint[],
-  variables: number,
-): BuiltTableau {
-  const slackCount = constraints.filter(
-    (constraint) => constraint.relation !== "=",
-  ).length;
-  const artificialCount = constraints.filter(
-    (constraint) => constraint.relation !== "<=",
-  ).length;
+function build(constraints: readonly NormalizedConstraint[], variables: number): BuiltTableau {
+  const slackCount = constraints.filter((constraint) => constraint.relation !== "=").length;
+  const artificialCount = constraints.filter((constraint) => constraint.relation !== "<=").length;
   const firstSlack = variables;
   const firstArtificial = firstSlack + slackCount;
   const columns = firstArtificial + artificialCount;
@@ -194,18 +185,12 @@ function build(
  * handful of variables, so recomputing `c_j − Σ c_B(i)·T[i][j]` every iteration
  * costs nothing measurable and removes a whole class of bug.
  */
-function reducedCosts(
-  tableau: Tableau,
-  costs: readonly Rational[],
-): Rational[] {
+function reducedCosts(tableau: Tableau, costs: readonly Rational[]): Rational[] {
   return Array.from({ length: tableau.columns }, (_, column) => {
     let value = costs[column];
 
     tableau.basis.forEach((basicColumn, row) => {
-      value = subtract(
-        value,
-        multiply(costs[basicColumn], tableau.rows[row][column]),
-      );
+      value = subtract(value, multiply(costs[basicColumn], tableau.rows[row][column]));
     });
 
     return value;
@@ -279,10 +264,7 @@ function iterate(tableau: Tableau, costs: readonly Rational[]): PhaseOutcome {
       const ratio = divide(tableau.rows[row][tableau.columns], coefficient);
       const comparison = bestRatio === null ? -1 : compare(ratio, bestRatio);
 
-      if (
-        comparison === -1 ||
-        (comparison === 0 && tableau.basis[row] < tableau.basis[leaving])
-      ) {
+      if (comparison === -1 || (comparison === 0 && tableau.basis[row] < tableau.basis[leaving])) {
         bestRatio = ratio;
         leaving = row;
       }
@@ -330,10 +312,7 @@ function expelArtificials(tableau: Tableau, firstArtificial: number): Tableau {
   }
 
   return {
-    rows: keep.map((row) => [
-      ...rows[row].slice(0, firstArtificial),
-      rows[row][tableau.columns],
-    ]),
+    rows: keep.map((row) => [...rows[row].slice(0, firstArtificial), rows[row][tableau.columns]]),
     basis: keep.map((row) => basis[row]),
     columns: firstArtificial,
   };
@@ -364,9 +343,8 @@ export function solveLinearProgram(program: LinearProgram): LpResult {
   let tableau = built.tableau;
 
   if (built.artificialCount > 0) {
-    const phaseOneCosts = Array.from(
-      { length: tableau.columns },
-      (_, column) => (column >= built.firstArtificial ? negate(ONE) : ZERO),
+    const phaseOneCosts = Array.from({ length: tableau.columns }, (_, column) =>
+      column >= built.firstArtificial ? negate(ONE) : ZERO,
     );
 
     iterate(tableau, phaseOneCosts);
@@ -405,8 +383,7 @@ export function solveLinearProgram(program: LinearProgram): LpResult {
   return {
     kind: "optimal",
     value: solution.reduce(
-      (total, value, index) =>
-        add(total, multiply(value, program.objective[index])),
+      (total, value, index) => add(total, multiply(value, program.objective[index])),
       ZERO,
     ),
     variables: solution,
@@ -414,18 +391,14 @@ export function solveLinearProgram(program: LinearProgram): LpResult {
 }
 
 /** True when `x` satisfies every constraint and is nonnegative. */
-export function satisfiesProgram(
-  program: LinearProgram,
-  candidate: readonly Rational[],
-): boolean {
+export function satisfiesProgram(program: LinearProgram, candidate: readonly Rational[]): boolean {
   if (candidate.some((value) => compare(value, ZERO) === -1)) {
     return false;
   }
 
   return program.constraints.every((constraint) => {
     const left = constraint.coefficients.reduce(
-      (total, coefficient, index) =>
-        add(total, multiply(coefficient, candidate[index])),
+      (total, coefficient, index) => add(total, multiply(coefficient, candidate[index])),
       ZERO,
     );
     const comparison = compare(left, constraint.constant);

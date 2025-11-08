@@ -9,9 +9,9 @@ function setChi(value: number) {
 }
 
 function rowValues(testId: string): string[] {
-  return Array.from(
-    screen.getByTestId(testId).querySelectorAll("tbody td"),
-  ).map((cell) => cell.textContent ?? "");
+  return Array.from(screen.getByTestId(testId).querySelectorAll("tbody td")).map(
+    (cell) => cell.textContent ?? "",
+  );
 }
 
 describe("zero-determinant demo", () => {

@@ -78,9 +78,7 @@ export function CurriculumPath() {
           <input
             checked={!progress.gated}
             id={gateId}
-            onChange={(event) =>
-              persist(withGating(progress, !event.target.checked))
-            }
+            onChange={(event) => persist(withGating(progress, !event.target.checked))}
             type="checkbox"
           />
           Open every stop now
@@ -108,17 +106,13 @@ export function CurriculumPath() {
               data-state={complete ? "done" : open ? "open" : "locked"}
               key={step.id}
             >
-              <p className="curriculum__index">
-                {String(index + 1).padStart(2, "0")}
-              </p>
+              <p className="curriculum__index">{String(index + 1).padStart(2, "0")}</p>
               <div>
                 <h2>
                   {open ? (
                     <Link
                       href={step.href}
-                      onClick={() =>
-                        persist(withCompleted(progress, step.id, true))
-                      }
+                      onClick={() => persist(withCompleted(progress, step.id, true))}
                     >
                       {step.title}
                     </Link>
@@ -133,13 +127,7 @@ export function CurriculumPath() {
                     <input
                       checked={complete}
                       onChange={(event) =>
-                        persist(
-                          withCompleted(
-                            progress,
-                            step.id,
-                            event.target.checked,
-                          ),
-                        )
+                        persist(withCompleted(progress, step.id, event.target.checked))
                       }
                       type="checkbox"
                     />
@@ -147,9 +135,9 @@ export function CurriculumPath() {
                   </label>
                 ) : (
                   <p className="curriculum__locked-note">
-                    Locked until the stop above is done — or open the whole path
-                    with the control at the top. It is also reachable directly
-                    from the home arc, which never gates anything.
+                    Locked until the stop above is done — or open the whole path with the control at
+                    the top. It is also reachable directly from the home arc, which never gates
+                    anything.
                   </p>
                 )}
               </div>

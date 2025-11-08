@@ -1,19 +1,6 @@
-import {
-  DEFAULT_IPD_ROUND_CAP,
-  simulateIpdMatch,
-} from "@/engine/repeated/match";
-import {
-  add,
-  compare,
-  divide,
-  rational,
-  type Rational,
-  ZERO,
-} from "@/engine/rational";
-import {
-  ipdStrategyById,
-  type IpdStrategyId,
-} from "@/engine/repeated/strategies";
+import { DEFAULT_IPD_ROUND_CAP, simulateIpdMatch } from "@/engine/repeated/match";
+import { add, compare, divide, rational, type Rational, ZERO } from "@/engine/rational";
+import { ipdStrategyById, type IpdStrategyId } from "@/engine/repeated/strategies";
 
 export const DEFAULT_TOURNAMENT_REPETITIONS = 20;
 export const DEFAULT_TOURNAMENT_SEED = 259_187;
@@ -71,21 +58,14 @@ function average(values: readonly Rational[]): Rational {
   );
 }
 
-function normalizeConfig(
-  config: IpdTournamentConfig,
-): Required<IpdTournamentConfig> {
+function normalizeConfig(config: IpdTournamentConfig): Required<IpdTournamentConfig> {
   const repetitions = config.repetitions ?? DEFAULT_TOURNAMENT_REPETITIONS;
   const continuationProbability =
-    config.continuationProbability ??
-    DEFAULT_TOURNAMENT_CONTINUATION_PROBABILITY;
+    config.continuationProbability ?? DEFAULT_TOURNAMENT_CONTINUATION_PROBABILITY;
   const noise = config.noise ?? DEFAULT_TOURNAMENT_NOISE;
   const roundCap = config.roundCap ?? DEFAULT_IPD_ROUND_CAP;
 
-  if (
-    !Number.isSafeInteger(repetitions) ||
-    repetitions < 1 ||
-    repetitions > 100
-  ) {
+  if (!Number.isSafeInteger(repetitions) || repetitions < 1 || repetitions > 100) {
     throw new RangeError("repetitions must be a safe integer from 1 to 100.");
   }
 
@@ -143,9 +123,7 @@ function pairwiseMeanPayoff(
  * Pairwise values are means of per-round payoffs, so geometric match lengths
  * never give a longer match greater weight in the resulting matrix.
  */
-export function runIpdTournament(
-  input: IpdTournamentConfig,
-): IpdTournamentResult {
+export function runIpdTournament(input: IpdTournamentConfig): IpdTournamentResult {
   const config = normalizeConfig(input);
   const matrix = config.strategies.map((strategy) => ({
     strategy,

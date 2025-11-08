@@ -49,10 +49,7 @@ export interface MoranConfig {
 }
 
 export function createMoranConfig(config: MoranConfig): MoranConfig {
-  if (
-    !Number.isSafeInteger(config.populationSize) ||
-    config.populationSize < 2
-  ) {
+  if (!Number.isSafeInteger(config.populationSize) || config.populationSize < 2) {
     throw new RangeError("populationSize must be an integer ≥ 2.");
   }
   if (
@@ -77,9 +74,7 @@ export function createMoranConfig(config: MoranConfig): MoranConfig {
 
 function assertState(config: MoranConfig, i: number): void {
   if (!Number.isSafeInteger(i) || i < 0 || i > config.populationSize) {
-    throw new RangeError(
-      `State must be an integer in 0..${config.populationSize}; received ${i}.`,
-    );
+    throw new RangeError(`State must be an integer in 0..${config.populationSize}; received ${i}.`);
   }
 }
 
@@ -99,17 +94,11 @@ export function expectedPayoffs(config: MoranConfig, i: number): StatePayoffs {
   const { a, b, c, d } = config.payoffs;
   const divisor = rational(BigInt(n - 1));
   const payoffA = divide(
-    add(
-      multiply(a, rational(BigInt(i - 1))),
-      multiply(b, rational(BigInt(n - i))),
-    ),
+    add(multiply(a, rational(BigInt(i - 1))), multiply(b, rational(BigInt(n - i)))),
     divisor,
   );
   const payoffB = divide(
-    add(
-      multiply(c, rational(BigInt(i))),
-      multiply(d, rational(BigInt(n - i - 1))),
-    ),
+    add(multiply(c, rational(BigInt(i))), multiply(d, rational(BigInt(n - i - 1)))),
     divisor,
   );
   return { payoffA, payoffB };
@@ -156,10 +145,7 @@ export function transitionRatio(config: MoranConfig, i: number): Rational {
  *
  * with γ_j the transition ratio above. Computed as an exact rational sum.
  */
-export function fixationProbability(
-  config: MoranConfig,
-  initialA: number,
-): Rational {
+export function fixationProbability(config: MoranConfig, initialA: number): Rational {
   assertState(config, initialA);
   if (initialA === 0) return ZERO;
   if (initialA === config.populationSize) return ONE;

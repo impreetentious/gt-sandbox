@@ -54,9 +54,7 @@ describe("P6 event-addressed IPD match engine", () => {
     expect(decideIpdStrategy("allc", base)).toBe(0);
     expect(decideIpdStrategy("alld", base)).toBe(1);
     expect(decideIpdStrategy("tft", { ...base, opponentActions: [1] })).toBe(1);
-    expect(decideIpdStrategy("grim", { ...base, opponentActions: [1] })).toBe(
-      1,
-    );
+    expect(decideIpdStrategy("grim", { ...base, opponentActions: [1] })).toBe(1);
     expect(
       decideIpdStrategy("pavlov", {
         ...base,
@@ -85,12 +83,8 @@ describe("P6 event-addressed IPD match engine", () => {
       [0, 0],
       [0, 0],
     ]);
-    expect(equals(result.rowTotal, { numerator: 15n, denominator: 1n })).toBe(
-      true,
-    );
-    expect(
-      equals(result.columnTotal, { numerator: 15n, denominator: 1n }),
-    ).toBe(true);
+    expect(equals(result.rowTotal, { numerator: 15n, denominator: 1n })).toBe(true);
+    expect(equals(result.columnTotal, { numerator: 15n, denominator: 1n })).toBe(true);
   });
 
   it("pins TFT versus AllD move-by-move and at total length L", () => {
@@ -103,29 +97,19 @@ describe("P6 event-addressed IPD match engine", () => {
       [1, 1],
       [1, 1],
     ]);
-    expect(equals(result.rowTotal, { numerator: 4n, denominator: 1n })).toBe(
-      true,
-    );
-    expect(equals(result.columnTotal, { numerator: 9n, denominator: 1n })).toBe(
-      true,
-    );
+    expect(equals(result.rowTotal, { numerator: 4n, denominator: 1n })).toBe(true);
+    expect(equals(result.columnTotal, { numerator: 9n, denominator: 1n })).toBe(true);
   });
 
   it("pins Pavlov's C,D alternation against AllD", () => {
     const result = simulateIpdMatch(fixedMatch("pavlov", "alld"));
 
-    expect(result.history.map((round) => round.row.action)).toEqual([
-      0, 1, 0, 1, 0,
-    ]);
-    expect(result.history.map((round) => round.column.action)).toEqual([
-      1, 1, 1, 1, 1,
-    ]);
+    expect(result.history.map((round) => round.row.action)).toEqual([0, 1, 0, 1, 0]);
+    expect(result.history.map((round) => round.column.action)).toEqual([1, 1, 1, 1, 1]);
   });
 
   it("pins the Grim-versus-Joss C-run, trigger, and mutual-D tail", () => {
-    const result = simulateIpdMatch(
-      fixedMatch("grim", "joss", { masterSeed: 77, roundCap: 8 }),
-    );
+    const result = simulateIpdMatch(fixedMatch("grim", "joss", { masterSeed: 77, roundCap: 8 }));
     expect(actionPairs(result)).toEqual([
       [0, 0],
       [0, 1],
@@ -168,9 +152,7 @@ describe("P6 event-addressed IPD match engine", () => {
   });
 
   it("uses independent noise draws after both strategy choices and discloses the cap", () => {
-    const noisy = simulateIpdMatch(
-      fixedMatch("allc", "allc", { noise: 1, roundCap: 2 }),
-    );
+    const noisy = simulateIpdMatch(fixedMatch("allc", "allc", { noise: 1, roundCap: 2 }));
 
     expect(actionPairs(noisy)).toEqual([
       [1, 1],
@@ -204,20 +186,16 @@ describe("P6 event-addressed IPD match engine", () => {
     expect(oneRound.continuationDraws).toHaveLength(1);
 
     expect(() =>
-      sampleIpdMatchLength(
-        fixedMatch("allc", "alld", { roundCap: DEFAULT_IPD_ROUND_CAP + 1 }),
-      ),
+      sampleIpdMatchLength(fixedMatch("allc", "alld", { roundCap: DEFAULT_IPD_ROUND_CAP + 1 })),
     ).toThrow(/roundCap/);
     expect(() =>
-      sampleIpdMatchLength(
-        fixedMatch("allc", "alld", { continuationProbability: -0.1 }),
-      ),
+      sampleIpdMatchLength(fixedMatch("allc", "alld", { continuationProbability: -0.1 })),
     ).toThrow(/continuationProbability/);
-    expect(() =>
-      sampleIpdMatchLength(fixedMatch("allc", "alld", { masterSeed: 0.5 })),
-    ).toThrow(/masterSeed/);
-    expect(() =>
-      sampleIpdMatchLength(fixedMatch("allc", "alld", { matchId: "" })),
-    ).toThrow(/matchId/);
+    expect(() => sampleIpdMatchLength(fixedMatch("allc", "alld", { masterSeed: 0.5 }))).toThrow(
+      /masterSeed/,
+    );
+    expect(() => sampleIpdMatchLength(fixedMatch("allc", "alld", { matchId: "" }))).toThrow(
+      /matchId/,
+    );
   });
 });

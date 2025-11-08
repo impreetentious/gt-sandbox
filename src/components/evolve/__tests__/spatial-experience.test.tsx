@@ -26,9 +26,7 @@ describe("spatial evolution surface", () => {
       }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Scenario")).toHaveValue("coexistence");
-    expect(screen.getByRole("slider", { name: /Temptation/ })).toHaveValue(
-      "16",
-    );
+    expect(screen.getByRole("slider", { name: /Temptation/ })).toHaveValue("16");
     // One defector in a 21 × 21 field.
     expect(screen.getByTestId("spatial-share")).toHaveTextContent("440/441");
   });
@@ -37,9 +35,7 @@ describe("spatial evolution surface", () => {
     render(<SpatialExperience />);
 
     fireEvent.click(screen.getByRole("button", { name: "Step forward" }));
-    expect(
-      screen.getByRole("heading", { name: "Generation 1" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Generation 1" })).toBeInTheDocument();
     expect(screen.getByTestId("spatial-share")).toHaveTextContent("48/49");
 
     fireEvent.click(screen.getByRole("button", { name: "Step back" }));
@@ -60,9 +56,7 @@ describe("spatial evolution surface", () => {
     render(<SpatialExperience />);
 
     setSlider(/Generation/, 20);
-    expect(
-      screen.getByRole("heading", { name: "Generation 20" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Generation 20" })).toBeInTheDocument();
     expect(screen.getByTestId("spatial-share")).toHaveTextContent("260/441");
   });
 
@@ -83,9 +77,7 @@ describe("spatial evolution surface", () => {
     );
     // The preset carries a whole configuration, not just the payoff.
     expect(screen.getByLabelText("Opening")).toHaveValue("seeded");
-    expect(screen.getByRole("slider", { name: /Temptation/ })).toHaveValue(
-      "12",
-    );
+    expect(screen.getByRole("slider", { name: /Temptation/ })).toHaveValue("12");
   });
 
   it("shows the collapse preset reaching zero cooperators", () => {
@@ -100,16 +92,12 @@ describe("spatial evolution surface", () => {
     render(<SpatialExperience />);
 
     setSlider(/Generation/, 15);
-    expect(
-      screen.getByRole("heading", { name: "Generation 15" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Generation 15" })).toBeInTheDocument();
 
     // A different neighbourhood is a different run; holding the old generation
     // index would silently show a frame from a lattice that no longer exists.
     selectOption("Neighbourhood", "von-neumann");
-    expect(
-      screen.getByRole("heading", { name: "Generation 0" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Generation 0" })).toBeInTheDocument();
   });
 
   it("draws one cell per lattice site and rewires on a size change", () => {
@@ -123,18 +111,13 @@ describe("spatial evolution surface", () => {
   it("offers the run as a data table in a focusable scroll container", () => {
     const { container } = render(<SpatialExperience />);
 
-    fireEvent.click(
-      screen.getByText("View the run as an accessible data table"),
-    );
+    fireEvent.click(screen.getByText("View the run as an accessible data table"));
     expect(
       screen.getByRole("table", {
         name: /Exact cooperator share at every generation/,
       }),
     ).toBeInTheDocument();
     // axe's scrollable-region-focusable: the container must take focus.
-    expect(container.querySelector(".spatial__table-scroll")).toHaveAttribute(
-      "tabindex",
-      "0",
-    );
+    expect(container.querySelector(".spatial__table-scroll")).toHaveAttribute("tabindex", "0");
   });
 });

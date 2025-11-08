@@ -132,12 +132,8 @@ describe("fixation probability", () => {
         payoffs: payoffs(1, 1, 1, 1),
         selectionIntensity: rational(1n, 3n),
       });
-      expect(formatRational(fixationOfSingleMutantA(config))).toBe(
-        `1/${populationSize}`,
-      );
-      expect(
-        equals(fixationOfSingleMutantA(config), neutralFixation(config)),
-      ).toBe(true);
+      expect(formatRational(fixationOfSingleMutantA(config))).toBe(`1/${populationSize}`);
+      expect(equals(fixationOfSingleMutantA(config), neutralFixation(config))).toBe(true);
     }
   });
 
@@ -148,9 +144,7 @@ describe("fixation probability", () => {
       selectionIntensity: rational(1n, 4n),
     });
     for (const row of fixationCurve(config)) {
-      expect(
-        equals(row.fixation, divide(rational(BigInt(row.state)), rational(8n))),
-      ).toBe(true);
+      expect(equals(row.fixation, divide(rational(BigInt(row.state)), rational(8n)))).toBe(true);
     }
   });
 
@@ -194,9 +188,7 @@ describe("fixation probability", () => {
       payoffs: payoffs(3, 1, 1, 3),
       selectionIntensity: rational(1n, 5n),
     });
-    expect(
-      equals(fixationOfSingleMutantA(config), fixationOfSingleMutantB(config)),
-    ).toBe(true);
+    expect(equals(fixationOfSingleMutantA(config), fixationOfSingleMutantB(config))).toBe(true);
   });
 });
 
@@ -208,10 +200,7 @@ describe("fixation probability", () => {
  * system by exact Gaussian elimination. This reaches the same numbers by a
  * completely different route, so it tests the cancellation itself.
  */
-function fixationByLinearSolve(
-  config: MoranConfig,
-  initialA: number,
-): Rational {
+function fixationByLinearSolve(config: MoranConfig, initialA: number): Rational {
   const n = config.populationSize;
   if (initialA === 0) return ZERO;
   if (initialA === n) return ONE;
@@ -226,22 +215,10 @@ function fixationByLinearSolve(
       multiply(rational(BigInt(i)), fitnessA),
       multiply(rational(BigInt(n - i)), fitnessB),
     );
-    const birthA = divide(
-      multiply(rational(BigInt(i)), fitnessA),
-      totalFitness,
-    );
-    const birthB = divide(
-      multiply(rational(BigInt(n - i)), fitnessB),
-      totalFitness,
-    );
-    const up = multiply(
-      birthA,
-      divide(rational(BigInt(n - i)), rational(BigInt(n))),
-    );
-    const down = multiply(
-      birthB,
-      divide(rational(BigInt(i)), rational(BigInt(n))),
-    );
+    const birthA = divide(multiply(rational(BigInt(i)), fitnessA), totalFitness);
+    const birthB = divide(multiply(rational(BigInt(n - i)), fitnessB), totalFitness);
+    const up = multiply(birthA, divide(rational(BigInt(n - i)), rational(BigInt(n))));
+    const down = multiply(birthB, divide(rational(BigInt(i)), rational(BigInt(n))));
 
     const row: Rational[] = Array.from({ length: size }, () => ZERO);
     row[i - 1] = add(up, down);
@@ -265,10 +242,7 @@ function fixationByLinearSolve(
       if (row === column || equals(matrix[row][column], ZERO)) continue;
       const factor = divide(matrix[row][column], pivotValue);
       for (let col = column; col < size; col += 1) {
-        matrix[row][col] = subtract(
-          matrix[row][col],
-          multiply(factor, matrix[column][col]),
-        );
+        matrix[row][col] = subtract(matrix[row][col], multiply(factor, matrix[column][col]));
       }
       rhs[row] = subtract(rhs[row], multiply(factor, rhs[column]));
     }
@@ -281,12 +255,9 @@ describe("cross-check against a direct Markov-chain solve", () => {
   it("matches the closed form on a Prisoner's Dilemma", () => {
     const config = prisonersDilemma(7, [1n, 4n]);
     for (let state = 0; state <= 7; state += 1) {
-      expect(
-        equals(
-          fixationProbability(config, state),
-          fixationByLinearSolve(config, state),
-        ),
-      ).toBe(true);
+      expect(equals(fixationProbability(config, state), fixationByLinearSolve(config, state))).toBe(
+        true,
+      );
     }
   });
 
@@ -297,12 +268,9 @@ describe("cross-check against a direct Markov-chain solve", () => {
       selectionIntensity: rational(1n, 2n),
     });
     for (let state = 0; state <= 6; state += 1) {
-      expect(
-        equals(
-          fixationProbability(config, state),
-          fixationByLinearSolve(config, state),
-        ),
-      ).toBe(true);
+      expect(equals(fixationProbability(config, state), fixationByLinearSolve(config, state))).toBe(
+        true,
+      );
     }
   });
 
@@ -324,10 +292,7 @@ describe("cross-check against a direct Markov-chain solve", () => {
           });
           for (let state = 1; state < populationSize; state += 1) {
             expect(
-              equals(
-                fixationProbability(config, state),
-                fixationByLinearSolve(config, state),
-              ),
+              equals(fixationProbability(config, state), fixationByLinearSolve(config, state)),
             ).toBe(true);
           }
         },

@@ -1,10 +1,4 @@
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 
@@ -53,17 +47,16 @@ describe("V2-P8 theme toggle", () => {
     window.localStorage.setItem("theme", "dark");
     render(<ThemeToggle />);
 
-    await waitFor(() =>
-      expect(screen.getByRole("radio", { name: "Dark" })).toBeChecked(),
-    );
+    await waitFor(() => {
+      expect(screen.getByRole("radio", { name: "Dark" })).toBeChecked();
+      expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+    });
   });
 
   it("ignores a stored value that is not a theme", async () => {
     window.localStorage.setItem("theme", "sepia");
     render(<ThemeToggle />);
 
-    await waitFor(() =>
-      expect(screen.getByRole("radio", { name: "System" })).toBeChecked(),
-    );
+    await waitFor(() => expect(screen.getByRole("radio", { name: "System" })).toBeChecked());
   });
 });

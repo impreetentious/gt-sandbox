@@ -1,14 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { createIpdSession, reduceIpdSession } from "@/state/ipd-session";
 
-function commitChoice(
-  state: ReturnType<typeof createIpdSession>,
-  action: 0 | 1,
-) {
-  return reduceIpdSession(
-    reduceIpdSession(state, { type: "submit-choice", action }),
-    { type: "commit-outcome" },
-  );
+function commitChoice(state: ReturnType<typeof createIpdSession>, action: 0 | 1) {
+  return reduceIpdSession(reduceIpdSession(state, { type: "submit-choice", action }), {
+    type: "commit-outcome",
+  });
 }
 
 describe("P6 interactive IPD session reducer", () => {
@@ -19,9 +15,7 @@ describe("P6 interactive IPD session reducer", () => {
       action: 1,
     });
 
-    expect(
-      reduceIpdSession(resolving, { type: "submit-choice", action: 0 }),
-    ).toBe(resolving);
+    expect(reduceIpdSession(resolving, { type: "submit-choice", action: 0 })).toBe(resolving);
     expect(resolving.pendingRound).toMatchObject({
       row: { intendedAction: 1, action: 1 },
       column: { intendedAction: 0, action: 0 },

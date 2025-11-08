@@ -1,17 +1,8 @@
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { ClassroomExperience } from "@/components/classroom/classroom-experience";
 import { rational } from "@/engine/rational";
-import {
-  buildSessionExport,
-  serializeSessionExport,
-} from "@/state/session-export";
+import { buildSessionExport, serializeSessionExport } from "@/state/session-export";
 
 afterEach(cleanup);
 
@@ -60,9 +51,7 @@ describe("classroom experience", () => {
       target: { files: [file] },
     });
 
-    await waitFor(() =>
-      expect(screen.getByTestId("classroom-aggregate")).toBeInTheDocument(),
-    );
+    await waitFor(() => expect(screen.getByTestId("classroom-aggregate")).toBeInTheDocument());
     expect(screen.getByText(/1 session loaded/)).toBeInTheDocument();
   });
 });

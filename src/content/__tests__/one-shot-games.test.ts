@@ -6,9 +6,9 @@ describe("P5 authored one-shot copy", () => {
     for (const content of Object.values(oneShotGameContent)) {
       expect(content.insights.length).toBeLessThanOrEqual(2);
       expect(content.framing).not.toMatch(/!|let's dive in/i);
-      expect(
-        content.personas.map((persona) => persona.description).join(" "),
-      ).not.toMatch(/!|let's dive in/i);
+      expect(content.personas.map((persona) => persona.description).join(" ")).not.toMatch(
+        /!|let's dive in/i,
+      );
     }
   });
 });

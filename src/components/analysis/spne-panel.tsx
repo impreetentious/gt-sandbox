@@ -66,13 +66,9 @@ export function SPNEPanel({ game, oracle, reveal }: Props) {
           <GlossaryTerm term="subgame-perfect-equilibrium" /> outcome
         </h3>
         <p>
-          Backward induction produces the strategy{" "}
-          <strong>{oracle.spne.label}</strong>. On-path payoffs:{" "}
-          <em>
-            ({spne.payoffs.map((value) => formatRational(value)).join(", ")})
-          </em>
-          . An independent verifier{" "}
-          {verifierResult.isSubgamePerfect ? "confirms" : "would flag"} this as
+          Backward induction produces the strategy <strong>{oracle.spne.label}</strong>. On-path
+          payoffs: <em>({spne.payoffs.map((value) => formatRational(value)).join(", ")})</em>. An
+          independent verifier {verifierResult.isSubgamePerfect ? "confirms" : "would flag"} this as
           subgame-perfect.
         </p>
       </section>
@@ -82,8 +78,8 @@ export function SPNEPanel({ game, oracle, reveal }: Props) {
           <GlossaryTerm term="backward-induction" /> stepper
         </h3>
         <p>
-          Solve every subgame first, working back to the root. Each step below
-          is one deciding player at one decision node.
+          Solve every subgame first, working back to the root. Each step below is one deciding
+          player at one decision node.
         </p>
         <ol>
           {trace.slice(0, visibleSteps).map((step) => (
@@ -92,33 +88,25 @@ export function SPNEPanel({ game, oracle, reveal }: Props) {
         </ol>
         <div className="spne-panel__stepper">
           <button
-            onClick={() =>
-              setVisibleSteps((count) => (canShowMore ? count + 1 : 0))
-            }
+            onClick={() => setVisibleSteps((count) => (canShowMore ? count + 1 : 0))}
             type="button"
           >
             {stepLabelForButton}
           </button>
           {allShown ? (
-            <p className="spne-panel__stepper-note">
-              All {trace.length} induction steps shown.
-            </p>
+            <p className="spne-panel__stepper-note">All {trace.length} induction steps shown.</p>
           ) : null}
         </div>
       </section>
 
       {nonSpVerdicts.length > 0 ? (
-        <section
-          aria-labelledby="spne-non-sp-title"
-          className="spne-panel__non-sp"
-        >
+        <section aria-labelledby="spne-non-sp-title" className="spne-panel__non-sp">
           <h3 id="spne-non-sp-title">Nash but not subgame-perfect</h3>
           <p>{reveal.credibleThreat}</p>
           <ul>
             {nonSpVerdicts.map((entry) => (
               <li key={entry.label}>
-                <strong>{entry.label}.</strong> Payoffs (
-                {entry.payoffs.join(", ")}). Verifier:{" "}
+                <strong>{entry.label}.</strong> Payoffs ({entry.payoffs.join(", ")}). Verifier:{" "}
                 {entry.verdict.isSubgamePerfect ? (
                   <span>marked subgame-perfect (unexpected)</span>
                 ) : (
@@ -133,10 +121,7 @@ export function SPNEPanel({ game, oracle, reveal }: Props) {
           </ul>
         </section>
       ) : (
-        <section
-          aria-labelledby="spne-non-sp-title"
-          className="spne-panel__non-sp"
-        >
+        <section aria-labelledby="spne-non-sp-title" className="spne-panel__non-sp">
           <h3 id="spne-non-sp-title">Where the theory strains</h3>
           <p>{reveal.credibleThreat}</p>
         </section>
@@ -145,8 +130,8 @@ export function SPNEPanel({ game, oracle, reveal }: Props) {
       <section aria-labelledby="spne-why-title">
         <h3 id="spne-why-title">Why the distinction matters</h3>
         <p>
-          A <GlossaryTerm term="credible-threat" /> would survive subgame
-          perfection; this one does not.
+          A <GlossaryTerm term="credible-threat" /> would survive subgame perfection; this one does
+          not.
         </p>
         <p>{reveal.whyItMatters}</p>
       </section>

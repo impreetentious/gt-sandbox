@@ -31,10 +31,7 @@ export function bestResponses(
   player: Player,
   opponentAction: number,
 ): number[] {
-  const actions = Array.from(
-    { length: playerActionCount(game, player) },
-    (_, index) => index,
-  );
+  const actions = Array.from({ length: playerActionCount(game, player) }, (_, index) => index);
   let bestPayoff: Rational | undefined;
   const responses: number[] = [];
 

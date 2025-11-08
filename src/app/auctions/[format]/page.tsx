@@ -21,11 +21,7 @@ export async function generateMetadata({
   return { title: content.title, description: content.framing };
 }
 
-export default async function AuctionPage({
-  params,
-}: {
-  params: Promise<{ format: string }>;
-}) {
+export default async function AuctionPage({ params }: { params: Promise<{ format: string }> }) {
   const { format } = await params;
   const resolved = auctionSlugToFormat[format];
   if (!resolved) {

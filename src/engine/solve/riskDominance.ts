@@ -15,10 +15,7 @@ export interface EquilibriumSelection {
   readonly riskProducts: readonly Rational[];
 }
 
-function deviationLossProduct(
-  game: NormalFormGame,
-  profile: Profile,
-): Rational {
+function deviationLossProduct(game: NormalFormGame, profile: Profile): Rational {
   const rowLoss = subtract(
     payoffFor(game, profile, "row"),
     payoffFor(game, { row: 1 - profile.row, column: profile.column }, "row"),
@@ -31,16 +28,10 @@ function deviationLossProduct(
   return multiply(rowLoss, columnLoss);
 }
 
-export function analyzeEquilibriumSelection(
-  game: NormalFormGame,
-): EquilibriumSelection {
+export function analyzeEquilibriumSelection(game: NormalFormGame): EquilibriumSelection {
   const equilibria = pureNashEquilibria(game);
 
-  if (
-    game.rowActions.length !== 2 ||
-    game.columnActions.length !== 2 ||
-    equilibria.length !== 2
-  ) {
+  if (game.rowActions.length !== 2 || game.columnActions.length !== 2 || equilibria.length !== 2) {
     return {
       equilibria,
       riskDominance: { kind: "not-applicable" },

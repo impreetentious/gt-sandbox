@@ -1,12 +1,7 @@
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { catalog } from "@/engine/catalog";
-import {
-  allProfiles,
-  createNormalFormGame,
-  isZeroSum,
-  profileKey,
-} from "@/engine/game";
+import { allProfiles, createNormalFormGame, isZeroSum, profileKey } from "@/engine/game";
 import { pureNashEquilibria } from "@/engine/solve/pure";
 import { verifyPureProfile } from "@/engine/verify";
 
@@ -17,17 +12,11 @@ function keys(profiles: readonly { row: number; column: number }[]): string[] {
 describe("catalog pure-equilibrium oracles", () => {
   for (const entry of catalog) {
     it(`${entry.game.title}: pure equilibria and zero-sum status`, () => {
-      expect(keys(pureNashEquilibria(entry.game))).toEqual(
-        keys(entry.oracle.pureNash),
-      );
+      expect(keys(pureNashEquilibria(entry.game))).toEqual(keys(entry.oracle.pureNash));
       expect(isZeroSum(entry.game)).toBe(entry.oracle.zeroSum);
 
       for (let row = 0; row < entry.game.rowActions.length; row += 1) {
-        for (
-          let column = 0;
-          column < entry.game.columnActions.length;
-          column += 1
-        ) {
+        for (let column = 0; column < entry.game.columnActions.length; column += 1) {
           const profile = { row, column };
           expect(verifyPureProfile(entry.game, profile).isNashEquilibrium).toBe(
             keys(entry.oracle.pureNash).includes(profileKey(profile)),
@@ -53,14 +42,8 @@ describe("pure-solver soundness", () => {
             return createNormalFormGame({
               id: `random-${rowCount}-${columnCount}`,
               title: "Random game",
-              rowActions: Array.from(
-                { length: rowCount },
-                (_, index) => `R${index}`,
-              ),
-              columnActions: Array.from(
-                { length: columnCount },
-                (_, index) => `C${index}`,
-              ),
+              rowActions: Array.from({ length: rowCount }, (_, index) => `R${index}`),
+              columnActions: Array.from({ length: columnCount }, (_, index) => `C${index}`),
               payoffs: Array.from({ length: rowCount }, () =>
                 Array.from({ length: columnCount }, () => {
                   const payoff = [values[cursor], values[cursor + 1]] as const;
@@ -81,9 +64,7 @@ describe("pure-solver soundness", () => {
 
         expect(keys(solverOutput)).toEqual(keys(independentlyVerified));
         expect(
-          solverOutput.every(
-            (profile) => verifyPureProfile(game, profile).isNashEquilibrium,
-          ),
+          solverOutput.every((profile) => verifyPureProfile(game, profile).isNashEquilibrium),
         ).toBe(true);
       }),
     );

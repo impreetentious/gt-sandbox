@@ -153,16 +153,13 @@ export function parseProgress(raw: string | null): CurriculumProgress {
   const record = parsed as Record<string, unknown>;
   const completed = Array.isArray(record.completed)
     ? record.completed.filter(
-        (value): value is string =>
-          typeof value === "string" && stepIds.has(value),
+        (value): value is string => typeof value === "string" && stepIds.has(value),
       )
     : [];
 
   return {
     gated: record.gated !== false,
-    completed: curriculum
-      .map((step) => step.id)
-      .filter((id) => completed.includes(id)),
+    completed: curriculum.map((step) => step.id).filter((id) => completed.includes(id)),
   };
 }
 
@@ -193,18 +190,12 @@ export function isUnlocked(progress: CurriculumProgress, id: string): boolean {
     return index === 0;
   }
 
-  return curriculum
-    .slice(0, index)
-    .every((step) => isComplete(progress, step.id));
+  return curriculum.slice(0, index).every((step) => isComplete(progress, step.id));
 }
 
 /** The first stop that is open and not yet done, or null once all are done. */
-export function nextStep(
-  progress: CurriculumProgress,
-): CurriculumStep | undefined {
-  return curriculum.find(
-    (step) => !isComplete(progress, step.id) && isUnlocked(progress, step.id),
-  );
+export function nextStep(progress: CurriculumProgress): CurriculumStep | undefined {
+  return curriculum.find((step) => !isComplete(progress, step.id) && isUnlocked(progress, step.id));
 }
 
 export function withCompleted(
@@ -218,16 +209,11 @@ export function withCompleted(
 
   const completed = curriculum
     .map((step) => step.id)
-    .filter((stepId) =>
-      stepId === id ? complete : isComplete(progress, stepId),
-    );
+    .filter((stepId) => (stepId === id ? complete : isComplete(progress, stepId)));
 
   return { ...progress, completed };
 }
 
-export function withGating(
-  progress: CurriculumProgress,
-  gated: boolean,
-): CurriculumProgress {
+export function withGating(progress: CurriculumProgress, gated: boolean): CurriculumProgress {
   return { ...progress, gated };
 }

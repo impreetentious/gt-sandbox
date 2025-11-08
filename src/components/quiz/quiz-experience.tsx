@@ -2,11 +2,7 @@
 
 import { useMemo, useState, useSyncExternalStore } from "react";
 
-import {
-  generateQuizRound,
-  QUIZ_LENGTH,
-  scoreQuizRound,
-} from "@/engine/quiz";
+import { generateQuizRound, QUIZ_LENGTH, scoreQuizRound } from "@/engine/quiz";
 import type { NormalFormGame } from "@/engine/game";
 import { decodeGameSearch } from "@/state/game-url";
 
@@ -35,11 +31,7 @@ function locationSnapshot() {
 }
 
 export function QuizExperience() {
-  const search = useSyncExternalStore(
-    subscribeToLocation,
-    locationSnapshot,
-    () => "",
-  );
+  const search = useSyncExternalStore(subscribeToLocation, locationSnapshot, () => "");
   const [seedOverride, setSeedOverride] = useState<number>();
   const seed = seedOverride ?? seedFromSearch(search);
   const [index, setIndex] = useState(0);
@@ -72,8 +64,8 @@ export function QuizExperience() {
           Make the call before the solver does.
         </h1>
         <p className="lede">
-          Five deterministic question types rotate from one seed. A shared Build
-          link becomes this quiz’s normal-form source.
+          Five deterministic question types rotate from one seed. A shared Build link becomes this
+          quiz’s normal-form source.
         </p>
       </header>
       <div className="quiz-experience__controls">
@@ -84,16 +76,11 @@ export function QuizExperience() {
             min="0"
             onChange={(event) => {
               const value = Number(event.target.value);
-              const nextSeed =
-                Number.isSafeInteger(value) && value >= 0 ? value >>> 0 : 42;
+              const nextSeed = Number.isSafeInteger(value) && value >= 0 ? value >>> 0 : 42;
               resetRound(nextSeed);
               const params = new URLSearchParams(window.location.search);
               params.set("seed", String(nextSeed));
-              window.history.replaceState(
-                null,
-                "",
-                `${window.location.pathname}?${params}`,
-              );
+              window.history.replaceState(null, "", `${window.location.pathname}?${params}`);
             }}
             type="number"
             value={seed}
@@ -130,9 +117,7 @@ export function QuizExperience() {
               key={choice.id}
               onClick={() =>
                 setAnswers((current) =>
-                  current.map((entry, answerIndex) =>
-                    answerIndex === index ? choice.id : entry,
-                  ),
+                  current.map((entry, answerIndex) => (answerIndex === index ? choice.id : entry)),
                 )
               }
               type="button"
@@ -145,17 +130,11 @@ export function QuizExperience() {
           <p className="quiz-experience__result" role="status">
             {correct ? "Correct. " : "Not quite. "}
             {question.explanation}
-            {complete
-              ? ` Round complete: ${score} of ${QUIZ_LENGTH}.`
-              : ""}
+            {complete ? ` Round complete: ${score} of ${QUIZ_LENGTH}.` : ""}
           </p>
         ) : null}
         {complete ? (
-          <button
-            className="analysis-button"
-            onClick={() => resetRound()}
-            type="button"
-          >
+          <button className="analysis-button" onClick={() => resetRound()} type="button">
             Play this seed again
           </button>
         ) : (

@@ -1,10 +1,4 @@
-import {
-  act,
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-} from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { OneShotPlayExperience } from "@/components/arena/one-shot-play";
 
@@ -31,12 +25,10 @@ describe("P5 one-shot play arenas", () => {
     }
 
     fireEvent.click(screen.getByText("Analysis / Stag Hunt"));
-    expect(
-      screen.getByRole("button", { name: "risk dominant" }).closest("p"),
-    ).toHaveTextContent("risk dominant outcome: (Hare, Hare).");
-    expect(
-      screen.getByText("Payoff-dominant outcome: (Stag, Stag)."),
-    ).toBeVisible();
+    expect(screen.getByRole("button", { name: "risk dominant" }).closest("p")).toHaveTextContent(
+      "risk dominant outcome: (Hare, Hare).",
+    );
+    expect(screen.getByText("Payoff-dominant outcome: (Stag, Stag).")).toBeVisible();
   });
 
   it("exposes Shark prediction accuracy against a biased scripted input", () => {

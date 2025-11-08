@@ -74,14 +74,9 @@ for (const offer of OFFERS) {
   );
 }
 
-const equalSplitThreatStrategy = new Map<string, number>([
-  ["proposer-move", 5],
-]);
+const equalSplitThreatStrategy = new Map<string, number>([["proposer-move", 5]]);
 for (const offer of OFFERS) {
-  equalSplitThreatStrategy.set(
-    `responder-after-offer-${offer}`,
-    offer < 5 ? 0 : 1,
-  );
+  equalSplitThreatStrategy.set(`responder-after-offer-${offer}`, offer < 5 ? 0 : 1);
 }
 
 export const ultimatum: ExtensiveCatalogGame = {

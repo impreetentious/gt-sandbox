@@ -49,15 +49,8 @@ function eventSeed(seed: number, round: number, channel: number): number {
   );
 }
 
-function seededBinaryAction(
-  seed: number,
-  round: number,
-  channel: number,
-): BinaryAction {
-  return createRng(eventSeed(seed, round, channel)).integer(
-    0,
-    2,
-  ) as BinaryAction;
+function seededBinaryAction(seed: number, round: number, channel: number): BinaryAction {
+  return createRng(eventSeed(seed, round, channel)).integer(0, 2) as BinaryAction;
 }
 
 function randomAction(
@@ -65,8 +58,7 @@ function randomAction(
   seed: number,
   round: number,
 ): BinaryAction {
-  const probability =
-    policy === "random:1/3" ? 1 / 3 : policy === "random:9/10" ? 9 / 10 : 1 / 2;
+  const probability = policy === "random:1/3" ? 1 / 3 : policy === "random:9/10" ? 9 / 10 : 1 / 2;
 
   return createRng(eventSeed(seed, round, 1)).next() < probability ? 0 : 1;
 }
@@ -75,11 +67,7 @@ function bestResponseToPointBelief(
   game: NormalFormGame,
   predictedPlayerAction: BinaryAction,
 ): BinaryAction {
-  return bestResponses(
-    game,
-    "column",
-    predictedPlayerAction,
-  )[0] as BinaryAction;
+  return bestResponses(game, "column", predictedPlayerAction)[0] as BinaryAction;
 }
 
 function fictitiousAction(
@@ -99,11 +87,11 @@ function fictitiousAction(
     for (const playerAction of [0, 1] as const) {
       expectedNumerator = add(expectedNumerator, {
         numerator:
-          payoffFor(game, { row: playerAction, column: action }, "column")
-            .numerator * weights[playerAction].numerator,
+          payoffFor(game, { row: playerAction, column: action }, "column").numerator *
+          weights[playerAction].numerator,
         denominator:
-          payoffFor(game, { row: playerAction, column: action }, "column")
-            .denominator * weights[playerAction].denominator,
+          payoffFor(game, { row: playerAction, column: action }, "column").denominator *
+          weights[playerAction].denominator,
       });
     }
 
@@ -133,10 +121,7 @@ export function predictMarkov2PlayerAction(
   const counts: [number, number] = [1, 1];
 
   for (let index = 2; index < playerActions.length; index += 1) {
-    if (
-      playerActions[index - 2] === previous[0] &&
-      playerActions[index - 1] === previous[1]
-    ) {
+    if (playerActions[index - 2] === previous[0] && playerActions[index - 1] === previous[1]) {
       counts[playerActions[index]] += 1;
     }
   }
@@ -152,9 +137,7 @@ export function predictMarkov2PlayerAction(
  * Decides a reusable one-shot-game persona from completed player history.
  * All random choices are event-addressed by the supplied seed and round.
  */
-export function decideOneShotOpponentAction(
-  input: OneShotPolicyInput,
-): OneShotPolicyDecision {
+export function decideOneShotOpponentAction(input: OneShotPolicyInput): OneShotPolicyDecision {
   const { game, playerActions, policy, round, seed } = input;
   assertTwoByTwo(game);
 
@@ -169,18 +152,13 @@ export function decideOneShotOpponentAction(
       return { action: playerActions.at(-1) ?? 0 };
     case "fsm:cautious": {
       const hasSeenTrust = playerActions.some(
-        (action, index) =>
-          index > 0 && action === 0 && playerActions[index - 1] === 0,
+        (action, index) => index > 0 && action === 0 && playerActions[index - 1] === 0,
       );
 
       return { action: hasSeenTrust ? (playerActions.at(-1) ?? 1) : 1 };
     }
     case "markov2": {
-      const predictedPlayerAction = predictMarkov2PlayerAction(
-        playerActions,
-        seed,
-        round,
-      );
+      const predictedPlayerAction = predictMarkov2PlayerAction(playerActions, seed, round);
 
       return {
         action: bestResponseToPointBelief(game, predictedPlayerAction),

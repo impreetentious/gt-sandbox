@@ -1,11 +1,4 @@
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-  within,
-} from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { GameWorkbench } from "@/components/build/game-workbench";
 import { pd } from "@/engine/catalog/pd";
@@ -19,17 +12,14 @@ describe("P9 custom-game workbench", () => {
   it("turns the symmetric PD temptation payoff into an assurance game live", async () => {
     render(<GameWorkbench defaultGame={pd.game} />);
 
-    expect(
-      screen.getByRole("heading", { name: "This is a dilemma game." }),
-    ).toBeVisible();
+    expect(screen.getByRole("heading", { name: "This is a dilemma game." })).toBeVisible();
 
     fireEvent.change(screen.getByLabelText("Your payoff for row 2, column 1"), {
       target: { value: "2" },
     });
-    fireEvent.change(
-      screen.getByLabelText("Rival payoff for row 1, column 2"),
-      { target: { value: "2" } },
-    );
+    fireEvent.change(screen.getByLabelText("Rival payoff for row 1, column 2"), {
+      target: { value: "2" },
+    });
 
     await waitFor(() =>
       expect(
@@ -38,9 +28,7 @@ describe("P9 custom-game workbench", () => {
         }),
       ).toBeVisible(),
     );
-    expect(within(screen.getByRole("table")).getAllByText("NE")).toHaveLength(
-      2,
-    );
+    expect(within(screen.getByRole("table")).getAllByText("NE")).toHaveLength(2);
     expect(window.location.search).toContain("v=1");
   });
 
@@ -52,14 +40,10 @@ describe("P9 custom-game workbench", () => {
     fireEvent.change(input, { target: { value: "1.1234567" } });
 
     await waitFor(() =>
-      expect(screen.getByRole("alert")).toHaveTextContent(
-        "at most 6 decimal places",
-      ),
+      expect(screen.getByRole("alert")).toHaveTextContent("at most 6 decimal places"),
     );
     expect(document.activeElement).toBe(input);
-    expect(
-      screen.getByRole("heading", { name: "This is a dilemma game." }),
-    ).toBeVisible();
+    expect(screen.getByRole("heading", { name: "This is a dilemma game." })).toBeVisible();
   });
 
   it("supports the bounded 4×4 editor and a manual-copy fallback", async () => {
@@ -74,17 +58,11 @@ describe("P9 custom-game workbench", () => {
       target: { value: "4" },
     });
 
-    await waitFor(() =>
-      expect(screen.getByLabelText("Row action 4")).toBeVisible(),
-    );
+    await waitFor(() => expect(screen.getByLabelText("Row action 4")).toBeVisible());
     expect(screen.getByLabelText("Column action 4")).toBeVisible();
-    expect(
-      screen.getByLabelText("Rival payoff for row 4, column 4"),
-    ).toBeVisible();
+    expect(screen.getByLabelText("Rival payoff for row 4, column 4")).toBeVisible();
 
-    fireEvent.click(
-      screen.getByRole("button", { name: "Copy reproducible link" }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Copy reproducible link" }));
     const fallback = await screen.findByLabelText(
       "Clipboard access is unavailable. Copy this link manually.",
     );
@@ -100,14 +78,10 @@ describe("P9 custom-game workbench", () => {
     });
 
     render(<GameWorkbench />);
-    fireEvent.click(
-      screen.getByRole("button", { name: "Copy reproducible link" }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Copy reproducible link" }));
 
     expect(
-      await screen.findByText(
-        "Copied. The complete bounded state is in the link.",
-      ),
+      await screen.findByText("Copied. The complete bounded state is in the link."),
     ).toBeVisible();
     expect(writeText).toHaveBeenCalledWith(expect.stringContaining("?v=1&"));
 

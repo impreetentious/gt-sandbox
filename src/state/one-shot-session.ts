@@ -1,7 +1,4 @@
-import {
-  oneShotGameContent,
-  type OneShotPlayableSlug,
-} from "@/content/one-shot-games";
+import { oneShotGameContent, type OneShotPlayableSlug } from "@/content/one-shot-games";
 import { catalogBySlug } from "@/engine/catalog";
 import { payoffAt } from "@/engine/game";
 import {
@@ -74,15 +71,10 @@ export function isPersonaForGame(
   slug: OneShotPlayableSlug,
   persona: OneShotOpponentPolicy,
 ): boolean {
-  return oneShotGameContent[slug].personas.some(
-    (candidate) => candidate.id === persona,
-  );
+  return oneShotGameContent[slug].personas.some((candidate) => candidate.id === persona);
 }
 
-function stageRound(
-  state: OneShotSessionState,
-  playerAction: BinaryAction,
-): OneShotRound {
+function stageRound(state: OneShotSessionState, playerAction: BinaryAction): OneShotRound {
   const game = catalogBySlug[state.slug].game;
   const decision = decideOneShotOpponentAction({
     policy: state.persona,
@@ -128,8 +120,7 @@ export function reduceOneShotSession(
         return state;
       }
       const persona =
-        action.persona !== undefined &&
-        isPersonaForGame(state.slug, action.persona)
+        action.persona !== undefined && isPersonaForGame(state.slug, action.persona)
           ? action.persona
           : state.persona;
       const seed = action.seed ?? state.seed;
@@ -159,8 +150,7 @@ export function reduceOneShotSession(
       }
 
       const rounds = [...state.rounds, round];
-      const isComplete =
-        rounds.length === oneShotGameContent[state.slug].roundLimit;
+      const isComplete = rounds.length === oneShotGameContent[state.slug].roundLimit;
 
       return {
         ...state,
@@ -169,21 +159,13 @@ export function reduceOneShotSession(
         pendingRound: null,
         playerScore: add(state.playerScore, round.playerPayoff),
         opponentScore: add(state.opponentScore, round.opponentPayoff),
-        focusTarget: isComplete
-          ? "play-again"
-          : round.playerAction === 0
-            ? "choice-0"
-            : "choice-1",
+        focusTarget: isComplete ? "play-again" : round.playerAction === 0 ? "choice-0" : "choice-1",
       };
     }
 
     case "play-again":
       return state.status === "complete"
-        ? createOneShotSession(
-            state.slug,
-            state.persona,
-            nextOneShotSessionSeed(state.seed),
-          )
+        ? createOneShotSession(state.slug, state.persona, nextOneShotSessionSeed(state.seed))
         : state;
   }
 }

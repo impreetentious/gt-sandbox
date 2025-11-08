@@ -3,11 +3,7 @@
 import { useMemo, useState } from "react";
 import { PublicGoodsPanel } from "@/components/analysis/public-goods-panel";
 import { publicGoodsContent } from "@/content/public-goods";
-import {
-  createPublicGoodsConfig,
-  evaluateProfile,
-  type PublicGoodsConfig,
-} from "@/engine/nplayer";
+import { createPublicGoodsConfig, evaluateProfile, type PublicGoodsConfig } from "@/engine/nplayer";
 import { compare, formatRational, rational } from "@/engine/rational";
 
 const ENDOWMENT = 10;
@@ -16,10 +12,7 @@ const MPCR_DENOMINATOR = 20n;
 const MPCR_MIN = 1;
 const MPCR_MAX = 20;
 
-function rivalContribution(
-  share: readonly [number, number],
-  endowment: number,
-): number {
+function rivalContribution(share: readonly [number, number], endowment: number): number {
   return Math.round((endowment * share[0]) / share[1]);
 }
 
@@ -46,29 +39,21 @@ export function PublicGoodsExperience() {
 
   const outcome = useMemo(() => {
     if (ownContribution === null) return null;
-    const profile = [
-      ownContribution,
-      ...Array.from({ length: playerCount - 1 }, () => othersEach),
-    ];
+    const profile = [ownContribution, ...Array.from({ length: playerCount - 1 }, () => othersEach)];
     return evaluateProfile(config, profile);
   }, [config, ownContribution, othersEach, playerCount]);
 
   const counterfactual = useMemo(() => {
     if (ownContribution === null) return null;
     const alternative = ownContribution === 0 ? ENDOWMENT : 0;
-    const profile = [
-      alternative,
-      ...Array.from({ length: playerCount - 1 }, () => othersEach),
-    ];
+    const profile = [alternative, ...Array.from({ length: playerCount - 1 }, () => othersEach)];
     return {
       contribution: alternative,
       outcome: evaluateProfile(config, profile),
     };
   }, [config, ownContribution, othersEach, playerCount]);
 
-  const mpcrLabel = formatRational(
-    rational(BigInt(mpcrStep), MPCR_DENOMINATOR),
-  );
+  const mpcrLabel = formatRational(rational(BigInt(mpcrStep), MPCR_DENOMINATOR));
 
   function reset() {
     setOwnContribution(null);
@@ -90,10 +75,7 @@ export function PublicGoodsExperience() {
       </header>
 
       <div className="public-goods__layout">
-        <section
-          aria-labelledby="public-goods-setup-title"
-          className="public-goods__setup"
-        >
+        <section aria-labelledby="public-goods-setup-title" className="public-goods__setup">
           <h2 id="public-goods-setup-title">The group</h2>
 
           <div className="public-goods__control">
@@ -133,8 +115,8 @@ export function PublicGoodsExperience() {
               value={mpcrStep}
             />
             <p className="public-goods__control-note">
-              Each token in the pot returns {mpcrLabel} to every player,
-              including whoever put it in.
+              Each token in the pot returns {mpcrLabel} to every player, including whoever put it
+              in.
             </p>
           </div>
 
@@ -160,10 +142,7 @@ export function PublicGoodsExperience() {
           </fieldset>
         </section>
 
-        <section
-          aria-labelledby="public-goods-act-title"
-          className="public-goods__act"
-        >
+        <section aria-labelledby="public-goods-act-title" className="public-goods__act">
           <h2 id="public-goods-act-title">Your move</h2>
           <p className="public-goods__prompt">{publicGoodsContent.actPrompt}</p>
 
@@ -181,17 +160,11 @@ export function PublicGoodsExperience() {
             ))}
           </div>
 
-          <p
-            aria-live="polite"
-            className="public-goods__narration"
-            data-testid="pg-narration"
-          >
+          <p aria-live="polite" className="public-goods__narration" data-testid="pg-narration">
             {outcome && ownContribution !== null ? (
               <>
-                You contributed {ownContribution}; the pot held{" "}
-                {outcome.groupTotal}. You earned{" "}
-                <strong>{formatRational(outcome.payoffs[0])}</strong>. Each
-                other player earned{" "}
+                You contributed {ownContribution}; the pot held {outcome.groupTotal}. You earned{" "}
+                <strong>{formatRational(outcome.payoffs[0])}</strong>. Each other player earned{" "}
                 {playerCount > 1
                   ? formatRational(outcome.payoffs[1])
                   : formatRational(outcome.payoffs[0])}
@@ -203,36 +176,21 @@ export function PublicGoodsExperience() {
           </p>
 
           {outcome && counterfactual && ownContribution !== null ? (
-            <p
-              className="public-goods__counterfactual"
-              data-testid="pg-counterfactual"
-            >
-              Had you contributed {counterfactual.contribution} instead, you
-              would have earned{" "}
+            <p className="public-goods__counterfactual" data-testid="pg-counterfactual">
+              Had you contributed {counterfactual.contribution} instead, you would have earned{" "}
               {formatRational(counterfactual.outcome.payoffs[0])} —{" "}
-              {compare(
-                counterfactual.outcome.payoffs[0],
-                outcome.payoffs[0],
-              ) === 1
+              {compare(counterfactual.outcome.payoffs[0], outcome.payoffs[0]) === 1
                 ? "more than you did."
-                : compare(
-                      counterfactual.outcome.payoffs[0],
-                      outcome.payoffs[0],
-                    ) === -1
+                : compare(counterfactual.outcome.payoffs[0], outcome.payoffs[0]) === -1
                   ? "less than you did."
                   : "exactly what you did."}{" "}
-              Group welfare would have been{" "}
-              {formatRational(counterfactual.outcome.welfare)} against your{" "}
-              {formatRational(outcome.welfare)}.
+              Group welfare would have been {formatRational(counterfactual.outcome.welfare)} against
+              your {formatRational(outcome.welfare)}.
             </p>
           ) : null}
 
           {outcome ? (
-            <button
-              className="public-goods__reset"
-              onClick={reset}
-              type="button"
-            >
+            <button className="public-goods__reset" onClick={reset} type="button">
               Play again
             </button>
           ) : null}

@@ -2,7 +2,14 @@ import { equals, rational, type Rational } from "@/engine/rational";
 import type { BinaryAction } from "@/engine/repeated/policies";
 
 export type IpdStrategyId =
-  "allc" | "alld" | "tft" | "grim" | "pavlov" | "gtft" | "joss" | "random";
+  | "allc"
+  | "alld"
+  | "tft"
+  | "grim"
+  | "pavlov"
+  | "gtft"
+  | "joss"
+  | "random";
 
 export interface StrategyDiagram {
   readonly states: readonly string[];
@@ -77,8 +84,7 @@ export const ipdStrategies: readonly IpdStrategy[] = [
       states: ["Cooperate", "Triggered: Defect"],
       transitions: ["Rival defects → Triggered", "Triggered → Triggered"],
     },
-    decide: (context) =>
-      context.opponentActions.includes(DEFECT) ? DEFECT : COOPERATE,
+    decide: (context) => (context.opponentActions.includes(DEFECT) ? DEFECT : COOPERATE),
   },
   {
     id: "pavlov",
@@ -96,8 +102,7 @@ export const ipdStrategies: readonly IpdStrategy[] = [
         return COOPERATE;
       }
 
-      return equals(previousPayoff, REWARD) ||
-        equals(previousPayoff, TEMPTATION)
+      return equals(previousPayoff, REWARD) || equals(previousPayoff, TEMPTATION)
         ? previousAction
         : flip(previousAction);
     },
@@ -105,8 +110,7 @@ export const ipdStrategies: readonly IpdStrategy[] = [
   {
     id: "gtft",
     name: "Generous TFT",
-    shortDescription:
-      "Tit for Tat, but forgives a defection with probability 1/3.",
+    shortDescription: "Tit for Tat, but forgives a defection with probability 1/3.",
     diagram: {
       states: ["Cooperate", "Mirror", "Forgive"],
       transitions: ["Rival defects → mirror D, except 1/3 → Forgive C"],
@@ -124,8 +128,7 @@ export const ipdStrategies: readonly IpdStrategy[] = [
       states: ["Mirror", "Sneak defect"],
       transitions: ["Each round: 1/10 → D; otherwise mirror rival’s last move"],
     },
-    decide: (context) =>
-      context.policyDraw < 1 / 10 ? DEFECT : titForTat(context),
+    decide: (context) => (context.policyDraw < 1 / 10 ? DEFECT : titForTat(context)),
   },
   {
     id: "random",
@@ -139,14 +142,10 @@ export const ipdStrategies: readonly IpdStrategy[] = [
   },
 ];
 
-export const ipdStrategyById: Readonly<Record<IpdStrategyId, IpdStrategy>> =
-  Object.fromEntries(
-    ipdStrategies.map((strategy) => [strategy.id, strategy]),
-  ) as Readonly<Record<IpdStrategyId, IpdStrategy>>;
+export const ipdStrategyById: Readonly<Record<IpdStrategyId, IpdStrategy>> = Object.fromEntries(
+  ipdStrategies.map((strategy) => [strategy.id, strategy]),
+) as Readonly<Record<IpdStrategyId, IpdStrategy>>;
 
-export function decideIpdStrategy(
-  strategy: IpdStrategyId,
-  context: StrategyContext,
-): BinaryAction {
+export function decideIpdStrategy(strategy: IpdStrategyId, context: StrategyContext): BinaryAction {
   return ipdStrategyById[strategy].decide(context);
 }

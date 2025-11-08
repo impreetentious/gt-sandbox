@@ -55,12 +55,7 @@ export interface StageGame {
  * Probability of cooperating after each of the four outcomes, indexed
  * CC, CD, DC, DD from this player's own point of view.
  */
-export type MemoryOneStrategy = readonly [
-  Rational,
-  Rational,
-  Rational,
-  Rational,
-];
+export type MemoryOneStrategy = readonly [Rational, Rational, Rational, Rational];
 
 export const TIT_FOR_TAT: MemoryOneStrategy = [ONE, ZERO, ONE, ZERO];
 export const ALWAYS_DEFECT: MemoryOneStrategy = [ZERO, ZERO, ZERO, ZERO];
@@ -114,17 +109,11 @@ export interface EnforcedRelation {
   readonly gamma: Rational;
 }
 
-function scaleVector(
-  vector: readonly Rational[],
-  factor: Rational,
-): readonly Rational[] {
+function scaleVector(vector: readonly Rational[], factor: Rational): readonly Rational[] {
   return vector.map((value) => multiply(value, factor));
 }
 
-function addVectors(
-  left: readonly Rational[],
-  right: readonly Rational[],
-): readonly Rational[] {
+function addVectors(left: readonly Rational[], right: readonly Rational[]): readonly Rational[] {
   return left.map((value, index) => add(value, right[index]));
 }
 
@@ -133,10 +122,7 @@ function addVectors(
  * to. This is the whole content of the Press–Dyson construction; everything
  * else in this module is feasibility bookkeeping around it.
  */
-export function relationVector(
-  game: StageGame,
-  relation: EnforcedRelation,
-): readonly Rational[] {
+export function relationVector(game: StageGame, relation: EnforcedRelation): readonly Rational[] {
   return addVectors(
     addVectors(
       scaleVector(ownPayoffVector(game), relation.alpha),
@@ -207,10 +193,7 @@ export function constructZdStrategy(
     if (equals(value, ZERO)) {
       continue;
     }
-    const bound = divide(
-      ONE,
-      compare(value, ZERO) === -1 ? negate(value) : value,
-    );
+    const bound = divide(ONE, compare(value, ZERO) === -1 ? negate(value) : value);
     if (ceiling === null || compare(bound, ceiling) === -1) {
       ceiling = bound;
     }
@@ -227,9 +210,7 @@ export function constructZdStrategy(
 
   const chosen = phi ?? ceiling;
   if (compare(chosen, ZERO) !== 1 || compare(chosen, ceiling) === 1) {
-    throw new RangeError(
-      `phi must lie in (0, ${ceiling.numerator}/${ceiling.denominator}].`,
-    );
+    throw new RangeError(`phi must lie in (0, ${ceiling.numerator}/${ceiling.denominator}].`);
   }
 
   const tilde = f.map((value) => multiply(value, chosen));
@@ -279,11 +260,7 @@ export function extortionateStrategy(
  * loss than it inflicts. Its signature is p₁ = 1: it never defects after mutual
  * cooperation.
  */
-export function generousStrategy(
-  game: StageGame,
-  chi: Rational,
-  phi?: Rational,
-): ZdConstruction {
+export function generousStrategy(game: StageGame, chi: Rational, phi?: Rational): ZdConstruction {
   if (compare(chi, ONE) === -1) {
     throw new RangeError("The generosity factor χ must be at least 1.");
   }
@@ -315,11 +292,7 @@ export function equalizerStrategy(
   target: Rational,
   phi?: Rational,
 ): ZdConstruction {
-  return constructZdStrategy(
-    game,
-    { alpha: ZERO, beta: negate(ONE), gamma: target },
-    phi,
-  );
+  return constructZdStrategy(game, { alpha: ZERO, beta: negate(ONE), gamma: target }, phi);
 }
 
 export type ZdVerdict =
@@ -354,11 +327,7 @@ function solveExact(
   const pivotColumns: number[] = [];
   let pivotRow = 0;
 
-  for (
-    let column = 0;
-    column < unknowns && pivotRow < matrix.length;
-    column++
-  ) {
+  for (let column = 0; column < unknowns && pivotRow < matrix.length; column++) {
     let selected = -1;
     for (let row = pivotRow; row < matrix.length; row++) {
       if (!equals(matrix[row][column], ZERO)) {
@@ -384,10 +353,7 @@ function solveExact(
         continue;
       }
       for (let c = column; c <= unknowns; c++) {
-        matrix[row][c] = subtract(
-          matrix[row][c],
-          multiply(factor, matrix[pivotRow][c]),
-        );
+        matrix[row][c] = subtract(matrix[row][c], multiply(factor, matrix[pivotRow][c]));
       }
     }
     pivotColumns.push(column);
@@ -419,16 +385,8 @@ function solveExact(
  * Rather than assert that, the check solves the 4×3 system exactly and reports
  * the inconsistency when there is one.
  */
-export function classifyZd(
-  game: StageGame,
-  strategy: MemoryOneStrategy,
-): ZdVerdict {
-  const tilde = [
-    subtract(strategy[0], ONE),
-    subtract(strategy[1], ONE),
-    strategy[2],
-    strategy[3],
-  ];
+export function classifyZd(game: StageGame, strategy: MemoryOneStrategy): ZdVerdict {
+  const tilde = [subtract(strategy[0], ONE), subtract(strategy[1], ONE), strategy[2], strategy[3]];
   const sx = ownPayoffVector(game);
   const sy = opponentPayoffVector(game);
 
@@ -511,9 +469,7 @@ export function stationaryOutcome(
   for (let column = 0; column < 4; column++) {
     const row: Rational[] = [];
     for (let state = 0; state < 4; state++) {
-      row.push(
-        subtract(transition[state][column], state === column ? ONE : ZERO),
-      );
+      row.push(subtract(transition[state][column], state === column ? ONE : ZERO));
     }
     row.push(ZERO);
     rows.push(row);
@@ -552,10 +508,7 @@ export function stationaryOutcome(
 }
 
 /** Residual of the enforced relation — exactly zero when it holds. */
-export function relationResidual(
-  relation: EnforcedRelation,
-  outcome: StationaryOutcome,
-): Rational {
+export function relationResidual(relation: EnforcedRelation, outcome: StationaryOutcome): Rational {
   return add(
     add(
       multiply(relation.alpha, outcome.ownPayoff),

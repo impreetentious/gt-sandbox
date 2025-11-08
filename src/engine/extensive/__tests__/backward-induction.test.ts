@@ -12,18 +12,10 @@ import {
   type ExtensiveGame,
   type GameNode,
 } from "@/engine/extensive";
-import {
-  compare,
-  equals,
-  formatRational,
-  rational,
-  type Rational,
-} from "@/engine/rational";
+import { compare, equals, formatRational, rational, type Rational } from "@/engine/rational";
 
 function payoffsAsInts(payoffs: readonly Rational[]): number[] {
-  return payoffs.map(
-    (value) => Number(value.numerator) / Number(value.denominator),
-  );
+  return payoffs.map((value) => Number(value.numerator) / Number(value.denominator));
 }
 
 /**
@@ -76,15 +68,8 @@ describe("extensive-form tree construction and traversal", () => {
   it("validates a hand-built tree and exposes its decision and terminal nodes", () => {
     const game = localEntryDeterrence();
     expect(game.players).toEqual(["P1", "P2"]);
-    expect(decisionNodes(game).map((node) => node.id)).toEqual([
-      "p1-move",
-      "p2-move",
-    ]);
-    expect(terminals(game).map((node) => node.id)).toEqual([
-      "fight",
-      "accommodate",
-      "stay-out",
-    ]);
+    expect(decisionNodes(game).map((node) => node.id)).toEqual(["p1-move", "p2-move"]);
+    expect(terminals(game).map((node) => node.id)).toEqual(["fight", "accommodate", "stay-out"]);
     expect(findNode(game, "accommodate").kind).toBe("terminal");
   });
 
@@ -219,9 +204,7 @@ describe("extensive-form tree construction and traversal", () => {
   });
 
   it("findNode throws for a missing id", () => {
-    expect(() => findNode(localEntryDeterrence(), "no-such")).toThrow(
-      /not found/,
-    );
+    expect(() => findNode(localEntryDeterrence(), "no-such")).toThrow(/not found/);
   });
 });
 
@@ -344,10 +327,7 @@ function terminalArb(spec: RandomTreeSpec): fc.Arbitrary<RandomNode> {
     );
 }
 
-function nodeArb(
-  spec: RandomTreeSpec,
-  remainingDepth: number,
-): fc.Arbitrary<RandomNode> {
+function nodeArb(spec: RandomTreeSpec, remainingDepth: number): fc.Arbitrary<RandomNode> {
   if (remainingDepth === 0) {
     return terminalArb(spec);
   }
@@ -371,10 +351,7 @@ function nodeArb(
             }) satisfies RandomNode,
         ),
     );
-  return fc.oneof(
-    { arbitrary: terminalArb(spec), weight: 1 },
-    { arbitrary: decision, weight: 3 },
-  );
+  return fc.oneof({ arbitrary: terminalArb(spec), weight: 1 }, { arbitrary: decision, weight: 3 });
 }
 
 function makeRandomTree(spec: RandomTreeSpec): fc.Arbitrary<RandomNode> {
@@ -394,9 +371,7 @@ function materialize(
       payoffs: node.payoffs.map((value) => rational(BigInt(value))),
     };
   }
-  const children = node.children.map((child) =>
-    materialize(child, playerNames, seed),
-  );
+  const children = node.children.map((child) => materialize(child, playerNames, seed));
   const actions = children.map((_, index) => `a${index}`);
   return {
     kind: "decision",
@@ -411,28 +386,25 @@ function materialize(
 describe("backward induction: property against the independent verifier", () => {
   it("SPNE strategies produced by BI always pass the verifier (soundness)", () => {
     fc.assert(
-      fc.property(
-        makeRandomTree({ depthLimit: 3, playerCount: 2, maxActions: 3 }),
-        (raw) => {
-          const players = ["P1", "P2"];
-          const seed = { next: 0 };
-          const root = materialize(raw as RandomNode, players, seed);
-          const game: ExtensiveGame = createExtensiveGame({
-            id: "rand",
-            title: "rand",
-            players,
-            root,
-          });
-          const { strategy, payoffs } = backwardInduction(game);
-          const verdict = verifySubgamePerfect(game, strategy);
-          expect(verdict.isSubgamePerfect).toBe(true);
-          const under = payoffsUnder(game, strategy);
-          expect(under.length).toBe(payoffs.length);
-          for (let index = 0; index < under.length; index += 1) {
-            expect(equals(under[index], payoffs[index])).toBe(true);
-          }
-        },
-      ),
+      fc.property(makeRandomTree({ depthLimit: 3, playerCount: 2, maxActions: 3 }), (raw) => {
+        const players = ["P1", "P2"];
+        const seed = { next: 0 };
+        const root = materialize(raw as RandomNode, players, seed);
+        const game: ExtensiveGame = createExtensiveGame({
+          id: "rand",
+          title: "rand",
+          players,
+          root,
+        });
+        const { strategy, payoffs } = backwardInduction(game);
+        const verdict = verifySubgamePerfect(game, strategy);
+        expect(verdict.isSubgamePerfect).toBe(true);
+        const under = payoffsUnder(game, strategy);
+        expect(under.length).toBe(payoffs.length);
+        for (let index = 0; index < under.length; index += 1) {
+          expect(equals(under[index], payoffs[index])).toBe(true);
+        }
+      }),
       { numRuns: 60 },
     );
   });

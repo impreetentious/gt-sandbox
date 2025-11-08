@@ -1,18 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { equals } from "@/engine/rational";
-import {
-  createOneShotSession,
-  reduceOneShotSession,
-} from "@/state/one-shot-session";
+import { createOneShotSession, reduceOneShotSession } from "@/state/one-shot-session";
 
-function commitChoice(
-  state: ReturnType<typeof createOneShotSession>,
-  action: 0 | 1,
-) {
-  return reduceOneShotSession(
-    reduceOneShotSession(state, { type: "submit-choice", action }),
-    { type: "commit-outcome" },
-  );
+function commitChoice(state: ReturnType<typeof createOneShotSession>, action: 0 | 1) {
+  return reduceOneShotSession(reduceOneShotSession(state, { type: "submit-choice", action }), {
+    type: "commit-outcome",
+  });
 }
 
 describe("P5 shared one-shot session reducer", () => {
@@ -23,9 +16,7 @@ describe("P5 shared one-shot session reducer", () => {
       action: 1,
     });
 
-    expect(
-      reduceOneShotSession(resolving, { type: "submit-choice", action: 0 }),
-    ).toBe(resolving);
+    expect(reduceOneShotSession(resolving, { type: "submit-choice", action: 0 })).toBe(resolving);
     expect(resolving.pendingRound).toMatchObject({
       playerAction: 1,
       opponentAction: 1,
@@ -49,9 +40,7 @@ describe("P5 shared one-shot session reducer", () => {
 
     expect(state.status).toBe("complete");
     expect(state.focusTarget).toBe("play-again");
-    expect(equals(state.playerScore, { numerator: 18n, denominator: 1n })).toBe(
-      true,
-    );
+    expect(equals(state.playerScore, { numerator: 18n, denominator: 1n })).toBe(true);
 
     const reset = reduceOneShotSession(state, { type: "play-again" });
     expect(reset).toMatchObject({

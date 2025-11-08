@@ -21,9 +21,7 @@ function formatEquilibrium(equilibrium: MixedNashEquilibrium) {
 
 function nonPureEquilibria(game: (typeof catalog)[number]["game"]) {
   return mixedNashEquilibria(game).filter(
-    (equilibrium) =>
-      equilibrium.row.support.length > 1 ||
-      equilibrium.column.support.length > 1,
+    (equilibrium) => equilibrium.row.support.length > 1 || equilibrium.column.support.length > 1,
   );
 }
 
@@ -34,14 +32,11 @@ describe("P3 mixed-equilibrium catalog oracles", () => {
       const mixed = nonPureEquilibria(entry.game);
 
       expect(mixed.map(formatEquilibrium)).toEqual(entry.oracle.mixedNash);
-      expect(equilibria).toHaveLength(
-        entry.oracle.pureNash.length + entry.oracle.mixedNash.length,
-      );
+      expect(equilibria).toHaveLength(entry.oracle.pureNash.length + entry.oracle.mixedNash.length);
       expect(isDegenerate(entry.game)).toBe(entry.oracle.degenerate);
       expect(
         equilibria.every(
-          (equilibrium) =>
-            verifyMixedEquilibrium(entry.game, equilibrium).isNashEquilibrium,
+          (equilibrium) => verifyMixedEquilibrium(entry.game, equilibrium).isNashEquilibrium,
         ),
       ).toBe(true);
     });
@@ -116,9 +111,7 @@ describe("mixed-equilibrium cross-checks", () => {
         const enumerated = nonPureEquilibria(game).map(formatEquilibrium);
         const closedForm = twoByTwoMixedEquilibrium(game);
 
-        expect(closedForm ? [formatEquilibrium(closedForm)] : []).toEqual(
-          enumerated,
-        );
+        expect(closedForm ? [formatEquilibrium(closedForm)] : []).toEqual(enumerated);
       }),
     );
   });

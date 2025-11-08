@@ -121,9 +121,7 @@ describe("P5 one-shot opponent personas", () => {
   });
 
   it("uses add-one Markov-2 counts and a seeded tie breaker", () => {
-    expect(predictMarkov2PlayerAction([], 4, 0)).toBe(
-      predictMarkov2PlayerAction([], 4, 0),
-    );
+    expect(predictMarkov2PlayerAction([], 4, 0)).toBe(predictMarkov2PlayerAction([], 4, 0));
     expect(predictMarkov2PlayerAction([0, 1, 0, 1, 0], 4, 5)).toBe(1);
 
     const decision = decideOneShotOpponentAction({

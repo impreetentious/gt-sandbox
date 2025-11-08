@@ -51,10 +51,7 @@ describe("second-price truthfulness", () => {
     // The overbid witness must show truthful strictly beating the overbid.
     if (analysis.overbidWitness) {
       expect(
-        compare(
-          analysis.overbidWitness.truthfulPayoff,
-          analysis.overbidWitness.alternativePayoff,
-        ),
+        compare(analysis.overbidWitness.truthfulPayoff, analysis.overbidWitness.alternativePayoff),
       ).toBe(1);
       // Overbidding can turn strictly negative — the losing-money warning.
       expect(compare(analysis.overbidWitness.alternativePayoff, ZERO)).toBe(-1);

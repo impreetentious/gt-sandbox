@@ -16,8 +16,7 @@ export const ipdOpponentOptions: readonly IpdOpponentOption[] = [
   {
     id: "mystery",
     label: "Mystery rival",
-    description:
-      "A seeded strategy whose identity remains hidden until the match ends.",
+    description: "A seeded strategy whose identity remains hidden until the match ends.",
   },
 ];
 

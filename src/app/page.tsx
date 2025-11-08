@@ -13,43 +13,37 @@ const path = [
     href: "/play/pd/",
     title: "Prisoner’s Dilemma",
     concept: "Dominance",
-    description:
-      "A price war where individually sensible choices destroy shared value.",
+    description: "A price war where individually sensible choices destroy shared value.",
   },
   {
     href: "/play/stag-hunt/",
     title: "Stag Hunt",
     concept: "Trust and safety",
-    description:
-      "A standards bet with one ambitious equilibrium and one dependable refuge.",
+    description: "A standards bet with one ambitious equilibrium and one dependable refuge.",
   },
   {
     href: "/play/battle-of-the-sexes/",
     title: "Battle of the Sexes",
     concept: "Commitment",
-    description:
-      "A merger needs one platform, but each side prefers a different winner.",
+    description: "A merger needs one platform, but each side prefers a different winner.",
   },
   {
     href: "/play/chicken/",
     title: "Chicken",
     concept: "Brinkmanship",
-    description:
-      "A capacity war where somebody must back down and nobody can safely volunteer.",
+    description: "A capacity war where somebody must back down and nobody can safely volunteer.",
   },
   {
     href: "/play/matching-pennies/",
     title: "Matching Pennies",
     concept: "Unpredictability",
-    description:
-      "An exploiter turns a visible pattern into evidence for mixed strategy.",
+    description: "An exploiter turns a visible pattern into evidence for mixed strategy.",
   },
   {
     href: "/play/iterated-pd/",
     title: "Iterated Prisoner’s Dilemma",
     concept: "The future",
-    description:
-      "A seeded match where today’s move changes what a rival does tomorrow.",
+    description: "A seeded match where today’s move changes what a rival does tomorrow.",
   },
   {
     href: "/evolve/",
@@ -139,8 +133,8 @@ export default function HomePage() {
           Learn strategy by feeling the incentives move.
         </h1>
         <p className="lede">
-          Make a choice with something at stake. Watch the outcome land. Then
-          let an exact analytical engine explain what just happened.
+          Make a choice with something at stake. Watch the outcome land. Then let an exact
+          analytical engine explain what just happened.
         </p>
         <div className="home-hero__actions">
           <Link className="home-primary-link" href="/play/pd/">
@@ -186,9 +180,7 @@ export default function HomePage() {
           {path.map((stop, index) => (
             <li key={stop.href}>
               <article>
-                <span aria-hidden="true">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
+                <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
                 <p>{stop.concept}</p>
                 <h3>{stop.title}</h3>
                 <p>{stop.description}</p>
@@ -201,13 +193,11 @@ export default function HomePage() {
 
       <section aria-labelledby="proof-title" className="home-proof">
         <p className="eyebrow">The proof underneath</p>
-        <h2 id="proof-title">
-          Exact where correctness matters. Seeded where simulation begins.
-        </h2>
+        <h2 id="proof-title">Exact where correctness matters. Seeded where simulation begins.</h2>
         <p>
-          Payoffs and equilibrium probabilities use rational arithmetic. Random
-          opponents, tournaments, and population runs use explicit seeds. A
-          shared link is enough to reproduce a bounded custom game.
+          Payoffs and equilibrium probabilities use rational arithmetic. Random opponents,
+          tournaments, and population runs use explicit seeds. A shared link is enough to reproduce
+          a bounded custom game.
         </p>
         <Link href="/methods/">Inspect the verification layers</Link>
       </section>

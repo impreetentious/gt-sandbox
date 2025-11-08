@@ -41,11 +41,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function HotSeatGamePage({
-  params,
-}: {
-  params: Promise<{ game: string }>;
-}) {
+export default async function HotSeatGamePage({ params }: { params: Promise<{ game: string }> }) {
   const { game } = await params;
   if (!(game in routeSlugs)) {
     notFound();

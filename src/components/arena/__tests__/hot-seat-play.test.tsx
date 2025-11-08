@@ -1,10 +1,4 @@
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  within,
-} from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { HotSeatPlayExperience } from "@/components/arena/hot-seat-play";
 
@@ -33,9 +27,7 @@ describe("hot-seat play experience", () => {
     render(<HotSeatPlayExperience slug="pd" />);
     commitRow(1);
     fireEvent.click(screen.getByRole("button", { name: "Player 2 is ready" }));
-    fireEvent.click(
-      screen.getByRole("button", { name: "Player 2: Hold price (key 1)" }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Player 2: Hold price (key 1)" }));
 
     const reveal = screen.getByTestId("hot-seat-reveal");
     expect(within(reveal).getByText(/Player 1 chose/)).toBeInTheDocument();
@@ -48,15 +40,9 @@ describe("hot-seat play experience", () => {
     // Play three rounds to unlock the full analysis panels.
     for (let round = 0; round < 3; round += 1) {
       commitRow(1);
-      fireEvent.click(
-        screen.getByRole("button", { name: "Player 2 is ready" }),
-      );
-      fireEvent.click(
-        screen.getByRole("button", { name: "Player 2: Undercut (key 2)" }),
-      );
-      fireEvent.click(
-        screen.getByRole("button", { name: /Next round|See the analysis/ }),
-      );
+      fireEvent.click(screen.getByRole("button", { name: "Player 2 is ready" }));
+      fireEvent.click(screen.getByRole("button", { name: "Player 2: Undercut (key 2)" }));
+      fireEvent.click(screen.getByRole("button", { name: /Next round|See the analysis/ }));
     }
 
     fireEvent.click(screen.getByText("Analysis / Prisoner's Dilemma"));

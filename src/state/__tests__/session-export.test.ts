@@ -52,9 +52,7 @@ describe("session export schema", () => {
   });
 
   it("rejects a foreign schema", () => {
-    const result = parseSessionExport(
-      JSON.stringify({ schema: "something-else", version: 1 }),
-    );
+    const result = parseSessionExport(JSON.stringify({ schema: "something-else", version: 1 }));
     expect(result).toEqual({
       ok: false,
       notice: "This file is not a gt-sandbox session.",

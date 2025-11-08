@@ -41,9 +41,7 @@ export function TopologyAtlas() {
     setSelected(Math.max(0, Math.min(games.length - 1, next)));
   };
 
-  const matrix = selectedGame
-    ? matrixSummary(ordinalTopology.indexOf(selectedGame))
-    : null;
+  const matrix = selectedGame ? matrixSummary(ordinalTopology.indexOf(selectedGame)) : null;
 
   return (
     <section className="topology-atlas" aria-labelledby="topology-title">
@@ -53,9 +51,8 @@ export function TopologyAtlas() {
           Every strict ordinal 2×2 game.
         </h1>
         <p className="lede">
-          The atlas quotients the 576 labelled payoff rankings by row and column
-          action relabelling, leaving 144 strategic structures. Select a tile to
-          inspect its exact best-response class.
+          The atlas quotients the 576 labelled payoff rankings by row and column action relabelling,
+          leaving 144 strategic structures. Select a tile to inspect its exact best-response class.
         </p>
       </header>
 
@@ -73,8 +70,7 @@ export function TopologyAtlas() {
         />
       </label>
       <p className="topology-atlas__count" role="status">
-        {games.length} of 144 games shown. Use arrow keys to move through the
-        grid.
+        {games.length} of 144 games shown. Use arrow keys to move through the grid.
       </p>
 
       {selectedGame ? (
@@ -104,14 +100,12 @@ export function TopologyAtlas() {
               </button>
             ))}
           </div>
-          <aside aria-live="polite" className="topology-atlas__detail">
+          <div aria-live="polite" className="topology-atlas__detail">
             <p className="eyebrow">Selected game</p>
             <h2>{selectedGame.structure}</h2>
             <p>{selectedGame.id.replace("ordinal-", "Ordinal game ")}</p>
             <table>
-              <caption className="sr-only">
-                Payoff matrix for the selected ordinal game
-              </caption>
+              <caption className="sr-only">Payoff matrix for the selected ordinal game</caption>
               <tbody>
                 {matrix?.map((row, rowIndex) => (
                   <tr key={rowIndex}>
@@ -123,15 +117,14 @@ export function TopologyAtlas() {
               </tbody>
             </table>
             <p className="topology-atlas__help">
-              Payoffs are ordinal ranks: higher is preferred. The label comes
-              from the same exact classifier used in Build.
+              Payoffs are ordinal ranks: higher is preferred. The label comes from the same exact
+              classifier used in Build.
             </p>
-          </aside>
+          </div>
         </div>
       ) : (
         <p className="topology-atlas__empty" role="status">
-          No ordinal games match “{query}”. Try a strategic concept such as
-          “battle” or “cycle”.
+          No ordinal games match “{query}”. Try a strategic concept such as “battle” or “cycle”.
         </p>
       )}
     </section>

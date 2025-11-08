@@ -1,10 +1,4 @@
-import {
-  add,
-  isRational,
-  parseRational,
-  rational,
-  type Rational,
-} from "@/engine/rational";
+import { add, isRational, parseRational, rational, type Rational } from "@/engine/rational";
 
 export type Player = "row" | "column";
 
@@ -44,9 +38,7 @@ function toRational(value: RationalInput): Rational {
 
   if (typeof value === "number") {
     if (!Number.isSafeInteger(value)) {
-      throw new TypeError(
-        "Numeric payoffs must be safe integers; use a string for fractions.",
-      );
+      throw new TypeError("Numeric payoffs must be safe integers; use a string for fractions.");
     }
 
     return rational(BigInt(value));
@@ -70,9 +62,7 @@ function assertActionLabels(actions: readonly string[], player: Player): void {
 }
 
 /** Creates an immutable-by-convention, rectangular normal-form game. */
-export function createNormalFormGame(
-  input: NormalFormGameInput,
-): NormalFormGame {
+export function createNormalFormGame(input: NormalFormGameInput): NormalFormGame {
   if (input.id.trim() === "" || input.title.trim() === "") {
     throw new TypeError("Games require a non-empty id and title.");
   }
@@ -86,14 +76,11 @@ export function createNormalFormGame(
 
   const payoffs = input.payoffs.map((row) => {
     if (row.length !== input.columnActions.length) {
-      throw new RangeError(
-        "Every payoff row must have one cell per column action.",
-      );
+      throw new RangeError("Every payoff row must have one cell per column action.");
     }
 
     return row.map(
-      ([rowPayoff, columnPayoff]) =>
-        [toRational(rowPayoff), toRational(columnPayoff)] as const,
+      ([rowPayoff, columnPayoff]) => [toRational(rowPayoff), toRational(columnPayoff)] as const,
     );
   });
 
@@ -123,19 +110,13 @@ export function payoffAt(game: NormalFormGame, profile: Profile): Payoff {
   const payoff = payoffRow?.[profile.column];
 
   if (!payoff) {
-    throw new RangeError(
-      `Profile (${profile.row}, ${profile.column}) is outside ${game.id}.`,
-    );
+    throw new RangeError(`Profile (${profile.row}, ${profile.column}) is outside ${game.id}.`);
   }
 
   return payoff;
 }
 
-export function payoffFor(
-  game: NormalFormGame,
-  profile: Profile,
-  player: Player,
-): Rational {
+export function payoffFor(game: NormalFormGame, profile: Profile, player: Player): Rational {
   return payoffAt(game, profile)[player === "row" ? 0 : 1];
 }
 

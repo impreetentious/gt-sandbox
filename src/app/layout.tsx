@@ -41,8 +41,7 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "Game Theory Sandbox",
     title: "Game Theory Sandbox",
-    description:
-      "Act, observe, and reveal the game theory underneath strategic choices.",
+    description: "Act, observe, and reveal the game theory underneath strategic choices.",
     images: [
       {
         url: "/og-image.png",
@@ -55,8 +54,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Game Theory Sandbox",
-    description:
-      "Act, observe, and reveal the game theory underneath strategic choices.",
+    description: "Act, observe, and reveal the game theory underneath strategic choices.",
     images: ["/og-image.png"],
   },
   robots: { index: true, follow: true },
@@ -86,9 +84,7 @@ const navigation = [
   { href: "/quiz/", label: "Quiz" },
 ];
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
       <head>

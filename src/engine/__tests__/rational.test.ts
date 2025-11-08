@@ -19,10 +19,7 @@ import {
 } from "@/engine/rational";
 
 const fractionArbitrary = fc
-  .tuple(
-    fc.bigInt({ min: -10000n, max: 10000n }),
-    fc.bigInt({ min: 1n, max: 10000n }),
-  )
+  .tuple(fc.bigInt({ min: -10000n, max: 10000n }), fc.bigInt({ min: 1n, max: 10000n }))
   .map(([numerator, denominator]) => rational(numerator, denominator));
 
 describe("exact rational arithmetic", () => {
@@ -58,15 +55,8 @@ describe("exact rational arithmetic", () => {
         fractionArbitrary,
         (left, middle, right) => {
           expect(equals(add(left, middle), add(middle, left))).toBe(true);
-          expect(equals(multiply(left, middle), multiply(middle, left))).toBe(
-            true,
-          );
-          expect(
-            equals(
-              add(add(left, middle), right),
-              add(left, add(middle, right)),
-            ),
-          ).toBe(true);
+          expect(equals(multiply(left, middle), multiply(middle, left))).toBe(true);
+          expect(equals(add(add(left, middle), right), add(left, add(middle, right)))).toBe(true);
           expect(
             equals(
               multiply(multiply(left, middle), right),
@@ -74,13 +64,9 @@ describe("exact rational arithmetic", () => {
             ),
           ).toBe(true);
           expect(equals(add(left, negate(left)), ZERO)).toBe(true);
-          expect(
-            equals(subtract(left, middle), add(left, negate(middle))),
-          ).toBe(true);
+          expect(equals(subtract(left, middle), add(left, negate(middle)))).toBe(true);
           const reverseComparison = compare(middle, left);
-          expect(compare(left, middle)).toBe(
-            reverseComparison === 0 ? 0 : -reverseComparison,
-          );
+          expect(compare(left, middle)).toBe(reverseComparison === 0 ? 0 : -reverseComparison);
         },
       ),
     );
@@ -92,9 +78,7 @@ describe("exact rational arithmetic", () => {
         expect(parseRational(formatRational(value))).toEqual(value);
 
         if (!isZero(value)) {
-          expect(equals(divide(multiply(value, value), value), value)).toBe(
-            true,
-          );
+          expect(equals(divide(multiply(value, value), value), value)).toBe(true);
         }
       }),
     );

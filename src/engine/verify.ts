@@ -1,18 +1,5 @@
-import {
-  add,
-  compare,
-  isZero,
-  multiply,
-  ONE,
-  ZERO,
-  type Rational,
-} from "@/engine/rational";
-import {
-  payoffFor,
-  type NormalFormGame,
-  type Player,
-  type Profile,
-} from "@/engine/game";
+import { add, compare, isZero, multiply, ONE, ZERO, type Rational } from "@/engine/rational";
+import { payoffFor, type NormalFormGame, type Player, type Profile } from "@/engine/game";
 import type { MixedNashEquilibrium, MixedStrategy } from "@/engine/solve/mixed";
 
 export interface PureProfileVerification {
@@ -30,19 +17,11 @@ export interface MixedEquilibriumVerification {
   readonly isNashEquilibrium: boolean;
 }
 
-function rowHasProfitableDeviation(
-  game: NormalFormGame,
-  profile: Profile,
-): boolean {
+function rowHasProfitableDeviation(game: NormalFormGame, profile: Profile): boolean {
   const current = payoffFor(game, profile, "row");
 
   for (let row = 0; row < game.rowActions.length; row += 1) {
-    if (
-      compare(
-        payoffFor(game, { row, column: profile.column }, "row"),
-        current,
-      ) === 1
-    ) {
+    if (compare(payoffFor(game, { row, column: profile.column }, "row"), current) === 1) {
       return true;
     }
   }
@@ -50,19 +29,11 @@ function rowHasProfitableDeviation(
   return false;
 }
 
-function columnHasProfitableDeviation(
-  game: NormalFormGame,
-  profile: Profile,
-): boolean {
+function columnHasProfitableDeviation(game: NormalFormGame, profile: Profile): boolean {
   const current = payoffFor(game, profile, "column");
 
   for (let column = 0; column < game.columnActions.length; column += 1) {
-    if (
-      compare(
-        payoffFor(game, { row: profile.row, column }, "column"),
-        current,
-      ) === 1
-    ) {
+    if (compare(payoffFor(game, { row: profile.row, column }, "column"), current) === 1) {
       return true;
     }
   }
@@ -71,10 +42,7 @@ function columnHasProfitableDeviation(
 }
 
 /** An independent, deviation-based check for a claimed pure equilibrium. */
-export function verifyPureProfile(
-  game: NormalFormGame,
-  profile: Profile,
-): PureProfileVerification {
+export function verifyPureProfile(game: NormalFormGame, profile: Profile): PureProfileVerification {
   const rowBestResponse = !rowHasProfitableDeviation(game, profile);
   const columnBestResponse = !columnHasProfitableDeviation(game, profile);
 
@@ -94,44 +62,29 @@ function expectedPayoffAgainstMix(
 ): Rational {
   let total = ZERO;
 
-  for (
-    let opponentAction = 0;
-    opponentAction < opponentProbabilities.length;
-    opponentAction += 1
-  ) {
+  for (let opponentAction = 0; opponentAction < opponentProbabilities.length; opponentAction += 1) {
     const profile =
       player === "row"
         ? { row: action, column: opponentAction }
         : { row: opponentAction, column: action };
     total = add(
       total,
-      multiply(
-        payoffFor(game, profile, player),
-        opponentProbabilities[opponentAction],
-      ),
+      multiply(payoffFor(game, profile, player), opponentProbabilities[opponentAction]),
     );
   }
 
   return total;
 }
 
-function hasValidProbabilities(
-  strategy: MixedStrategy,
-  actionCount: number,
-): boolean {
+function hasValidProbabilities(strategy: MixedStrategy, actionCount: number): boolean {
   if (strategy.probabilities.length !== actionCount) {
     return false;
   }
 
-  const total = strategy.probabilities.reduce(
-    (sum, probability) => add(sum, probability),
-    ZERO,
-  );
+  const total = strategy.probabilities.reduce((sum, probability) => add(sum, probability), ZERO);
   return (
     compare(total, ONE) === 0 &&
-    strategy.probabilities.every(
-      (probability) => compare(probability, ZERO) !== -1,
-    )
+    strategy.probabilities.every((probability) => compare(probability, ZERO) !== -1)
   );
 }
 
@@ -142,12 +95,7 @@ function bestRespondsToMix(
   opponentStrategy: MixedStrategy,
 ): boolean {
   const payoffs = ownStrategy.probabilities.map((_, action) =>
-    expectedPayoffAgainstMix(
-      game,
-      player,
-      action,
-      opponentStrategy.probabilities,
-    ),
+    expectedPayoffAgainstMix(game, player, action, opponentStrategy.probabilities),
   );
   const bestPayoff = payoffs.reduce(
     (best, payoff) => (compare(payoff, best) === 1 ? payoff : best),
@@ -166,14 +114,8 @@ export function verifyMixedEquilibrium(
   game: NormalFormGame,
   equilibrium: MixedNashEquilibrium,
 ): MixedEquilibriumVerification {
-  const rowStrategyValid = hasValidProbabilities(
-    equilibrium.row,
-    game.rowActions.length,
-  );
-  const columnStrategyValid = hasValidProbabilities(
-    equilibrium.column,
-    game.columnActions.length,
-  );
+  const rowStrategyValid = hasValidProbabilities(equilibrium.row, game.rowActions.length);
+  const columnStrategyValid = hasValidProbabilities(equilibrium.column, game.columnActions.length);
   const rowBestResponds =
     rowStrategyValid &&
     columnStrategyValid &&

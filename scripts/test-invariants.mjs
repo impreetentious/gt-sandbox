@@ -6,10 +6,7 @@ const fixture = resolve("src/engine/__p0-invariant-violation.ts");
 
 try {
   mkdirSync(dirname(fixture), { recursive: true });
-  writeFileSync(
-    fixture,
-    "import React from 'react';\nexport const seeded = React;\n",
-  );
+  writeFileSync(fixture, "import React from 'react';\nexport const seeded = React;\n");
 
   let failedAsExpected = false;
   try {
@@ -19,9 +16,7 @@ try {
   }
 
   if (!failedAsExpected) {
-    throw new Error(
-      "The seeded engine React import did not fail invariant checks.",
-    );
+    throw new Error("The seeded engine React import did not fail invariant checks.");
   }
 } finally {
   rmSync(fixture, { force: true });

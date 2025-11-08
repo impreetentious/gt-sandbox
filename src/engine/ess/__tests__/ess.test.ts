@@ -1,11 +1,7 @@
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { classifyESS, interiorRestPoint } from "@/engine/ess";
-import {
-  classifySelection,
-  createMoranConfig,
-  type SymmetricPayoffs,
-} from "@/engine/moran";
+import { classifySelection, createMoranConfig, type SymmetricPayoffs } from "@/engine/moran";
 import { compare, formatRational, rational } from "@/engine/rational";
 
 function payoffs(a: number, b: number, c: number, d: number): SymmetricPayoffs {

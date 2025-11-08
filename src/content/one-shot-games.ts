@@ -32,24 +32,19 @@ function atLeast(rounds: readonly OneShotRound[], count: number): boolean {
 }
 
 function sharkAccuracy(rounds: readonly OneShotRound[]): number {
-  const predicted = rounds.filter(
-    (round) => round.predictedPlayerAction !== undefined,
-  );
+  const predicted = rounds.filter((round) => round.predictedPlayerAction !== undefined);
 
   if (predicted.length === 0) {
     return 0;
   }
 
   return (
-    predicted.filter(
-      (round) => round.predictedPlayerAction === round.playerAction,
-    ).length / predicted.length
+    predicted.filter((round) => round.predictedPlayerAction === round.playerAction).length /
+    predicted.length
   );
 }
 
-export const oneShotGameContent: Readonly<
-  Record<OneShotPlayableSlug, OneShotGameContent>
-> = {
+export const oneShotGameContent: Readonly<Record<OneShotPlayableSlug, OneShotGameContent>> = {
   stag: {
     slug: "stag",
     eyebrow: "Play / Standards adoption",
@@ -60,8 +55,7 @@ export const oneShotGameContent: Readonly<
       {
         id: "fsm:trusting",
         name: "Trusting",
-        description:
-          "Starts with the new standard, then mirrors your last choice.",
+        description: "Starts with the new standard, then mirrors your last choice.",
       },
       {
         id: "fsm:cautious",
@@ -72,8 +66,7 @@ export const oneShotGameContent: Readonly<
       {
         id: "fictitious",
         name: "Learner",
-        description:
-          "Best-responds to an add-one-smoothed record of your past choices.",
+        description: "Best-responds to an add-one-smoothed record of your past choices.",
       },
     ],
     insights: [
@@ -82,8 +75,7 @@ export const oneShotGameContent: Readonly<
         message:
           "A repeated commitment is evidence, not a promise. The Cautious rival only mirrors after it has seen two commitments in a row.",
         when: (rounds) =>
-          atLeast(rounds, 3) &&
-          rounds.slice(0, 2).every((round) => round.playerAction === 0),
+          atLeast(rounds, 3) && rounds.slice(0, 2).every((round) => round.playerAction === 0),
       },
     ],
   },
@@ -102,14 +94,12 @@ export const oneShotGameContent: Readonly<
       {
         id: "fictitious",
         name: "Learner",
-        description:
-          "Best-responds to an add-one-smoothed record of your past choices.",
+        description: "Best-responds to an add-one-smoothed record of your past choices.",
       },
       {
         id: "random:1/3",
         name: "Judge",
-        description:
-          "Randomizes: your platform one-third of the time, theirs two-thirds.",
+        description: "Randomizes: your platform one-third of the time, theirs two-thirds.",
       },
     ],
     insights: [
@@ -118,8 +108,7 @@ export const oneShotGameContent: Readonly<
         message:
           "Your preference is becoming legible. Against a Learner, consistent commitment can train the coordination point in your favor.",
         when: (rounds) =>
-          atLeast(rounds, 3) &&
-          rounds.slice(0, 3).every((round) => round.playerAction === 0),
+          atLeast(rounds, 3) && rounds.slice(0, 3).every((round) => round.playerAction === 0),
       },
     ],
   },
@@ -138,14 +127,12 @@ export const oneShotGameContent: Readonly<
       {
         id: "random:9/10",
         name: "Judge",
-        description:
-          "Swerve with probability 9/10: the exact mixed-equilibrium policy.",
+        description: "Swerve with probability 9/10: the exact mixed-equilibrium policy.",
       },
       {
         id: "fictitious",
         name: "Learner",
-        description:
-          "Best-responds to an add-one-smoothed record of your past choices.",
+        description: "Best-responds to an add-one-smoothed record of your past choices.",
       },
     ],
     insights: [
@@ -154,9 +141,7 @@ export const oneShotGameContent: Readonly<
         message:
           "Both firms went straight. The crash is not a useful threat once it happens; it is the price of brinkmanship.",
         when: (rounds) =>
-          rounds.some(
-            (round) => round.playerAction === 1 && round.opponentAction === 1,
-          ),
+          rounds.some((round) => round.playerAction === 1 && round.opponentAction === 1),
       },
     ],
   },
@@ -170,14 +155,12 @@ export const oneShotGameContent: Readonly<
       {
         id: "random:1/2",
         name: "Coin",
-        description:
-          "Randomizes equally between heads and tails: the equilibrium policy.",
+        description: "Randomizes equally between heads and tails: the equilibrium policy.",
       },
       {
         id: "markov2",
         name: "Shark",
-        description:
-          "Predicts from the last two moves, then best-responds to that prediction.",
+        description: "Predicts from the last two moves, then best-responds to that prediction.",
       },
     ],
     insights: [
@@ -191,8 +174,6 @@ export const oneShotGameContent: Readonly<
   },
 };
 
-export function sharkPredictionAccuracy(
-  rounds: readonly OneShotRound[],
-): number {
+export function sharkPredictionAccuracy(rounds: readonly OneShotRound[]): number {
   return sharkAccuracy(rounds);
 }

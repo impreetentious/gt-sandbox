@@ -1,10 +1,4 @@
-import {
-  act,
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-} from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { PdPlayExperience } from "@/components/arena/pd-play";
 
@@ -39,10 +33,7 @@ describe("Prisoner's Dilemma arena and P4 reveal", () => {
     expect(screen.getByRole("status")).toHaveTextContent(
       "Round 1: you held price; Copycat held price.",
     );
-    expect(screen.getByTestId("matrix-cell-0-0")).toHaveAttribute(
-      "data-highlight",
-      "current",
-    );
+    expect(screen.getByTestId("matrix-cell-0-0")).toHaveAttribute("data-highlight", "current");
 
     fireEvent.click(screen.getByText("Analysis / Price war"));
     expect(
@@ -56,25 +47,12 @@ describe("Prisoner's Dilemma arena and P4 reveal", () => {
     fireEvent.click(holdPrice);
     commitOutcome();
 
-    expect(
-      screen.getByRole("heading", { name: "best response map" }),
-    ).toBeVisible();
-    expect(
-      screen.getByRole("button", { name: "Show elimination 1 of 2" }),
-    ).toBeVisible();
-    fireEvent.click(
-      screen.getByRole("button", { name: "Show elimination 1 of 2" }),
-    );
-    expect(
-      screen.getByText("Step 1: You: Undercut eliminates Hold price."),
-    ).toBeVisible();
-    fireEvent.click(
-      screen.getByLabelText("Dim dominated outcomes in the matrix"),
-    );
-    expect(screen.getByTestId("matrix-cell-1-1")).toHaveAttribute(
-      "data-pareto",
-      "dominated",
-    );
+    expect(screen.getByRole("heading", { name: "best response map" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Show elimination 1 of 2" })).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "Show elimination 1 of 2" }));
+    expect(screen.getByText("Step 1: You: Undercut eliminates Hold price.")).toBeVisible();
+    fireEvent.click(screen.getByLabelText("Dim dominated outcomes in the matrix"));
+    expect(screen.getByTestId("matrix-cell-1-1")).toHaveAttribute("data-pareto", "dominated");
   });
 
   it("moves focus to replay at the end, then back to the first choice", () => {

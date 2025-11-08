@@ -13,9 +13,7 @@ export interface RepeatableGameContent {
   readonly caveat?: string;
 }
 
-export const repeatableGameContent: Readonly<
-  Record<RepeatableSlug, RepeatableGameContent>
-> = {
+export const repeatableGameContent: Readonly<Record<RepeatableSlug, RepeatableGameContent>> = {
   pd: {
     slug: "pd",
     framing:

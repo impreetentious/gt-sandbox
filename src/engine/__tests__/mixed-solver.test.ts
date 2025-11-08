@@ -35,17 +35,9 @@ describe("exact mixed-equilibrium solver and verifier", () => {
     const game = matchingPennies();
     const equilibrium = mixedNashEquilibria(game)[0];
 
-    expect(equilibrium.row.probabilities.map(formatRational)).toEqual([
-      "1/2",
-      "1/2",
-    ]);
-    expect(equilibrium.column.probabilities.map(formatRational)).toEqual([
-      "1/2",
-      "1/2",
-    ]);
-    expect(verifyMixedEquilibrium(game, equilibrium).isNashEquilibrium).toBe(
-      true,
-    );
+    expect(equilibrium.row.probabilities.map(formatRational)).toEqual(["1/2", "1/2"]);
+    expect(equilibrium.column.probabilities.map(formatRational)).toEqual(["1/2", "1/2"]);
+    expect(verifyMixedEquilibrium(game, equilibrium).isNashEquilibrium).toBe(true);
     expect(twoByTwoMixedEquilibrium(game)).toEqual(equilibrium);
     expect(analyzeMixedEquilibria(game)).toEqual({
       equilibria: [equilibrium],
@@ -120,15 +112,9 @@ describe("exact mixed-equilibrium solver and verifier", () => {
       columnPayoff: rational(-1n),
     };
 
-    expect(verifyMixedEquilibrium(game, invalidLength).rowStrategyValid).toBe(
-      false,
-    );
-    expect(
-      verifyMixedEquilibrium(game, invalidProbability).rowStrategyValid,
-    ).toBe(false);
-    expect(
-      verifyMixedEquilibrium(game, profitableDeviation).isNashEquilibrium,
-    ).toBe(false);
+    expect(verifyMixedEquilibrium(game, invalidLength).rowStrategyValid).toBe(false);
+    expect(verifyMixedEquilibrium(game, invalidProbability).rowStrategyValid).toBe(false);
+    expect(verifyMixedEquilibrium(game, profitableDeviation).isNashEquilibrium).toBe(false);
   });
 
   it("rejects singular and out-of-range closed-form inputs", () => {
@@ -197,10 +183,7 @@ describe("exact mixed-equilibrium solver and verifier", () => {
       rowActions: ["A", "B", "C", "D"],
       columnActions: ["W", "X", "Y", "Z"],
       payoffs: Array.from({ length: 4 }, (_, row) =>
-        Array.from({ length: 4 }, (_, column) => [
-          row * 7 + column * 3,
-          row * 5 + column * 11,
-        ]),
+        Array.from({ length: 4 }, (_, column) => [row * 7 + column * 3, row * 5 + column * 11]),
       ),
     });
 
@@ -209,9 +192,7 @@ describe("exact mixed-equilibrium solver and verifier", () => {
     const startedAt = performance.now();
     mixedNashEquilibria(timingGame);
     const elapsedMilliseconds = performance.now() - startedAt;
-    console.info(
-      `4×4 exact support enumeration: ${elapsedMilliseconds.toFixed(3)} ms`,
-    );
+    console.info(`4×4 exact support enumeration: ${elapsedMilliseconds.toFixed(3)} ms`);
     expect(elapsedMilliseconds).toBeLessThan(16);
   });
 });

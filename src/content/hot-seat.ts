@@ -16,9 +16,7 @@ export interface HotSeatGameContent {
  * iterated PD is excluded: it is a match against a strategy, not a
  * commit-and-conceal human exchange.
  */
-export const hotSeatGameContent: Readonly<
-  Record<HotSeatSlug, HotSeatGameContent>
-> = {
+export const hotSeatGameContent: Readonly<Record<HotSeatSlug, HotSeatGameContent>> = {
   pd: {
     slug: "pd",
     eyebrow: "Hot-seat / Price war",

@@ -11,9 +11,7 @@ import {
   type IpdTournamentConfig,
 } from "@/engine/repeated/tournament";
 
-function tournament(
-  overrides: Partial<IpdTournamentConfig> = {},
-): IpdTournamentConfig {
+function tournament(overrides: Partial<IpdTournamentConfig> = {}): IpdTournamentConfig {
   return {
     strategies: ["allc", "alld", "tft"],
     masterSeed: 713_405,
@@ -77,12 +75,8 @@ describe("P7 deterministic IPD tournament", () => {
   });
 
   it("rejects invalid tournament configuration before simulating", () => {
-    expect(() =>
-      runIpdTournament(tournament({ strategies: ["allc"] })),
-    ).toThrow(/at least two/);
-    expect(() =>
-      runIpdTournament(tournament({ strategies: ["allc", "allc"] })),
-    ).toThrow(/unique/);
+    expect(() => runIpdTournament(tournament({ strategies: ["allc"] }))).toThrow(/at least two/);
+    expect(() => runIpdTournament(tournament({ strategies: ["allc", "allc"] }))).toThrow(/unique/);
     expect(() =>
       runIpdTournament(
         tournament({
@@ -90,12 +84,8 @@ describe("P7 deterministic IPD tournament", () => {
         }),
       ),
     ).toThrow(/Unknown/);
-    expect(() => runIpdTournament(tournament({ repetitions: 0 }))).toThrow(
-      /repetitions/,
-    );
-    expect(() => runIpdTournament(tournament({ repetitions: 101 }))).toThrow(
-      /repetitions/,
-    );
+    expect(() => runIpdTournament(tournament({ repetitions: 0 }))).toThrow(/repetitions/);
+    expect(() => runIpdTournament(tournament({ repetitions: 101 }))).toThrow(/repetitions/);
   });
 
   it("pins the default all-eight roster: Grim wins the documented default seed", () => {

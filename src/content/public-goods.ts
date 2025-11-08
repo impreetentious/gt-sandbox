@@ -12,8 +12,7 @@ export interface PublicGoodsRival {
 export const publicGoodsContent = {
   framing:
     "You and the rest of the group each hold 10 tokens. Keep them and they are yours. Put them in the shared pot and the pot is multiplied, then split evenly across everyone — including whoever kept theirs.",
-  actPrompt:
-    "Choose how many of your 10 tokens go into the pot. The others have already decided.",
+  actPrompt: "Choose how many of your 10 tokens go into the pot. The others have already decided.",
   rivals: [
     {
       id: "all-in",
@@ -25,8 +24,7 @@ export const publicGoodsContent = {
     {
       id: "half",
       label: "Half contributors",
-      description:
-        "Every other player puts in half. The typical opening round in classroom play.",
+      description: "Every other player puts in half. The typical opening round in classroom play.",
       shareOfEndowment: [1, 2],
     },
     {
@@ -38,8 +36,7 @@ export const publicGoodsContent = {
     },
   ] satisfies readonly PublicGoodsRival[],
   reveal: {
-    headline:
-      "Your best move never depended on them. That is what makes it a dilemma.",
+    headline: "Your best move never depended on them. That is what makes it a dilemma.",
     dominance:
       "A token you contribute costs you 1 and returns the MPCR to you. While the MPCR is below 1 that trade is a loss no matter what anyone else does — so contributing nothing is strictly dominant, and universal free-riding is the unique Nash equilibrium. Notice there is no anticipation in that argument: you never had to guess the others' choices.",
     efficiency:

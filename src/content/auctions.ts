@@ -12,9 +12,7 @@ export interface AuctionFormatContent {
   readonly observationHelp: string;
 }
 
-export const auctionFormatContent: Readonly<
-  Record<AuctionFormat, AuctionFormatContent>
-> = {
+export const auctionFormatContent: Readonly<Record<AuctionFormat, AuctionFormatContent>> = {
   "first-price": {
     format: "first-price",
     slug: "first-price",

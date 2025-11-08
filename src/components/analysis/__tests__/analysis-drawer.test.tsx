@@ -41,14 +41,10 @@ describe("F4 analysis drawer degenerate disclosure", () => {
     );
 
     expect(
-      screen.queryByText(
-        /No additional mixed equilibrium is needed beyond those pure outcomes\./,
-      ),
+      screen.queryByText(/No additional mixed equilibrium is needed beyond those pure outcomes\./),
     ).toBeNull();
     expect(
-      screen.getByText(
-        /Equal-size support enumeration found no further mixed sample here\./,
-      ),
+      screen.getByText(/Equal-size support enumeration found no further mixed sample here\./),
     ).toBeVisible();
   });
 });
@@ -100,9 +96,7 @@ describe("V2-P7 mixture-only dominance in the drawer", () => {
     render(drawerFor(mixtureOnly));
 
     expect(
-      screen.getByText(
-        /No strict-dominance elimination applies to this game\./,
-      ),
+      screen.getByText(/No strict-dominance elimination applies to this game\./),
     ).toBeVisible();
     expect(
       screen.getByText(

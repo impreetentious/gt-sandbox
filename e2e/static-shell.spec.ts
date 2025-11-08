@@ -49,10 +49,7 @@ test("every static route is same-origin, CSP-protected, and accessible", async (
     }
   });
   page.on("console", (message) => {
-    if (
-      message.type() === "error" &&
-      /content security policy|\bcsp\b/i.test(message.text())
-    ) {
+    if (message.type() === "error" && /content security policy|\bcsp\b/i.test(message.text())) {
       cspErrors.push(message.text());
     }
   });
@@ -60,15 +57,10 @@ test("every static route is same-origin, CSP-protected, and accessible", async (
   for (const route of routes) {
     const response = await page.goto(route);
     expect(response?.ok(), `route should load: ${route}`).toBeTruthy();
-    expect(response?.headers()["content-security-policy"]).toContain(
-      "default-src 'self'",
-    );
+    expect(response?.headers()["content-security-policy"]).toContain("default-src 'self'");
     await expect(page.getByRole("main")).toBeVisible();
     const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
-    expect(
-      accessibilityScanResults.violations,
-      `axe violations on ${route}`,
-    ).toEqual([]);
+    expect(accessibilityScanResults.violations, `axe violations on ${route}`).toEqual([]);
   }
 
   expect(offOriginRequests).toEqual([]);
@@ -94,32 +86,20 @@ test("the primary routes can be opened with the keyboard", async ({ page }) => {
       await page.keyboard.press("Tab");
     }
 
-    await expect(
-      page.getByRole("link", { name: route.name, exact: true }),
-    ).toBeFocused();
+    await expect(page.getByRole("link", { name: route.name, exact: true })).toBeFocused();
     await page.keyboard.press("Enter");
-    await expect(
-      page.getByRole("heading", { name: route.heading }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: route.heading })).toBeVisible();
   }
 });
 
-test("the exported game route works as a direct deep link", async ({
-  page,
-}) => {
+test("the exported game route works as a direct deep link", async ({ page }) => {
   await page.goto("/play/pd/");
-  await expect(
-    page.getByRole("heading", { name: "Prisoner's Dilemma" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Prisoner's Dilemma" })).toBeVisible();
 });
 
-test("the topology atlas, seeded quiz, and chromeless embed are operable", async ({
-  page,
-}) => {
+test("the topology atlas, seeded quiz, and chromeless embed are operable", async ({ page }) => {
   await page.goto("/topology/");
-  await expect(
-    page.getByRole("heading", { name: "Every strict ordinal 2×2 game." }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Every strict ordinal 2×2 game." })).toBeVisible();
   const grid = page.getByRole("listbox", { name: "Ordinal game grid" });
   await grid.focus();
   await page.keyboard.press("ArrowRight");
@@ -134,12 +114,9 @@ test("the topology atlas, seeded quiz, and chromeless embed are operable", async
   for (let question = 0; question < 5; question += 1) {
     await page.locator(".quiz-experience__choices button").first().click();
     await expect(page.getByRole("status")).toBeVisible();
-    if (question < 4)
-      await page.getByRole("button", { name: "Next question" }).click();
+    if (question < 4) await page.getByRole("button", { name: "Next question" }).click();
   }
-  await expect(page.getByRole("status")).toContainText(
-    /Round complete: \d of 5/,
-  );
+  await expect(page.getByRole("status")).toContainText(/Round complete: \d of 5/);
 
   await page.goto("/embed/pd/");
   await expect(page.locator(".site-header")).toBeHidden();
@@ -147,9 +124,7 @@ test("the topology atlas, seeded quiz, and chromeless embed are operable", async
   await expect(page.getByTestId("game-workbench")).toBeVisible();
 });
 
-test("the PD session completes keyboard-only and stays accessible", async ({
-  page,
-}) => {
+test("the PD session completes keyboard-only and stays accessible", async ({ page }) => {
   await page.goto("/play/pd/");
 
   const arena = page.locator(".pd-session");
@@ -172,9 +147,7 @@ test("the PD session completes keyboard-only and stays accessible", async ({
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("the PD outcome highlight has a static reduced-motion path", async ({
-  page,
-}) => {
+test("the PD outcome highlight has a static reduced-motion path", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/play/pd/");
 
@@ -189,9 +162,7 @@ test("the PD outcome highlight has a static reduced-motion path", async ({
   await expect(outcome).toHaveCSS("transition-duration", "0s");
 });
 
-test("the PD analysis drawer is keyboard-operable and accessible", async ({
-  page,
-}) => {
+test("the PD analysis drawer is keyboard-operable and accessible", async ({ page }) => {
   await page.goto("/play/pd/");
 
   const holdPrice = page.getByRole("button", {
@@ -201,10 +172,7 @@ test("the PD analysis drawer is keyboard-operable and accessible", async ({
 
   for (let round = 0; round < 3; round += 1) {
     await page.keyboard.press("1");
-    await expect(page.locator(".pd-session")).toHaveAttribute(
-      "data-round",
-      String(round + 1),
-    );
+    await expect(page.locator(".pd-session")).toHaveAttribute("data-round", String(round + 1));
   }
 
   const drawer = page.locator(".analysis-drawer");
@@ -218,17 +186,13 @@ test("the PD analysis drawer is keyboard-operable and accessible", async ({
   });
   await firstElimination.focus();
   await page.keyboard.press("Enter");
-  await expect(
-    page.getByText("Step 1: You: Undercut eliminates Hold price."),
-  ).toBeVisible();
+  await expect(page.getByText("Step 1: You: Undercut eliminates Hold price.")).toBeVisible();
 
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("each P5 one-shot game completes by keyboard and remains accessible", async ({
-  page,
-}) => {
+test("each P5 one-shot game completes by keyboard and remains accessible", async ({ page }) => {
   const games = [
     { route: "/play/stag-hunt/", button: "Stag (key 1)", rounds: 10 },
     {
@@ -251,23 +215,16 @@ test("each P5 one-shot game completes by keyboard and remains accessible", async
 
     for (let round = 1; round <= game.rounds; round += 1) {
       await page.keyboard.press("1");
-      await expect(page.locator(".one-shot-session")).toHaveAttribute(
-        "data-round",
-        String(round),
-      );
+      await expect(page.locator(".one-shot-session")).toHaveAttribute("data-round", String(round));
     }
 
-    await expect(
-      page.getByRole("button", { name: "Play again" }),
-    ).toBeFocused();
+    await expect(page.getByRole("button", { name: "Play again" })).toBeFocused();
     const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
     expect(accessibilityScanResults.violations).toEqual([]);
   }
 });
 
-test("the IPD mystery flow reveals its strategy and seeded counterfactual", async ({
-  page,
-}) => {
+test("the IPD mystery flow reveals its strategy and seeded counterfactual", async ({ page }) => {
   await page.goto("/play/iterated-pd/");
   await page.getByLabel("Choose IPD rival").selectOption("mystery");
   await expect(
@@ -296,21 +253,15 @@ test("the IPD mystery flow reveals its strategy and seeded counterfactual", asyn
   }
 
   await expect(page.getByRole("button", { name: "Play again" })).toBeFocused();
-  await expect(
-    page.getByText(/Tit for Tat in your seat would have scored/),
-  ).toBeVisible();
+  await expect(page.getByText(/Tit for Tat in your seat would have scored/)).toBeVisible();
   await expect(page.getByLabel(/state diagram/)).toBeVisible();
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("the hot-seat game conceals Player 1's move and completes by keyboard", async ({
-  page,
-}) => {
+test("the hot-seat game conceals Player 1's move and completes by keyboard", async ({ page }) => {
   await page.goto("/hot-seat/pd/");
-  await expect(
-    page.getByRole("heading", { name: "Prisoner's Dilemma" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Prisoner's Dilemma" })).toBeVisible();
 
   const session = page.locator(".hot-seat-session");
 
@@ -326,13 +277,9 @@ test("the hot-seat game conceals Player 1's move and completes by keyboard", asy
     await expect(handover).not.toContainText("Undercut");
     await page.getByRole("button", { name: "Player 2 is ready" }).click();
 
-    await page
-      .getByRole("button", { name: "Player 2: Undercut (key 2)" })
-      .click();
+    await page.getByRole("button", { name: "Player 2: Undercut (key 2)" }).click();
     await expect(session).toHaveAttribute("data-round", String(round));
-    await page
-      .getByRole("button", { name: /Next round|See the analysis/ })
-      .click();
+    await page.getByRole("button", { name: /Next round|See the analysis/ }).click();
   }
 
   await expect(session).toHaveAttribute("data-phase", "complete");
@@ -342,13 +289,9 @@ test("the hot-seat game conceals Player 1's move and completes by keyboard", asy
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("the classroom builds an assignment link and aggregates a session file", async ({
-  page,
-}) => {
+test("the classroom builds an assignment link and aggregates a session file", async ({ page }) => {
   await page.goto("/classroom/");
-  await expect(
-    page.getByRole("heading", { name: "Run it with a class." }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Run it with a class." })).toBeVisible();
 
   const link = page.getByLabel("Assignment link", { exact: true });
   await expect(link).toHaveValue(/\/play\/pd\/\?/);
@@ -385,21 +328,15 @@ test("the classroom builds an assignment link and aggregates a session file", as
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("the second-price auction proves truthfulness and completes a session", async ({
-  page,
-}) => {
+test("the second-price auction proves truthfulness and completes a session", async ({ page }) => {
   await page.goto("/auctions/second-price/");
-  await expect(
-    page.getByRole("heading", { name: "Second-price sealed bid" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Second-price sealed bid" })).toBeVisible();
   await expect(page.getByText(/weakly dominant/)).toBeVisible();
 
   for (let round = 1; round <= 8; round += 1) {
     await page.getByRole("button", { name: "Submit bid" }).click();
     await expect(page.getByTestId("auction-result")).toBeVisible();
-    await page
-      .getByRole("button", { name: /Next round|Finish session/ })
-      .click();
+    await page.getByRole("button", { name: /Next round|Finish session/ }).click();
   }
 
   await expect(page.getByRole("button", { name: "Play again" })).toBeFocused();
@@ -407,38 +344,24 @@ test("the second-price auction proves truthfulness and completes a session", asy
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("the common-value auction surfaces the winner's curse", async ({
-  page,
-}) => {
+test("the common-value auction surfaces the winner's curse", async ({ page }) => {
   await page.goto("/auctions/common-value/");
-  await expect(
-    page.getByText(/Bidding your own signal loses money/),
-  ).toBeVisible();
+  await expect(page.getByText(/Bidding your own signal loses money/)).toBeVisible();
 });
 
-test("the repeat surface shows the folk-theorem threshold and switches games", async ({
-  page,
-}) => {
+test("the repeat surface shows the folk-theorem threshold and switches games", async ({ page }) => {
   await page.goto("/repeat/");
-  await expect(
-    page.getByRole("heading", { name: "Iterate any game." }),
-  ).toBeVisible();
-  await expect(
-    page.getByText(/continuation probability is at least 1\/2/),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Iterate any game." })).toBeVisible();
+  await expect(page.getByText(/continuation probability is at least 1\/2/)).toBeVisible();
 
   await page.getByLabel("Stage game").selectOption("pennies");
-  await expect(
-    page.getByText(/Cooperation cannot be sustained here/),
-  ).toBeVisible();
+  await expect(page.getByText(/Cooperation cannot be sustained here/)).toBeVisible();
 
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("the tournament heatmap can be filtered and exposes its table fallback", async ({
-  page,
-}) => {
+test("the tournament heatmap can be filtered and exposes its table fallback", async ({ page }) => {
   await page.goto("/evolve/");
 
   await expect(
@@ -447,9 +370,7 @@ test("the tournament heatmap can be filtered and exposes its table fallback", as
     }),
   ).toBeVisible();
   await page.getByRole("checkbox", { name: "Always Cooperate" }).click();
-  await expect(
-    page.getByRole("status", { name: "Tournament changes" }),
-  ).toHaveText(
+  await expect(page.getByRole("status", { name: "Tournament changes" })).toHaveText(
     "Always Cooperate removed from the tournament. 7 strategies selected.",
   );
 
@@ -483,51 +404,36 @@ test("the evolution trajectory is keyboard-operable, reduced-motion safe, and na
   await scrubber.focus();
   await page.keyboard.press("End");
   await expect(scrubber).toHaveValue("100");
-  await expect(
-    page.locator('[aria-label="Population at generation 100"]'),
-  ).toBeVisible();
+  await expect(page.locator('[aria-label="Population at generation 100"]')).toBeVisible();
 
-  await page
-    .getByText("View each generation as an accessible data table")
-    .click();
+  await page.getByText("View each generation as an accessible data table").click();
   await expect(
     page.getByRole("table", {
       name: "Population share at every generation for this seeded evolution run.",
     }),
   ).toBeVisible();
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= window.innerWidth,
-    ),
-  ).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+    true,
+  );
 
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("a bounded evolution URL restores its complete seeded configuration", async ({
-  page,
-}) => {
-  await page.goto(
-    "/evolve/?ev=1&s=alld%2Ctft&x=0.2%2C0.8&d=0.9&n=0.05&r=10&seed=42&cap=400&g=80",
-  );
+test("a bounded evolution URL restores its complete seeded configuration", async ({ page }) => {
+  await page.goto("/evolve/?ev=1&s=alld%2Ctft&x=0.2%2C0.8&d=0.9&n=0.05&r=10&seed=42&cap=400&g=80");
   await page.getByRole("tab", { name: "Evolution" }).click();
 
-  await expect(
-    page.getByRole("slider", { name: "Continuation probability" }),
-  ).toHaveValue("0.9");
-  await expect(page.getByRole("slider", { name: "Action noise" })).toHaveValue(
-    "0.05",
-  );
+  await expect(page.getByRole("slider", { name: "Continuation probability" })).toHaveValue("0.9");
+  await expect(page.getByRole("slider", { name: "Action noise" })).toHaveValue("0.05");
   await expect(page.getByLabel("Evolution seed")).toHaveValue("42");
-  await expect(
-    page.getByRole("slider", { name: "Generation scrubber" }),
-  ).toHaveAttribute("max", "80");
+  await expect(page.getByRole("slider", { name: "Generation scrubber" })).toHaveAttribute(
+    "max",
+    "80",
+  );
 });
 
-test("a PD play share link restores the encoded persona and seed", async ({
-  page,
-}) => {
+test("a PD play share link restores the encoded persona and seed", async ({ page }) => {
   const search =
     "?v=1&title=Prisoner%27s+Dilemma&row=Cooperate&row=Defect&col=Cooperate&col=Defect&p=3%2C3%3B0%2C5%3B5%2C0%3B1%2C1&persona=always%3AD&seed=1234567";
   await page.goto(`/play/pd/${search}`);
@@ -562,27 +468,21 @@ test("a canonical payoff edit changes the game structure and survives a direct l
   ).toBeVisible();
 });
 
-test("the 4×4 editor contains wide labels at narrow width and 200% zoom", async ({
-  page,
-}) => {
+test("the 4×4 editor contains wide labels at narrow width and 200% zoom", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 760 });
   await page.goto("/build/");
   await page.getByLabel("Number of row actions").selectOption("4");
   await page.getByLabel("Number of column actions").selectOption("4");
   await page.getByLabel("Row action 4").fill("R".repeat(40));
   await page.getByLabel("Column action 4").fill("C".repeat(40));
-  await expect(
-    page.getByLabel("Rival payoff for row 4, column 4"),
-  ).toBeVisible();
+  await expect(page.getByLabel("Rival payoff for row 4, column 4")).toBeVisible();
 
   await page.evaluate(() => {
     document.body.style.zoom = "2";
   });
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= window.innerWidth,
-    ),
-  ).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+    true,
+  );
   expect(
     await page
       .locator(".game-workbench__matrix-scroll")
@@ -593,9 +493,7 @@ test("the 4×4 editor contains wide labels at narrow width and 200% zoom", async
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("the launch home remembers its single onboarding preference", async ({
-  page,
-}) => {
+test("the launch home remembers its single onboarding preference", async ({ page }) => {
   await page.goto("/");
   await expect(
     page.getByRole("heading", { name: "Choose first. Open Analysis second." }),
@@ -605,41 +503,25 @@ test("the launch home remembers its single onboarding preference", async ({
   await expect(
     page.getByRole("heading", { name: "Choose first. Open Analysis second." }),
   ).toHaveCount(0);
-  expect(await page.evaluate(() => Object.keys(window.localStorage))).toEqual([
-    "seenOnboarding",
-  ]);
+  expect(await page.evaluate(() => Object.keys(window.localStorage))).toEqual(["seenOnboarding"]);
 });
 
-test("key launch surfaces retain visible state in forced colors", async ({
-  page,
-}) => {
+test("key launch surfaces retain visible state in forced colors", async ({ page }) => {
   await page.emulateMedia({ forcedColors: "active" });
   await page.goto("/play/pd/");
   const holdPrice = page.getByRole("button", { name: "Hold price (key 1)" });
   await holdPrice.click();
-  await expect(page.getByTestId("matrix-cell-0-0")).toHaveAttribute(
-    "data-highlight",
-    "current",
-  );
-  await expect(page.getByTestId("matrix-cell-0-0")).toHaveCSS(
-    "outline-style",
-    "solid",
-  );
+  await expect(page.getByTestId("matrix-cell-0-0")).toHaveAttribute("data-highlight", "current");
+  await expect(page.getByTestId("matrix-cell-0-0")).toHaveCSS("outline-style", "solid");
 });
 
-test("unknown game slugs serve the exported not-found page", async ({
-  page,
-}) => {
+test("unknown game slugs serve the exported not-found page", async ({ page }) => {
   const response = await page.goto("/play/unknown/");
   expect(response?.status()).toBe(404);
-  await expect(
-    page.getByRole("heading", { name: "This payoff does not exist." }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "This payoff does not exist." })).toBeVisible();
 });
 
-test("the finite-population tab computes exact fixation and stays accessible", async ({
-  page,
-}) => {
+test("the finite-population tab computes exact fixation and stays accessible", async ({ page }) => {
   await page.goto("/evolve/");
   await page.getByRole("tab", { name: "Finite population" }).click();
   await expect(
@@ -658,9 +540,7 @@ test("the finite-population tab computes exact fixation and stays accessible", a
   await expect(page.getByTestId("finite-fixation")).toContainText("1/8");
   await expect(page.getByTestId("finite-disagreement")).toHaveCount(0);
 
-  await page
-    .getByText("View the fixation curve as an accessible data table")
-    .click();
+  await page.getByText("View the fixation curve as an accessible data table").click();
   await expect(
     page.getByRole("table", { name: /Exact fixation probability for Red/ }),
   ).toBeVisible();
@@ -668,11 +548,9 @@ test("the finite-population tab computes exact fixation and stays accessible", a
   // Long exact rationals must not push the page horizontally.
   await page.getByLabel("Game").selectOption("stag-hunt");
   await size.fill("60");
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= window.innerWidth,
-    ),
-  ).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+    true,
+  );
 
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
@@ -690,12 +568,8 @@ test("the public-goods surface prices free-riding and exposes the dilemma window
 
   // Default N=4, MPCR=2/5, half contributors → pot 15, free-ride pays 16.
   await page.getByRole("button", { name: "0", exact: true }).click();
-  await expect(page.getByTestId("pg-narration")).toContainText(
-    "the pot held 15",
-  );
-  await expect(page.getByTestId("pg-narration")).toContainText(
-    "You earned 16.",
-  );
+  await expect(page.getByTestId("pg-narration")).toContainText("the pot held 15");
+  await expect(page.getByTestId("pg-narration")).toContainText("You earned 16.");
 
   const drawer = page.locator(".analysis-drawer");
   await drawer.locator("summary").click();
@@ -712,9 +586,7 @@ test("the public-goods surface prices free-riding and exposes the dilemma window
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("the methods page derives zero-determinant strategies exactly", async ({
-  page,
-}) => {
+test("the methods page derives zero-determinant strategies exactly", async ({ page }) => {
   await page.goto("/methods/");
   await expect(
     page.getByRole("heading", { name: "One player can fix the scoreboard." }),
@@ -740,9 +612,7 @@ test("the methods page derives zero-determinant strategies exactly", async ({
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("the spatial lattice steps deterministically and stays accessible", async ({
-  page,
-}) => {
+test("the spatial lattice steps deterministically and stays accessible", async ({ page }) => {
   await page.goto("/evolve/spatial/");
   await expect(
     page.getByRole("heading", {
@@ -783,11 +653,9 @@ test("the spatial lattice steps deterministically and stays accessible", async (
 
   // The largest lattice must not push the page sideways.
   await page.getByRole("slider", { name: /Lattice/ }).fill("29");
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= window.innerWidth,
-    ),
-  ).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+    true,
+  );
 
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
@@ -797,9 +665,7 @@ test("entry deterrence plays through both incumbent policies and reveals SPNE", 
   page,
 }) => {
   await page.goto("/extensive/entry-deterrence/");
-  await expect(
-    page.getByRole("heading", { name: "Entry Deterrence" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Entry Deterrence" })).toBeVisible();
 
   const session = page.locator(".extensive-session");
   // Rational Incumbent → In should land on the accommodate terminal, payoffs (1, 1).
@@ -811,25 +677,19 @@ test("entry deterrence plays through both incumbent policies and reveals SPNE", 
   const drawer = page.locator(".analysis-drawer");
   await drawer.locator("summary").click();
   await expect(drawer).toHaveAttribute("open", "");
-  await expect(
-    page.getByText(/Backward induction predicts entry/),
-  ).toBeVisible();
+  await expect(page.getByText(/Backward induction predicts entry/)).toBeVisible();
 
   // Reset; switch to Committed Incumbent; enter and get punished.
   await page.getByRole("button", { name: "Play again" }).click();
   await page.getByRole("radio", { name: /Committed Incumbent/ }).check();
   await page.getByRole("button", { name: "In", exact: true }).click();
-  await expect(
-    page.getByText(/Outcome: Entrant -1, Incumbent -1/),
-  ).toBeVisible();
+  await expect(page.getByText(/Outcome: Entrant -1, Incumbent -1/)).toBeVisible();
 
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("the build editor surfaces dominance that only a mixture can find", async ({
-  page,
-}) => {
+test("the build editor surfaces dominance that only a mixture can find", async ({ page }) => {
   // Push and Hold each lose to Steady somewhere, so nothing is eliminated by
   // pure comparison; an even split between them beats Steady everywhere. The
   // engine has to run a linear program to see it, and this is the browser
@@ -855,17 +715,13 @@ test("the build editor surfaces dominance that only a mixture can find", async (
   await expect(
     page.getByText(/No strict-dominance elimination applies to this game\./),
   ).toBeVisible();
-  await expect(
-    page.getByText(/is beaten by mixing .* which earns at least 1 more/),
-  ).toBeVisible();
+  await expect(page.getByText(/is beaten by mixing .* which earns at least 1 more/)).toBeVisible();
 
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("every static route stays accessible under the dark palette", async ({
-  page,
-}) => {
+test("every static route stays accessible under the dark palette", async ({ page }) => {
   // The unit layer cannot see contrast, so the dark palette gets the same
   // per-route axe sweep the light one does — with the theme pinned explicitly
   // and again through the system preference, because those are two different
@@ -877,32 +733,23 @@ test("every static route stays accessible under the dark palette", async ({
     await page.goto(route);
     await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
     const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
-    expect(
-      accessibilityScanResults.violations,
-      `dark-mode axe violations on ${route}`,
-    ).toEqual([]);
+    expect(accessibilityScanResults.violations, `dark-mode axe violations on ${route}`).toEqual([]);
   }
 });
 
-test("the system preference drives the palette when nothing is pinned", async ({
-  page,
-}) => {
+test("the system preference drives the palette when nothing is pinned", async ({ page }) => {
   await page.emulateMedia({ colorScheme: "dark" });
   await page.goto("/evolve/");
 
   await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
   const systemDark = await page.evaluate(() =>
-    getComputedStyle(document.documentElement)
-      .getPropertyValue("--paper")
-      .trim(),
+    getComputedStyle(document.documentElement).getPropertyValue("--paper").trim(),
   );
 
   // Pinning light must win over a dark system preference.
   await page.getByRole("radio", { name: "Light", exact: true }).check();
   const pinnedLight = await page.evaluate(() =>
-    getComputedStyle(document.documentElement)
-      .getPropertyValue("--paper")
-      .trim(),
+    getComputedStyle(document.documentElement).getPropertyValue("--paper").trim(),
   );
 
   expect(systemDark).toBe("#14161a");
@@ -912,36 +759,26 @@ test("the system preference drives the palette when nothing is pinned", async ({
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("the theme choice survives navigation and a reload without flashing", async ({
-  page,
-}) => {
+test("the theme choice survives navigation and a reload without flashing", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("radio", { name: "Dark" }).check();
-  expect(await page.evaluate(() => window.localStorage.getItem("theme"))).toBe(
-    "dark",
-  );
+  expect(await page.evaluate(() => window.localStorage.getItem("theme"))).toBe("dark");
 
   // The inline bootstrap has to win before first paint, so the attribute must
   // already be present when the document reaches the load event.
   await page.goto("/methods/");
-  expect(
-    await page.evaluate(() =>
-      document.documentElement.getAttribute("data-theme"),
-    ),
-  ).toBe("dark");
+  expect(await page.evaluate(() => document.documentElement.getAttribute("data-theme"))).toBe(
+    "dark",
+  );
   await expect(page.getByRole("radio", { name: "Dark" })).toBeChecked();
 
   // Returning to System removes the key rather than storing a third value.
   await page.getByRole("radio", { name: "System" }).check();
-  expect(
-    await page.evaluate(() => window.localStorage.getItem("theme")),
-  ).toBeNull();
+  expect(await page.evaluate(() => window.localStorage.getItem("theme"))).toBeNull();
   await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
 });
 
-test("the tournament heatmap re-anchors its scale in dark mode", async ({
-  page,
-}) => {
+test("the tournament heatmap re-anchors its scale in dark mode", async ({ page }) => {
   await page.goto("/evolve/");
   const cell = page.locator(".tournament-heatmap__cell").first();
   const lightBackground = await cell.evaluate(
@@ -961,10 +798,7 @@ test("the tournament heatmap re-anchors its scale in dark mode", async ({
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("the service worker registers and serves a later load offline", async ({
-  page,
-  context,
-}) => {
+test("the service worker registers and serves a later load offline", async ({ page, context }) => {
   await page.goto("/");
   await expect
     .poll(() => page.evaluate(() => navigator.serviceWorker.controller !== null))
@@ -987,17 +821,13 @@ test("the service worker registers and serves a later load offline", async ({
   await context.setOffline(true);
   await page.reload();
   await expect(page.getByRole("main")).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Correctness is the product." }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Correctness is the product." })).toBeVisible();
 
   // A route never visited says so, rather than quietly rendering the home
   // page under someone else's URL.
   await page.goto("/classroom/");
   await expect(page).toHaveURL(/\/offline\/$/);
-  await expect(
-    page.getByRole("heading", { name: "Not cached yet." }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Not cached yet." })).toBeVisible();
 
   await context.setOffline(false);
 });
@@ -1017,9 +847,7 @@ test("the manifest is same-origin, installable, and names only local icons", asy
   expect(manifest.scope).toBe("/");
   expect(manifest.display).toBe("standalone");
   expect(manifest.icons.length).toBeGreaterThan(0);
-  expect(
-    manifest.icons.map((icon: { purpose: string }) => icon.purpose),
-  ).toContain("maskable");
+  expect(manifest.icons.map((icon: { purpose: string }) => icon.purpose)).toContain("maskable");
 
   for (const icon of manifest.icons as { src: string }[]) {
     expect(icon.src.startsWith("/")).toBe(true);
@@ -1028,9 +856,7 @@ test("the manifest is same-origin, installable, and names only local icons", asy
   }
 });
 
-test("the learn path gates by default and opens entirely from one control", async ({
-  page,
-}) => {
+test("the learn path gates by default and opens entirely from one control", async ({ page }) => {
   await page.goto("/learn/");
 
   const first = page.getByRole("link", { name: "Prisoner's Dilemma" });
@@ -1042,32 +868,24 @@ test("the learn path gates by default and opens entirely from one control", asyn
   // The gate is the acceptance: one checkbox, and every stop is reachable.
   await page.getByLabel("Open every stop now").check();
   await expect(page.getByRole("link", { name: "Stag Hunt" })).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: "Build your own" }),
-  ).toBeVisible();
-  await expect(page.getByRole("status")).toContainText(
-    "Gating is off; every stop is open.",
-  );
+  await expect(page.getByRole("link", { name: "Build your own" })).toBeVisible();
+  await expect(page.getByRole("status")).toContainText("Gating is off; every stop is open.");
 
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("the learn path advances, persists, and stores exactly one key", async ({
-  page,
-}) => {
+test("the learn path advances, persists, and stores exactly one key", async ({ page }) => {
   await page.goto("/learn/");
   await page.getByLabel("Mark this stop done").first().check();
 
-  await expect(page.getByRole("status")).toContainText(
-    "1 of 10 stops done. Next: Stag Hunt.",
-  );
+  await expect(page.getByRole("status")).toContainText("1 of 10 stops done. Next: Stag Hunt.");
   await expect(page.getByRole("link", { name: "Stag Hunt" })).toBeVisible();
 
   // Nothing beyond the documented key, and nothing derived from a clock.
-  expect(
-    await page.evaluate(() => Object.keys(window.localStorage).sort()),
-  ).toEqual(["curriculum"]);
+  expect(await page.evaluate(() => Object.keys(window.localStorage).sort())).toEqual([
+    "curriculum",
+  ]);
 
   await page.reload();
   await expect(page.getByRole("link", { name: "Stag Hunt" })).toBeVisible();
@@ -1080,8 +898,6 @@ test("the learn path advances, persists, and stores exactly one key", async ({
   await expect(page.getByRole("status")).toContainText("2 of 10 stops done");
 
   await page.getByRole("button", { name: "Start the path over" }).click();
-  expect(
-    await page.evaluate(() => window.localStorage.getItem("curriculum")),
-  ).toBeNull();
+  expect(await page.evaluate(() => window.localStorage.getItem("curriculum"))).toBeNull();
   await expect(page.getByRole("link", { name: "Stag Hunt" })).toHaveCount(0);
 });

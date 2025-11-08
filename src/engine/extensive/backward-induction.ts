@@ -33,9 +33,7 @@ function solve(
   if (node.kind === "terminal") {
     return node.payoffs;
   }
-  const childPayoffs = node.children.map((child) =>
-    solve(child, game, strategy),
-  );
+  const childPayoffs = node.children.map((child) => solve(child, game, strategy));
   const playerIndex = game.players.indexOf(node.player);
   if (playerIndex < 0) {
     throw new TypeError(`Player ${node.player} is not in ${game.id}.`);

@@ -25,9 +25,7 @@ describe("finite-population surface", () => {
       }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Game")).toHaveValue("stag-hunt");
-    expect(screen.getByRole("slider", { name: /Population size/ })).toHaveValue(
-      "20",
-    );
+    expect(screen.getByRole("slider", { name: /Population size/ })).toHaveValue("20");
   });
 
   it("reports exactly 1/N under neutral drift, for the whole table", () => {
@@ -49,9 +47,7 @@ describe("finite-population surface", () => {
     selectGame("prisoners-dilemma");
     expect(screen.getByTestId("finite-ess-a")).toHaveTextContent(/Not an ESS/);
     expect(screen.getByTestId("finite-ess-b")).toHaveTextContent(/An ESS/);
-    const rows = screen
-      .getByTestId("finite-fixation")
-      .querySelectorAll("tbody tr");
+    const rows = screen.getByTestId("finite-fixation").querySelectorAll("tbody tr");
     expect(rows[0]).toHaveTextContent(/No$/); // Cooperate not favoured
     expect(rows[1]).toHaveTextContent(/Yes$/); // Defect favoured
   });
@@ -90,9 +86,7 @@ describe("finite-population surface", () => {
   it("exposes the fixation curve as an accessible data table", () => {
     render(<FinitePopulationExperience />);
     setSlider(/Population size/, 4);
-    fireEvent.click(
-      screen.getByText("View the fixation curve as an accessible data table"),
-    );
+    fireEvent.click(screen.getByText("View the fixation curve as an accessible data table"));
     const table = screen.getByRole("table", {
       name: /Exact fixation probability for Stag from every starting count/,
     });
@@ -104,13 +98,9 @@ describe("finite-population surface", () => {
     render(<FinitePopulationExperience />);
     selectGame("neutral");
     setSlider(/Population size/, 6);
-    fireEvent.click(
-      screen.getByText("Why these are fractions and not decimals"),
-    );
+    fireEvent.click(screen.getByText("Why these are fractions and not decimals"));
     // Neutral game: fixation is exactly 1/6, so the margin is exactly 0.
     expect(screen.getByTestId("finite-margin")).toHaveTextContent("0");
-    expect(
-      screen.getByText(/selection is doing nothing at all/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/selection is doing nothing at all/)).toBeInTheDocument();
   });
 });

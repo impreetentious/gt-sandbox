@@ -1,18 +1,6 @@
-import {
-  payoffAt,
-  payoffFor,
-  type NormalFormGame,
-  type Profile,
-} from "@/engine/game";
+import { payoffAt, payoffFor, type NormalFormGame, type Profile } from "@/engine/game";
 import { createEventRng } from "@/engine/rng";
-import {
-  add,
-  compare,
-  divide,
-  rational,
-  type Rational,
-  ZERO,
-} from "@/engine/rational";
+import { add, compare, divide, rational, type Rational, ZERO } from "@/engine/rational";
 import type { BinaryAction } from "@/engine/repeated/policies";
 import type { IpdStrategyId } from "@/engine/repeated/strategies";
 
@@ -83,11 +71,7 @@ function assertProbability(value: number, label: string): void {
 
 function roundCapOf(config: IteratedGameConfig): number {
   const cap = config.roundCap ?? DEFAULT_ITERATED_ROUND_CAP;
-  if (
-    !Number.isSafeInteger(cap) ||
-    cap < 1 ||
-    cap > DEFAULT_ITERATED_ROUND_CAP
-  ) {
+  if (!Number.isSafeInteger(cap) || cap < 1 || cap > DEFAULT_ITERATED_ROUND_CAP) {
     throw new RangeError(
       `roundCap must be a safe integer from 1 to ${DEFAULT_ITERATED_ROUND_CAP}.`,
     );
@@ -112,10 +96,7 @@ function flip(symbol: CooperationSymbol): CooperationSymbol {
   return symbol === "C" ? "D" : "C";
 }
 
-function decideSymbol(
-  strategy: IpdStrategyId,
-  context: SymbolContext,
-): CooperationSymbol {
+function decideSymbol(strategy: IpdStrategyId, context: SymbolContext): CooperationSymbol {
   const lastOpponent = context.opponentSymbols.at(-1);
   const titForTat = (): CooperationSymbol => lastOpponent ?? "C";
 
@@ -134,14 +115,10 @@ function decideSymbol(
       if (lastOwn === undefined || lastPayoff === undefined) {
         return "C";
       }
-      return compare(lastPayoff, context.aspiration) >= 0
-        ? lastOwn
-        : flip(lastOwn);
+      return compare(lastPayoff, context.aspiration) >= 0 ? lastOwn : flip(lastOwn);
     }
     case "gtft":
-      return lastOpponent === "D" && context.policyDraw < 1 / 3
-        ? "C"
-        : titForTat();
+      return lastOpponent === "D" && context.policyDraw < 1 / 3 ? "C" : titForTat();
     case "joss":
       return context.policyDraw < 1 / 10 ? "D" : titForTat();
     case "random":
@@ -149,25 +126,16 @@ function decideSymbol(
   }
 }
 
-function symbolToAction(
-  symbol: CooperationSymbol,
-  cooperateAction: BinaryAction,
-): BinaryAction {
+function symbolToAction(symbol: CooperationSymbol, cooperateAction: BinaryAction): BinaryAction {
   return symbol === "C" ? cooperateAction : cooperateAction === 0 ? 1 : 0;
 }
 
-function actionToSymbol(
-  action: BinaryAction,
-  cooperateAction: BinaryAction,
-): CooperationSymbol {
+function actionToSymbol(action: BinaryAction, cooperateAction: BinaryAction): CooperationSymbol {
   return action === cooperateAction ? "C" : "D";
 }
 
 /** The mean of a player's four stage payoffs — Pavlov's aspiration level. */
-function aspirationLevel(
-  game: NormalFormGame,
-  player: "row" | "column",
-): Rational {
+function aspirationLevel(game: NormalFormGame, player: "row" | "column"): Rational {
   let sum = ZERO;
   for (let row = 0; row < 2; row += 1) {
     for (let column = 0; column < 2; column += 1) {
@@ -196,9 +164,7 @@ function sampleLength(config: IteratedGameConfig): {
   return { rounds: cap, truncatedAtCap: true };
 }
 
-export function simulateIteratedMatch(
-  config: IteratedGameConfig,
-): IteratedMatchResult {
+export function simulateIteratedMatch(config: IteratedGameConfig): IteratedMatchResult {
   validateConfig(config);
   const { game, cooperate } = config;
   const rowCooperate = cooperate.row as BinaryAction;
@@ -309,9 +275,6 @@ export function simulateIteratedMatch(
     mutualCooperationRate:
       length.rounds === 0
         ? ZERO
-        : divide(
-            rational(BigInt(mutualCooperation)),
-            rational(BigInt(length.rounds)),
-          ),
+        : divide(rational(BigInt(mutualCooperation)), rational(BigInt(length.rounds))),
   };
 }

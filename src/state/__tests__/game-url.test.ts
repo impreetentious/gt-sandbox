@@ -27,19 +27,10 @@ describe("bounded custom-game URL state", () => {
           const game = createNormalFormGame({
             id: "property",
             title: "Property game",
-            rowActions: Array.from(
-              { length: rowCount },
-              (_, index) => `Row ${index + 1}`,
-            ),
-            columnActions: Array.from(
-              { length: columnCount },
-              (_, index) => `Column ${index + 1}`,
-            ),
+            rowActions: Array.from({ length: rowCount }, (_, index) => `Row ${index + 1}`),
+            columnActions: Array.from({ length: columnCount }, (_, index) => `Column ${index + 1}`),
             payoffs: Array.from({ length: rowCount }, () =>
-              Array.from({ length: columnCount }, () => [
-                values[cursor++],
-                values[cursor++],
-              ]),
+              Array.from({ length: columnCount }, () => [values[cursor++], values[cursor++]]),
             ),
           });
           const search = encodeGameSearch({
@@ -64,11 +55,7 @@ describe("bounded custom-game URL state", () => {
             decoded.state.game.payoffs.map((row) =>
               row.map((payoff) => payoff.map(formatRational)),
             ),
-          ).toEqual(
-            game.payoffs.map((row) =>
-              row.map((payoff) => payoff.map(formatRational)),
-            ),
-          );
+          ).toEqual(game.payoffs.map((row) => row.map((payoff) => payoff.map(formatRational))));
           expect(decoded.state.extras).toEqual({
             continuationProbability: 0.95,
             noise: 0.05,
@@ -82,22 +69,20 @@ describe("bounded custom-game URL state", () => {
   });
 
   it("rejects malformed, oversized, and over-limit values without partial parsing", () => {
-    expect(
-      decodeGameSearch(`?v=1&title=x&row=A&row=B&col=A&col=B&p=0,0`),
-    ).toMatchObject({ kind: "invalid" });
-    expect(
-      decodeGameSearch(`?v=1&junk=${"x".repeat(MAX_GAME_URL_BYTES)}`),
-    ).toMatchObject({ kind: "invalid" });
-    expect(
-      decodeGameSearch(`?junk=${"x".repeat(MAX_GAME_URL_BYTES)}`),
-    ).toMatchObject({ kind: "invalid" });
+    expect(decodeGameSearch(`?v=1&title=x&row=A&row=B&col=A&col=B&p=0,0`)).toMatchObject({
+      kind: "invalid",
+    });
+    expect(decodeGameSearch(`?v=1&junk=${"x".repeat(MAX_GAME_URL_BYTES)}`)).toMatchObject({
+      kind: "invalid",
+    });
+    expect(decodeGameSearch(`?junk=${"x".repeat(MAX_GAME_URL_BYTES)}`)).toMatchObject({
+      kind: "invalid",
+    });
     expect(() => parseBoundedRational("9".repeat(20_000))).toThrow(
       /integer, a fraction, or a finite decimal/,
     );
     expect(() => parseBoundedRational("1000001/1")).toThrow(/1,000,000/);
-    expect(() => parseBoundedRational("1.1234567")).toThrow(
-      /at most 6 decimal places/,
-    );
+    expect(() => parseBoundedRational("1.1234567")).toThrow(/at most 6 decimal places/);
   });
 
   it("rejects non-finite simulation metadata before encoding", () => {
@@ -124,9 +109,9 @@ describe("bounded custom-game URL state", () => {
         extras: { continuationProbability: Number.NaN },
       }),
     ).toThrow(/Continuation probability/);
-    expect(() =>
-      encodeGameSearch({ game, extras: { noise: Number.POSITIVE_INFINITY } }),
-    ).toThrow(/Noise/);
+    expect(() => encodeGameSearch({ game, extras: { noise: Number.POSITIVE_INFINITY } })).toThrow(
+      /Noise/,
+    );
     expect(() =>
       encodeGameSearch({
         game,

@@ -12,9 +12,7 @@ function filesUnder(directory) {
   });
 }
 
-const htmlFiles = filesUnder(exportDirectory).filter((file) =>
-  file.endsWith(".html"),
-);
+const htmlFiles = filesUnder(exportDirectory).filter((file) => file.endsWith(".html"));
 const compressedSizes = new Map();
 
 function compressedSize(file) {
@@ -27,9 +25,7 @@ function compressedSize(file) {
 
 function referencedJavascript(htmlFile) {
   const html = readFileSync(htmlFile, "utf8");
-  const references = html.matchAll(
-    /(?:src|href)="([^"?#]+\.js)(?:[?#][^"]*)?"/g,
-  );
+  const references = html.matchAll(/(?:src|href)="([^"?#]+\.js)(?:[?#][^"]*)?"/g);
 
   return new Set(
     [...references]
@@ -46,10 +42,7 @@ function referencedJavascript(htmlFile) {
 const routeSizes = htmlFiles
   .map((htmlFile) => {
     const javascriptFiles = referencedJavascript(htmlFile);
-    const bytes = [...javascriptFiles].reduce(
-      (total, file) => total + compressedSize(file),
-      0,
-    );
+    const bytes = [...javascriptFiles].reduce((total, file) => total + compressedSize(file), 0);
 
     return {
       route: relative(exportDirectory, htmlFile),
@@ -76,8 +69,6 @@ if (oversizedRoutes.length > 0) {
   );
 
   for (const route of oversizedRoutes) {
-    console.warn(
-      `- ${route.route}: ${(route.bytes / 1024).toFixed(1)} KiB gzip`,
-    );
+    console.warn(`- ${route.route}: ${(route.bytes / 1024).toFixed(1)} KiB gzip`);
   }
 }

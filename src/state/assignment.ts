@@ -36,10 +36,7 @@ const CATALOG_SLUG: Record<string, GameSlug> = {
 };
 
 export const ASSIGNMENT_TARGETS: Readonly<
-  Record<
-    AssignmentSurface,
-    readonly { readonly value: string; readonly label: string }[]
-  >
+  Record<AssignmentSurface, readonly { readonly value: string; readonly label: string }[]>
 > = {
   play: [
     { value: "pd", label: "Prisoner's Dilemma" },
@@ -72,9 +69,7 @@ export function buildAssignmentPath(spec: AssignmentSpec): string {
   }
 
   if (spec.surface === "auction") {
-    if (
-      !ASSIGNMENT_TARGETS.auction.some((entry) => entry.value === spec.target)
-    ) {
+    if (!ASSIGNMENT_TARGETS.auction.some((entry) => entry.value === spec.target)) {
       throw new RangeError(`Unknown auction target: ${spec.target}`);
     }
     return `/auctions/${spec.target}/`;
@@ -89,9 +84,7 @@ export function buildAssignmentPath(spec: AssignmentSpec): string {
   const search = encodeGameSearch({
     game: catalogBySlug[catalogSlug].game,
     extras: {
-      ...(spec.persona !== undefined
-        ? { persona: spec.persona as OneShotOpponentPolicy }
-        : {}),
+      ...(spec.persona !== undefined ? { persona: spec.persona as OneShotOpponentPolicy } : {}),
       ...(spec.seed !== undefined ? { seed: spec.seed } : {}),
     },
   });

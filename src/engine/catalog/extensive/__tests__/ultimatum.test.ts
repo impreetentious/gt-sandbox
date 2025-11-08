@@ -1,14 +1,6 @@
 import { describe, expect, it } from "vitest";
-import {
-  extensiveCatalog,
-  extensiveCatalogBySlug,
-  ultimatum,
-} from "@/engine/catalog/extensive";
-import {
-  backwardInduction,
-  payoffsUnder,
-  verifySubgamePerfect,
-} from "@/engine/extensive";
+import { extensiveCatalog, extensiveCatalogBySlug, ultimatum } from "@/engine/catalog/extensive";
+import { backwardInduction, payoffsUnder, verifySubgamePerfect } from "@/engine/extensive";
 import { formatRational } from "@/engine/rational";
 
 describe("ultimatum catalog oracle", () => {
@@ -21,8 +13,7 @@ describe("ultimatum catalog oracle", () => {
   it("declares an 11-way proposer root over offers 0..10", () => {
     const { game } = ultimatum;
     expect(game.players).toEqual(["Proposer", "Responder"]);
-    if (game.root.kind !== "decision")
-      throw new Error("expected decision root");
+    if (game.root.kind !== "decision") throw new Error("expected decision root");
     expect(game.root.id).toBe("proposer-move");
     expect(game.root.actions).toHaveLength(11);
     expect(game.root.actions[0]).toBe("0");
@@ -64,8 +55,6 @@ describe("ultimatum catalog oracle", () => {
     expect(verdict.violation?.player).toBe("Responder");
 
     const rationals = payoffsUnder(game, threat.strategy);
-    expect(rationals.map(formatRational)).toEqual(
-      threat.payoffs.map((value) => String(value)),
-    );
+    expect(rationals.map(formatRational)).toEqual(threat.payoffs.map((value) => String(value)));
   });
 });

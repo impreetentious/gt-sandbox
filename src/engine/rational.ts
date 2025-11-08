@@ -68,10 +68,7 @@ export function subtract(left: Rational, right: Rational): Rational {
 }
 
 export function multiply(left: Rational, right: Rational): Rational {
-  return rational(
-    left.numerator * right.numerator,
-    left.denominator * right.denominator,
-  );
+  return rational(left.numerator * right.numerator, left.denominator * right.denominator);
 }
 
 export function divide(left: Rational, right: Rational): Rational {
@@ -79,10 +76,7 @@ export function divide(left: Rational, right: Rational): Rational {
     throw new RangeError("Cannot divide by zero.");
   }
 
-  return rational(
-    left.numerator * right.denominator,
-    left.denominator * right.numerator,
-  );
+  return rational(left.numerator * right.denominator, left.denominator * right.numerator);
 }
 
 export function negate(value: Rational): Rational {
@@ -90,8 +84,7 @@ export function negate(value: Rational): Rational {
 }
 
 export function compare(left: Rational, right: Rational): -1 | 0 | 1 {
-  const difference =
-    left.numerator * right.denominator - right.numerator * left.denominator;
+  const difference = left.numerator * right.denominator - right.numerator * left.denominator;
 
   if (difference < 0n) {
     return -1;

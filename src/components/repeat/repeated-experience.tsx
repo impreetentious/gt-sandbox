@@ -11,18 +11,9 @@ import {
   type PayoffPoint,
 } from "@/engine/repeated/folk-theorem";
 import { simulateIteratedMatch } from "@/engine/repeated/iterated-game";
-import {
-  ipdStrategies,
-  type IpdStrategyId,
-} from "@/engine/repeated/strategies";
+import { ipdStrategies, type IpdStrategyId } from "@/engine/repeated/strategies";
 
-const REPEATABLE_SLUGS: readonly RepeatableSlug[] = [
-  "pd",
-  "stag",
-  "chicken",
-  "bos",
-  "pennies",
-];
+const REPEATABLE_SLUGS: readonly RepeatableSlug[] = ["pd", "stag", "chicken", "bos", "pennies"];
 
 const SLUG_LABEL: Record<RepeatableSlug, string> = {
   pd: "Prisoner's Dilemma",
@@ -47,10 +38,7 @@ function describeThreshold(threshold: DeltaThreshold): string {
   }
 }
 
-function sustainedAtDelta(
-  threshold: DeltaThreshold,
-  delta: number,
-): boolean | null {
+function sustainedAtDelta(threshold: DeltaThreshold, delta: number): boolean | null {
   switch (threshold.kind) {
     case "always":
       return true;
@@ -90,16 +78,7 @@ export function RepeatedGameExperience() {
         noise,
         roundCap: 1000,
       }),
-    [
-      game,
-      content.cooperate,
-      rowStrategy,
-      columnStrategy,
-      seed,
-      delta,
-      noise,
-      slug,
-    ],
+    [game, content.cooperate, rowStrategy, columnStrategy, seed, delta, noise, slug],
   );
 
   const sustained = sustainedAtDelta(folk.threshold, delta);
@@ -125,8 +104,7 @@ export function RepeatedGameExperience() {
         row: game.payoffs[row][column][0],
         column: game.payoffs[row][column][1],
       } as PayoffPoint,
-      isCooperative:
-        row === content.cooperate.row && column === content.cooperate.column,
+      isCooperative: row === content.cooperate.row && column === content.cooperate.column,
     })),
   );
 
@@ -150,10 +128,7 @@ export function RepeatedGameExperience() {
       >
         <label>
           <span>Stage game</span>
-          <select
-            onChange={(event) => setSlug(event.target.value as RepeatableSlug)}
-            value={slug}
-          >
+          <select onChange={(event) => setSlug(event.target.value as RepeatableSlug)} value={slug}>
             {REPEATABLE_SLUGS.map((option) => (
               <option key={option} value={option}>
                 {SLUG_LABEL[option]}
@@ -164,9 +139,7 @@ export function RepeatedGameExperience() {
         <label>
           <span>Row strategy</span>
           <select
-            onChange={(event) =>
-              setRowStrategy(event.target.value as IpdStrategyId)
-            }
+            onChange={(event) => setRowStrategy(event.target.value as IpdStrategyId)}
             value={rowStrategy}
           >
             {ipdStrategies.map((strategy) => (
@@ -179,9 +152,7 @@ export function RepeatedGameExperience() {
         <label>
           <span>Column strategy</span>
           <select
-            onChange={(event) =>
-              setColumnStrategy(event.target.value as IpdStrategyId)
-            }
+            onChange={(event) => setColumnStrategy(event.target.value as IpdStrategyId)}
             value={columnStrategy}
           >
             {ipdStrategies.map((strategy) => (
@@ -193,8 +164,7 @@ export function RepeatedGameExperience() {
         </label>
         <label>
           <span>
-            <GlossaryTerm term="continuation-probability" /> δ ={" "}
-            {delta.toFixed(3)}
+            <GlossaryTerm term="continuation-probability" /> δ = {delta.toFixed(3)}
           </span>
           <input
             max={0.995}
@@ -220,9 +190,7 @@ export function RepeatedGameExperience() {
           <span>Seed</span>
           <input
             min={0}
-            onChange={(event) =>
-              setSeed(Math.max(0, Math.floor(Number(event.target.value)) || 0))
-            }
+            onChange={(event) => setSeed(Math.max(0, Math.floor(Number(event.target.value)) || 0))}
             type="number"
             value={seed}
           />
@@ -260,19 +228,14 @@ export function RepeatedGameExperience() {
               <polygon
                 className="repeat__hull"
                 points={points
-                  .map(
-                    (point) =>
-                      `${px(toNumber(point.row))},${py(toNumber(point.column))}`,
-                  )
+                  .map((point) => `${px(toNumber(point.row))},${py(toNumber(point.column))}`)
                   .join(" ")}
               />
             ) : null}
             {outcomeCells.map((cell) => (
               <circle
                 className={
-                  cell.isCooperative
-                    ? "repeat__point repeat__point--cooperative"
-                    : "repeat__point"
+                  cell.isCooperative ? "repeat__point repeat__point--cooperative" : "repeat__point"
                 }
                 cx={px(toNumber(cell.point.row))}
                 cy={py(toNumber(cell.point.column))}
@@ -284,9 +247,8 @@ export function RepeatedGameExperience() {
 
           <table className="repeat__table">
             <caption>
-              Exact payoffs for each outcome, with each player&apos;s minimax
-              (security) value. The individually-rational region is every
-              feasible payoff at or above both minimax values.
+              Exact payoffs for each outcome, with each player&apos;s minimax (security) value. The
+              individually-rational region is every feasible payoff at or above both minimax values.
             </caption>
             <thead>
               <tr>
@@ -322,21 +284,16 @@ export function RepeatedGameExperience() {
           </p>
           {!folk.cooperativeIsIndividuallyRational ? (
             <p className="repeat__caveat">
-              The chosen cooperative outcome is not individually rational — at
-              least one player can guarantee more by playing defensively.
+              The chosen cooperative outcome is not individually rational — at least one player can
+              guarantee more by playing defensively.
             </p>
           ) : null}
-          {content.caveat ? (
-            <p className="repeat__caveat">{content.caveat}</p>
-          ) : null}
+          {content.caveat ? <p className="repeat__caveat">{content.caveat}</p> : null}
           {sustained !== null ? (
-            <p
-              className="repeat__verdict"
-              data-sustained={sustained ? "yes" : "no"}
-            >
+            <p className="repeat__verdict" data-sustained={sustained ? "yes" : "no"}>
               At your chosen δ = {delta.toFixed(3)}, cooperation is{" "}
-              <strong>{sustained ? "sustainable" : "not sustainable"}</strong>{" "}
-              as a grim-trigger equilibrium.
+              <strong>{sustained ? "sustainable" : "not sustainable"}</strong> as a grim-trigger
+              equilibrium.
             </p>
           ) : null}
         </section>
@@ -370,13 +327,9 @@ export function RepeatedGameExperience() {
             </div>
           </dl>
           <p className="repeat__strip-label">
-            First {Math.min(match.history.length, 24)} rounds (C = cooperate, D
-            = defect):
+            First {Math.min(match.history.length, 24)} rounds (C = cooperate, D = defect):
           </p>
-          <ol
-            aria-label="Round-by-round realized play"
-            className="repeat__strip"
-          >
+          <ol aria-label="Round-by-round realized play" className="repeat__strip">
             {match.history.slice(0, 24).map((round) => (
               <li key={round.number}>
                 <span aria-hidden="true">
@@ -384,8 +337,7 @@ export function RepeatedGameExperience() {
                   {round.columnSymbol}
                 </span>
                 <span className="sr-only">
-                  Round {round.number}: row {round.rowSymbol}, column{" "}
-                  {round.columnSymbol}.
+                  Round {round.number}: row {round.rowSymbol}, column {round.columnSymbol}.
                 </span>
               </li>
             ))}

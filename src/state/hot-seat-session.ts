@@ -11,11 +11,14 @@ import { buildSessionExport, type SessionExport } from "@/state/session-export";
  * player chooses. Neither engine nor persona machinery is involved — this is a
  * pure reducer over two human inputs, so it stays inside I4 with zero backend.
  */
-export type HotSeatPhase =
-  "row-commit" | "handover" | "column-commit" | "reveal" | "complete";
+export type HotSeatPhase = "row-commit" | "handover" | "column-commit" | "reveal" | "complete";
 
 export type HotSeatFocusTarget =
-  "row-choice-0" | "column-choice-0" | "handover" | "advance" | "restart";
+  | "row-choice-0"
+  | "column-choice-0"
+  | "handover"
+  | "advance"
+  | "restart";
 
 export interface HotSeatRound {
   readonly number: number;
@@ -54,10 +57,7 @@ export function createHotSeatSession(slug: HotSeatSlug): HotSeatState {
   };
 }
 
-export function reduceHotSeatSession(
-  state: HotSeatState,
-  action: HotSeatAction,
-): HotSeatState {
+export function reduceHotSeatSession(state: HotSeatState, action: HotSeatAction): HotSeatState {
   switch (action.type) {
     case "commit-row":
       if (state.phase !== "row-commit") {
@@ -115,8 +115,7 @@ export function reduceHotSeatSession(
       if (state.phase !== "reveal") {
         return state;
       }
-      const isComplete =
-        state.rounds.length === hotSeatGameContent[state.slug].roundLimit;
+      const isComplete = state.rounds.length === hotSeatGameContent[state.slug].roundLimit;
       return {
         ...state,
         phase: isComplete ? "complete" : "row-commit",
@@ -125,9 +124,7 @@ export function reduceHotSeatSession(
     }
 
     case "restart":
-      return state.phase === "complete"
-        ? createHotSeatSession(state.slug)
-        : state;
+      return state.phase === "complete" ? createHotSeatSession(state.slug) : state;
   }
 }
 

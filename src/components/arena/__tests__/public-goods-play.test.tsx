@@ -21,9 +21,7 @@ describe("public-goods surface", () => {
       }),
     ).toBeInTheDocument();
     expect(screen.getByRole("slider", { name: /Players/ })).toHaveValue("4");
-    expect(
-      screen.getByText(/Pick a number of tokens to contribute/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Pick a number of tokens to contribute/)).toBeInTheDocument();
   });
 
   it("contributing 0 against half contributors pays the exact free-ride payoff", () => {
@@ -55,9 +53,7 @@ describe("public-goods surface", () => {
     render(<PublicGoodsExperience />);
     fireEvent.click(screen.getByRole("button", { name: "0" }));
     setSlider(/Players/, 8);
-    expect(
-      screen.getByText(/Pick a number of tokens to contribute/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Pick a number of tokens to contribute/)).toBeInTheDocument();
     expect(screen.getByRole("slider", { name: /Players/ })).toHaveValue("8");
   });
 
@@ -72,9 +68,7 @@ describe("public-goods surface", () => {
     render(<PublicGoodsExperience />);
     fireEvent.click(screen.getByRole("button", { name: "0" }));
     fireEvent.click(screen.getByRole("button", { name: "Play again" }));
-    expect(
-      screen.getByText(/Pick a number of tokens to contribute/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Pick a number of tokens to contribute/)).toBeInTheDocument();
   });
 });
 
@@ -89,9 +83,7 @@ describe("public-goods analysis panel", () => {
     // MPCR 2/5, N=4 → private −3/5, social 3/5.
     expect(screen.getByText(/MPCR − 1 = -3\/5/)).toBeInTheDocument();
     expect(screen.getByText(/MPCR × N − 1 = 3\/5/)).toBeInTheDocument();
-    expect(
-      screen.getByText(/sits inside the dilemma window/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/sits inside the dilemma window/)).toBeInTheDocument();
   });
 
   it("drops the dilemma verdict when the MPCR leaves the window", () => {
@@ -99,18 +91,14 @@ describe("public-goods analysis panel", () => {
     // 20/20 = MPCR 1 → contributing is break-even, no dominance.
     setSlider(/Marginal per capita return/, 20);
     fireEvent.click(screen.getByText("Analysis / Public goods"));
-    expect(
-      screen.getByText(/sits outside the dilemma window/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/sits outside the dilemma window/)).toBeInTheDocument();
     expect(screen.getByText(/indifferent/)).toBeInTheDocument();
   });
 
   it("reveals the token-by-token sweep on demand", () => {
     render(<PublicGoodsExperience />);
     fireEvent.click(screen.getByText("Analysis / Public goods"));
-    fireEvent.click(
-      screen.getByRole("button", { name: "Show the exact sweep" }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Show the exact sweep" }));
     expect(
       screen.getByRole("table", {
         name: /Your payoff and total welfare at every contribution/,

@@ -33,9 +33,7 @@ export interface ExtensiveContent {
   };
 }
 
-export const extensiveContent: Readonly<
-  Record<ExtensiveSlug, ExtensiveContent>
-> = Object.freeze({
+export const extensiveContent: Readonly<Record<ExtensiveSlug, ExtensiveContent>> = Object.freeze({
   "entry-deterrence": {
     userPlayer: "Entrant",
     payoffPairLabel: "(Entrant, Incumbent)",
@@ -99,8 +97,7 @@ export const extensiveContent: Readonly<
       },
     ],
     reveal: {
-      headline:
-        "Backward induction predicts a minimal offer. Experiments predict rebellion.",
+      headline: "Backward induction predicts a minimal offer. Experiments predict rebellion.",
       credibleThreat:
         "The Nash where the Proposer offers 5 relies on the Responder threatening to reject anything smaller. That threat is not credible: at an offer of, say, 1, Rejecting gives 0 while Accepting gives 1, and subgame perfection insists you only threaten what you would actually do.",
       whyItMatters:
@@ -151,9 +148,7 @@ export const extensiveContent: Readonly<
   },
 });
 
-function buildResponderStrategy(
-  decide: (offer: number) => number,
-): ReadonlyMap<string, number> {
+function buildResponderStrategy(decide: (offer: number) => number): ReadonlyMap<string, number> {
   const strategy = new Map<string, number>();
   for (let offer = 0; offer <= 10; offer += 1) {
     strategy.set(`responder-after-offer-${offer}`, decide(offer));

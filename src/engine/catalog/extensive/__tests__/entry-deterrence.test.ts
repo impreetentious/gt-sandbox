@@ -4,11 +4,7 @@ import {
   extensiveCatalog,
   extensiveCatalogBySlug,
 } from "@/engine/catalog/extensive";
-import {
-  backwardInduction,
-  payoffsUnder,
-  verifySubgamePerfect,
-} from "@/engine/extensive";
+import { backwardInduction, payoffsUnder, verifySubgamePerfect } from "@/engine/extensive";
 import { formatRational } from "@/engine/rational";
 
 describe("entry-deterrence catalog oracle", () => {
@@ -22,8 +18,7 @@ describe("entry-deterrence catalog oracle", () => {
     const { game } = entryDeterrence;
     expect(game.players).toEqual(["Entrant", "Incumbent"]);
     expect(game.root.kind).toBe("decision");
-    if (game.root.kind !== "decision")
-      throw new Error("expected decision root");
+    if (game.root.kind !== "decision") throw new Error("expected decision root");
     expect(game.root.id).toBe("entrant-move");
     expect(game.root.actions).toEqual(["In", "Out"]);
   });
@@ -57,8 +52,6 @@ describe("entry-deterrence catalog oracle", () => {
 
     // On-path payoffs of the non-SP Nash equal what the oracle claims.
     const rationals = payoffsUnder(game, threat.strategy);
-    expect(rationals.map(formatRational)).toEqual(
-      threat.payoffs.map((value) => String(value)),
-    );
+    expect(rationals.map(formatRational)).toEqual(threat.payoffs.map((value) => String(value)));
   });
 });

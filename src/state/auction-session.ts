@@ -5,13 +5,7 @@ import {
   type AuctionPersonaId,
 } from "@/engine/auction/auction";
 import { createRng } from "@/engine/rng";
-import {
-  add,
-  rational,
-  subtract,
-  ZERO,
-  type Rational,
-} from "@/engine/rational";
+import { add, rational, subtract, ZERO, type Rational } from "@/engine/rational";
 import { buildSessionExport, type SessionExport } from "@/state/session-export";
 
 /**
@@ -83,10 +77,7 @@ function drawInteger(
   minInclusive: number,
   maxInclusive: number,
 ): number {
-  return createRng(eventSeed(seed, round, channel)).integer(
-    minInclusive,
-    maxInclusive + 1,
-  );
+  return createRng(eventSeed(seed, round, channel)).integer(minInclusive, maxInclusive + 1);
 }
 
 function noise(seed: number, round: number, channel: number): number {
@@ -118,9 +109,7 @@ function drawRound(
   };
 }
 
-export function auctionPersonasForFormat(
-  format: AuctionFormat,
-): readonly AuctionPersonaId[] {
+export function auctionPersonasForFormat(format: AuctionFormat): readonly AuctionPersonaId[] {
   if (format === "second-price") {
     return ["truthful", "shader", "overbidder"];
   }
@@ -154,10 +143,7 @@ export function createAuctionSession(
 
 function resolveRound(state: AuctionSessionState, bid: number): AuctionRound {
   const draw = state.current;
-  const rivalBid = auctionPersonas[state.persona].bid(
-    draw.rivalObservation,
-    state.maxValue,
-  );
+  const rivalBid = auctionPersonas[state.persona].bid(draw.rivalObservation, state.maxValue);
 
   if (state.format === "common-value") {
     // First-price common value: the higher bid wins and pays its own bid; the
@@ -173,9 +159,7 @@ function resolveRound(state: AuctionSessionState, bid: number): AuctionRound {
       rivalBid,
       youWin,
       price: youWin ? price : ZERO,
-      yourPayoff: youWin
-        ? subtract(rational(BigInt(draw.commonValue ?? 0)), price)
-        : ZERO,
+      yourPayoff: youWin ? subtract(rational(BigInt(draw.commonValue ?? 0)), price) : ZERO,
       commonValue: draw.commonValue,
     };
   }
@@ -219,10 +203,7 @@ export function reduceAuctionSession(
       if (state.status !== "bidding") {
         return state;
       }
-      const bid = Math.max(
-        0,
-        Math.min(state.maxValue + 1, Math.floor(action.bid)),
-      );
+      const bid = Math.max(0, Math.min(state.maxValue + 1, Math.floor(action.bid)));
       return {
         ...state,
         status: "revealed",
@@ -263,10 +244,7 @@ export function reduceAuctionSession(
   }
 }
 
-export function auctionSessionToExport(
-  state: AuctionSessionState,
-  title: string,
-): SessionExport {
+export function auctionSessionToExport(state: AuctionSessionState, title: string): SessionExport {
   return buildSessionExport({
     kind: "auction",
     game: state.format,

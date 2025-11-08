@@ -5,10 +5,7 @@ import {
   DEFAULT_TOURNAMENT_REPETITIONS,
   runIpdTournament,
 } from "@/engine/repeated/tournament";
-import {
-  ipdStrategyById,
-  type IpdStrategyId,
-} from "@/engine/repeated/strategies";
+import { ipdStrategyById, type IpdStrategyId } from "@/engine/repeated/strategies";
 import type { Rational } from "@/engine/rational";
 
 export const DEFAULT_EVOLUTION_GENERATIONS = 100;
@@ -71,18 +68,13 @@ function normalizeShares(shares: readonly number[]): readonly number[] {
   }, 0);
 
   if (!Number.isFinite(total) || total <= 0) {
-    throw new RangeError(
-      "initialShares must contain at least one positive share.",
-    );
+    throw new RangeError("initialShares must contain at least one positive share.");
   }
 
   return shares.map((share) => share / total);
 }
 
-function validateMatrix(
-  payoffMatrix: readonly (readonly number[])[],
-  strategyCount: number,
-): void {
+function validateMatrix(payoffMatrix: readonly (readonly number[])[], strategyCount: number): void {
   if (payoffMatrix.length !== strategyCount) {
     throw new RangeError("payoffMatrix must have one row per strategy.");
   }
@@ -93,10 +85,7 @@ function validateMatrix(
     }
 
     row.forEach((payoff, columnIndex) =>
-      assertFiniteNonnegative(
-        payoff,
-        `payoffMatrix[${rowIndex}][${columnIndex}]`,
-      ),
+      assertFiniteNonnegative(payoff, `payoffMatrix[${rowIndex}][${columnIndex}]`),
     );
   });
 }
@@ -114,14 +103,8 @@ export function runReplicatorDynamics(
   initialShares: readonly number[],
   generationCount = DEFAULT_EVOLUTION_GENERATIONS,
 ): ReplicatorResult {
-  if (
-    !Number.isSafeInteger(generationCount) ||
-    generationCount < 0 ||
-    generationCount > 500
-  ) {
-    throw new RangeError(
-      "generationCount must be a safe integer from 0 to 500.",
-    );
+  if (!Number.isSafeInteger(generationCount) || generationCount < 0 || generationCount > 500) {
+    throw new RangeError("generationCount must be a safe integer from 0 to 500.");
   }
 
   if (initialShares.length < 1) {
@@ -134,10 +117,7 @@ export function runReplicatorDynamics(
 
   for (let generation = 0; generation <= generationCount; generation += 1) {
     const fitness = payoffMatrix.map((row) =>
-      row.reduce(
-        (total, payoff, index) => total + payoff * (shares[index] ?? 0),
-        0,
-      ),
+      row.reduce((total, payoff, index) => total + payoff * (shares[index] ?? 0), 0),
     );
     const meanFitness = fitness.reduce(
       (total, value, index) => total + value * (shares[index] ?? 0),
@@ -154,9 +134,7 @@ export function runReplicatorDynamics(
       return { status: "zero-mean-fitness", generation, generations };
     }
 
-    shares = shares.map(
-      (share, index) => (share * (fitness[index] ?? 0)) / meanFitness,
-    );
+    shares = shares.map((share, index) => (share * (fitness[index] ?? 0)) / meanFitness);
   }
 
   return { status: "complete", generations };
@@ -166,13 +144,10 @@ function rationalToNumber(value: Rational): number {
   return Number(value.numerator) / Number(value.denominator);
 }
 
-function normalizeConfig(
-  input: IpdEvolutionConfig,
-): Required<IpdEvolutionConfig> {
+function normalizeConfig(input: IpdEvolutionConfig): Required<IpdEvolutionConfig> {
   const repetitions = input.repetitions ?? DEFAULT_TOURNAMENT_REPETITIONS;
   const continuationProbability =
-    input.continuationProbability ??
-    DEFAULT_TOURNAMENT_CONTINUATION_PROBABILITY;
+    input.continuationProbability ?? DEFAULT_TOURNAMENT_CONTINUATION_PROBABILITY;
   const noise = input.noise ?? DEFAULT_TOURNAMENT_NOISE;
   const roundCap = input.roundCap ?? DEFAULT_IPD_ROUND_CAP;
   const generations = input.generations ?? DEFAULT_EVOLUTION_GENERATIONS;
@@ -199,32 +174,18 @@ function normalizeConfig(
     throw new TypeError("masterSeed must be a safe integer.");
   }
 
-  if (
-    !Number.isSafeInteger(repetitions) ||
-    repetitions < 1 ||
-    repetitions > 100
-  ) {
+  if (!Number.isSafeInteger(repetitions) || repetitions < 1 || repetitions > 100) {
     throw new RangeError("repetitions must be a safe integer from 1 to 100.");
   }
 
   assertProbability(continuationProbability, "continuationProbability");
   assertProbability(noise, "noise");
 
-  if (
-    !Number.isSafeInteger(roundCap) ||
-    roundCap < 1 ||
-    roundCap > DEFAULT_IPD_ROUND_CAP
-  ) {
-    throw new RangeError(
-      `roundCap must be a safe integer from 1 to ${DEFAULT_IPD_ROUND_CAP}.`,
-    );
+  if (!Number.isSafeInteger(roundCap) || roundCap < 1 || roundCap > DEFAULT_IPD_ROUND_CAP) {
+    throw new RangeError(`roundCap must be a safe integer from 1 to ${DEFAULT_IPD_ROUND_CAP}.`);
   }
 
-  if (
-    !Number.isSafeInteger(generations) ||
-    generations < 0 ||
-    generations > 500
-  ) {
+  if (!Number.isSafeInteger(generations) || generations < 0 || generations > 500) {
     throw new RangeError("generations must be a safe integer from 0 to 500.");
   }
 
@@ -261,10 +222,6 @@ export function runIpdEvolution(input: IpdEvolutionConfig): IpdEvolutionResult {
   return {
     config,
     payoffMatrix,
-    result: runReplicatorDynamics(
-      payoffMatrix,
-      config.initialShares,
-      config.generations,
-    ),
+    result: runReplicatorDynamics(payoffMatrix, config.initialShares, config.generations),
   };
 }

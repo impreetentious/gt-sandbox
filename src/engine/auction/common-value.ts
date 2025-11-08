@@ -1,12 +1,4 @@
-import {
-  add,
-  compare,
-  divide,
-  rational,
-  subtract,
-  ZERO,
-  type Rational,
-} from "@/engine/rational";
+import { add, compare, divide, rational, subtract, ZERO, type Rational } from "@/engine/rational";
 
 /**
  * Exact winner's-curse analysis for a two-bidder common-value auction. The
@@ -72,17 +64,13 @@ export function analyzeCommonValue(maxValue: number): CommonValueAnalysis {
   }
 
   const joint = enumerateJoint(maxValue);
-  const signals = Array.from(
-    new Set(joint.map((outcome) => outcome.signal)),
-  ).sort((a, b) => a - b);
+  const signals = Array.from(new Set(joint.map((outcome) => outcome.signal))).sort((a, b) => a - b);
 
   const rows: SignalRow[] = signals.map((signal) => {
     const atSignal = joint.filter((outcome) => outcome.signal === signal);
     // Winning by bidding your signal means your signal strictly exceeds the
     // rival's (ties are split but do not change the strict-curse direction).
-    const winning = atSignal.filter(
-      (outcome) => outcome.signal > outcome.rivalSignal,
-    );
+    const winning = atSignal.filter((outcome) => outcome.signal > outcome.rivalSignal);
     return {
       signal,
       naiveEstimate: meanOf(atSignal.map((outcome) => outcome.w)),
@@ -90,10 +78,7 @@ export function analyzeCommonValue(maxValue: number): CommonValueAnalysis {
       winProbability:
         atSignal.length === 0
           ? ZERO
-          : divide(
-              rational(BigInt(winning.length)),
-              rational(BigInt(atSignal.length)),
-            ),
+          : divide(rational(BigInt(winning.length)), rational(BigInt(atSignal.length))),
     };
   });
 
@@ -108,15 +93,11 @@ export function analyzeCommonValue(maxValue: number): CommonValueAnalysis {
       );
     }
   }
-  const expectedNaiveProfit = divide(
-    profitTotal,
-    rational(BigInt(joint.length)),
-  );
+  const expectedNaiveProfit = divide(profitTotal, rational(BigInt(joint.length)));
 
   const curseHolds = rows.every(
     (row) =>
-      row.winProbability.numerator === 0n ||
-      compare(row.winningEstimate, row.naiveEstimate) <= 0,
+      row.winProbability.numerator === 0n || compare(row.winningEstimate, row.naiveEstimate) <= 0,
   );
 
   return { maxValue, rows, expectedNaiveProfit, curseHolds };

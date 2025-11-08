@@ -8,12 +8,8 @@ describe("seeded RNG", () => {
     const different = createRng(43);
     const firstSequence = Array.from({ length: 8 }, () => first.next());
 
-    expect(firstSequence).toEqual(
-      Array.from({ length: 8 }, () => second.next()),
-    );
-    expect(firstSequence).not.toEqual(
-      Array.from({ length: 8 }, () => different.next()),
-    );
+    expect(firstSequence).toEqual(Array.from({ length: 8 }, () => second.next()));
+    expect(firstSequence).not.toEqual(Array.from({ length: 8 }, () => different.next()));
     expect(firstSequence.every((value) => value >= 0 && value < 1)).toBe(true);
   });
 
@@ -37,9 +33,7 @@ describe("seeded RNG", () => {
     };
 
     expect(deriveRngSeed(address)).toBe(deriveRngSeed(address));
-    expect(deriveRngSeed({ ...address, actor: "column" })).not.toBe(
-      deriveRngSeed(address),
-    );
+    expect(deriveRngSeed({ ...address, actor: "column" })).not.toBe(deriveRngSeed(address));
     expect(createEventRng(address).next()).toBe(createEventRng(address).next());
     expect(() => deriveRngSeed({ ...address, matchId: "" })).toThrow(/matchId/);
     expect(() => deriveRngSeed({ ...address, round: -1 })).toThrow(/round/);

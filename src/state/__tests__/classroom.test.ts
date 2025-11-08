@@ -7,10 +7,7 @@ import {
   submissionsToCsv,
   type ClassroomSubmission,
 } from "@/state/classroom";
-import {
-  buildSessionExport,
-  serializeSessionExport,
-} from "@/state/session-export";
+import { buildSessionExport, serializeSessionExport } from "@/state/session-export";
 
 function sessionFile(game: string, rowTotal: number): string {
   return serializeSessionExport(
@@ -90,14 +87,12 @@ describe("assignment link builder", () => {
     expect(buildAssignmentPath({ surface: "hot-seat", target: "stag" })).toBe(
       "/hot-seat/stag-hunt/",
     );
-    expect(
-      buildAssignmentPath({ surface: "auction", target: "common-value" }),
-    ).toBe("/auctions/common-value/");
+    expect(buildAssignmentPath({ surface: "auction", target: "common-value" })).toBe(
+      "/auctions/common-value/",
+    );
   });
 
   it("rejects unknown targets", () => {
-    expect(() =>
-      buildAssignmentPath({ surface: "auction", target: "nope" }),
-    ).toThrow();
+    expect(() => buildAssignmentPath({ surface: "auction", target: "nope" })).toThrow();
   });
 });

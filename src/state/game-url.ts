@@ -1,9 +1,5 @@
 import { createNormalFormGame, type NormalFormGame } from "@/engine/game";
-import {
-  formatRational,
-  parseRational,
-  type Rational,
-} from "@/engine/rational";
+import { formatRational, parseRational, type Rational } from "@/engine/rational";
 
 export const GAME_URL_VERSION = "1";
 export const MAX_GAME_URL_BYTES = 8 * 1024;
@@ -49,13 +45,9 @@ function codePointLength(value: string): number {
   return Array.from(value).length;
 }
 
-function validateLabel(
-  value: string,
-  kind: "action" | "title" | "persona",
-): string | null {
+function validateLabel(value: string, kind: "action" | "title" | "persona"): string | null {
   const trimmed = value.trim();
-  const maximum =
-    kind === "title" ? MAX_TITLE_CODE_POINTS : MAX_LABEL_CODE_POINTS;
+  const maximum = kind === "title" ? MAX_TITLE_CODE_POINTS : MAX_LABEL_CODE_POINTS;
 
   if (trimmed === "") {
     return `${kind === "action" ? "Action labels" : kind === "title" ? "The game title" : "The persona"} cannot be empty.`;
@@ -68,10 +60,7 @@ function validateLabel(
   return null;
 }
 
-function validateActions(
-  actions: readonly string[],
-  player: string,
-): string | null {
+function validateActions(actions: readonly string[], player: string): string | null {
   if (actions.length < MIN_ACTIONS || actions.length > MAX_ACTIONS) {
     return `${player} must have between ${MIN_ACTIONS} and ${MAX_ACTIONS} actions.`;
   }
@@ -119,9 +108,7 @@ export function parseBoundedRational(source: string): Rational {
       absolute(numerator) > MAX_RATIONAL_COMPONENT ||
       absolute(denominator) > MAX_RATIONAL_COMPONENT
     ) {
-      throw new RangeError(
-        "Payoff numerators and denominators are limited to 1,000,000.",
-      );
+      throw new RangeError("Payoff numerators and denominators are limited to 1,000,000.");
     }
   }
 
@@ -150,10 +137,7 @@ export function gameToDraft(game: NormalFormGame): EditableGameDraft {
   };
 }
 
-export function draftToGame(
-  draft: EditableGameDraft,
-  id = "custom",
-): DraftGameResult {
+export function draftToGame(draft: EditableGameDraft, id = "custom"): DraftGameResult {
   const titleError = validateLabel(draft.title, "title");
   if (titleError) {
     return { ok: false, notice: titleError };
@@ -179,17 +163,12 @@ export function draftToGame(
   try {
     const payoffs = draft.payoffs.map((row) => {
       if (row.length !== draft.columnActions.length) {
-        throw new RangeError(
-          "The payoff matrix needs one cell per action pair.",
-        );
+        throw new RangeError("The payoff matrix needs one cell per action pair.");
       }
 
       return row.map(
         ([rowPayoff, columnPayoff]) =>
-          [
-            parseBoundedRational(rowPayoff),
-            parseBoundedRational(columnPayoff),
-          ] as const,
+          [parseBoundedRational(rowPayoff), parseBoundedRational(columnPayoff)] as const,
       );
     });
 
@@ -206,10 +185,7 @@ export function draftToGame(
   } catch (error) {
     return {
       ok: false,
-      notice:
-        error instanceof Error
-          ? error.message
-          : "The game could not be parsed.",
+      notice: error instanceof Error ? error.message : "The game could not be parsed.",
     };
   }
 }
@@ -251,9 +227,7 @@ function validateExtras(extras: GameShareExtras): void {
 
   if (
     extras.seed !== undefined &&
-    (!Number.isSafeInteger(extras.seed) ||
-      extras.seed < 0 ||
-      extras.seed > 0xffff_ffff)
+    (!Number.isSafeInteger(extras.seed) || extras.seed < 0 || extras.seed > 0xffff_ffff)
   ) {
     throw new RangeError("The seed must be an unsigned 32-bit integer.");
   }
@@ -265,9 +239,7 @@ function validateExtras(extras: GameShareExtras): void {
       extras.continuationProbability < 0.5 ||
       extras.continuationProbability > 0.995)
   ) {
-    throw new RangeError(
-      "Continuation probability must be between 0.5 and 0.995.",
-    );
+    throw new RangeError("Continuation probability must be between 0.5 and 0.995.");
   }
 
   if (
@@ -320,9 +292,7 @@ export function encodeGameSearch(state: GameShareState): string {
 
   const search = params.toString();
   if (new TextEncoder().encode(search).length > MAX_GAME_URL_BYTES) {
-    throw new RangeError(
-      "The encoded game exceeds the 8 KiB share-link limit.",
-    );
+    throw new RangeError("The encoded game exceeds the 8 KiB share-link limit.");
   }
 
   return search;
@@ -337,8 +307,7 @@ export function decodeGameSearch(search: string): DecodeGameUrlResult {
   if (new TextEncoder().encode(query).length > MAX_GAME_URL_BYTES) {
     return {
       kind: "invalid",
-      notice:
-        "This share link exceeds the 8 KiB limit. The default game was loaded instead.",
+      notice: "This share link exceeds the 8 KiB limit. The default game was loaded instead.",
     };
   }
 
@@ -361,9 +330,7 @@ export function decodeGameSearch(search: string): DecodeGameUrlResult {
 
     const cells = payoffSource.split(";");
     if (cells.length !== rowActions.length * columnActions.length) {
-      throw new RangeError(
-        "The shared payoff matrix has the wrong dimensions.",
-      );
+      throw new RangeError("The shared payoff matrix has the wrong dimensions.");
     }
 
     const payoffs: Array<Array<readonly [string, string]>> = Array.from(
@@ -375,10 +342,7 @@ export function decodeGameSearch(search: string): DecodeGameUrlResult {
       if (values.length !== 2) {
         throw new SyntaxError("Every shared cell needs two payoffs.");
       }
-      payoffs[Math.floor(index / columnActions.length)].push([
-        values[0],
-        values[1],
-      ]);
+      payoffs[Math.floor(index / columnActions.length)].push([values[0], values[1]]);
     });
 
     const result = draftToGame(

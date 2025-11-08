@@ -1,13 +1,6 @@
 import { createRng } from "@/engine/rng";
 import type { SymmetricPayoffs } from "@/engine/moran";
-import {
-  add,
-  compare,
-  rational,
-  ONE,
-  ZERO,
-  type Rational,
-} from "@/engine/rational";
+import { add, compare, rational, ONE, ZERO, type Rational } from "@/engine/rational";
 
 /**
  * Spatial evolutionary dynamics on a 2D lattice — the Nowak–May counterpart to
@@ -116,12 +109,8 @@ export function cellPosition(
  * it is the tie-break used when two neighbours share the top score, so it must
  * not depend on iteration order elsewhere.
  */
-export function neighborsOf(
-  config: SpatialConfig,
-  index: number,
-): readonly number[] {
-  const offsets =
-    config.neighborhood === "moore" ? MOORE_OFFSETS : VON_NEUMANN_OFFSETS;
+export function neighborsOf(config: SpatialConfig, index: number): readonly number[] {
+  const offsets = config.neighborhood === "moore" ? MOORE_OFFSETS : VON_NEUMANN_OFFSETS;
   const { x, y } = cellPosition(config, index);
   const neighbors: number[] = [];
 
@@ -159,22 +148,14 @@ function payoffBetween(
  * has fewer games to earn from, and averaging would erase the edge effect the
  * boundary setting exists to expose.
  */
-export function scoreGrid(
-  config: SpatialConfig,
-  grid: SpatialGrid,
-): readonly Rational[] {
+export function scoreGrid(config: SpatialConfig, grid: SpatialGrid): readonly Rational[] {
   assertGrid(config, grid);
 
   return grid.map((strategy, index) => {
-    let total = config.selfInteraction
-      ? payoffBetween(config.payoffs, strategy, strategy)
-      : ZERO;
+    let total = config.selfInteraction ? payoffBetween(config.payoffs, strategy, strategy) : ZERO;
 
     for (const neighbor of neighborsOf(config, index)) {
-      total = add(
-        total,
-        payoffBetween(config.payoffs, strategy, grid[neighbor]),
-      );
+      total = add(total, payoffBetween(config.payoffs, strategy, grid[neighbor]));
     }
 
     return total;
@@ -192,10 +173,7 @@ export function scoreGrid(
  * blink forever instead of settling, turning a fixed point into a period-2
  * artefact of the tie-break.
  */
-export function stepGrid(
-  config: SpatialConfig,
-  grid: SpatialGrid,
-): SpatialGrid {
+export function stepGrid(config: SpatialConfig, grid: SpatialGrid): SpatialGrid {
   const scores = scoreGrid(config, grid);
 
   return grid.map((strategy, index) => {
@@ -243,10 +221,7 @@ export interface SpatialRun {
 }
 
 export function cooperatorShare(grid: SpatialGrid): Rational {
-  const cooperators = grid.reduce<number>(
-    (total, strategy) => total + (strategy === 0 ? 1 : 0),
-    0,
-  );
+  const cooperators = grid.reduce<number>((total, strategy) => total + (strategy === 0 ? 1 : 0), 0);
   return rational(BigInt(cooperators), BigInt(grid.length));
 }
 
@@ -325,15 +300,8 @@ export function runSpatial(
  */
 export function singleDefectorGrid(config: SpatialConfig): SpatialGrid {
   createSpatialConfig(config);
-  const grid: SpatialStrategy[] = Array.from(
-    { length: config.width * config.height },
-    () => 0,
-  );
-  const center = cellIndex(
-    config,
-    Math.floor(config.width / 2),
-    Math.floor(config.height / 2),
-  );
+  const grid: SpatialStrategy[] = Array.from({ length: config.width * config.height }, () => 0);
+  const center = cellIndex(config, Math.floor(config.width / 2), Math.floor(config.height / 2));
   grid[center] = 1;
   return grid;
 }
@@ -346,11 +314,7 @@ export function singleDefectorGrid(config: SpatialConfig): SpatialGrid {
  * is the one place a float is admissible because it selects a cell rather than
  * computing a payoff (I2's simulation boundary).
  */
-export function seededGrid(
-  config: SpatialConfig,
-  seed: number,
-  share: Rational,
-): SpatialGrid {
+export function seededGrid(config: SpatialConfig, seed: number, share: Rational): SpatialGrid {
   createSpatialConfig(config);
 
   if (compare(share, ZERO) === -1 || compare(share, ONE) === 1) {

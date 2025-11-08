@@ -49,11 +49,7 @@ function normalGameFor(
   return { game: game.game, source: game.game.title };
 }
 
-function profileLabel(
-  game: NormalFormGame,
-  row: number,
-  column: number,
-): string {
+function profileLabel(game: NormalFormGame, row: number, column: number): string {
   return `${game.rowActions[row]} / ${game.columnActions[column]}`;
 }
 
@@ -86,10 +82,7 @@ function nashQuestion(seed: number, customGame?: NormalFormGame): QuizQuestion {
   };
 }
 
-function dominantQuestion(
-  seed: number,
-  customGame?: NormalFormGame,
-): QuizQuestion {
+function dominantQuestion(seed: number, customGame?: NormalFormGame): QuizQuestion {
   const { game, source } = normalGameFor(seed + 1, customGame);
   const relation = dominanceRelations(game, "strict").find(
     (candidate) => candidate.player === "row",
@@ -98,9 +91,10 @@ function dominantQuestion(
     ? game.rowActions[relation.dominator]
     : "No strictly dominant row action";
   const choices = rotate(
-    [...game.rowActions, "No strictly dominant row action"].map(
-      (label, index) => ({ id: String(index), label }),
-    ),
+    [...game.rowActions, "No strictly dominant row action"].map((label, index) => ({
+      id: String(index),
+      label,
+    })),
     seed,
   );
   return {
@@ -118,10 +112,7 @@ function dominantQuestion(
   };
 }
 
-function mixedQuestion(
-  seed: number,
-  customGame?: NormalFormGame,
-): QuizQuestion {
+function mixedQuestion(seed: number, customGame?: NormalFormGame): QuizQuestion {
   const candidates = customGame
     ? [customGame, ...catalog.map((entry) => entry.game)]
     : catalog.map((entry) => entry.game);
@@ -155,10 +146,7 @@ function mixedQuestion(
   };
 }
 
-function classifyQuestion(
-  seed: number,
-  customGame?: NormalFormGame,
-): QuizQuestion {
+function classifyQuestion(seed: number, customGame?: NormalFormGame): QuizQuestion {
   const { game, source } = normalGameFor(seed + 2, customGame);
   const answer = classifyTwoByTwo(game);
   const labels = [
@@ -170,9 +158,10 @@ function classifyQuestion(
     "cycle",
   ];
   const choices = rotate(
-    [answer, ...labels.filter((label) => label !== answer).slice(0, 3)].map(
-      (label) => ({ id: label, label }),
-    ),
+    [answer, ...labels.filter((label) => label !== answer).slice(0, 3)].map((label) => ({
+      id: label,
+      label,
+    })),
     seed,
   );
   return {
@@ -247,8 +236,7 @@ export function scoreQuizRound(
   answers: readonly (string | null)[],
 ): number {
   return questions.reduce(
-    (score, question, index) =>
-      score + (answers[index] === question.correctChoiceId ? 1 : 0),
+    (score, question, index) => score + (answers[index] === question.correctChoiceId ? 1 : 0),
     0,
   );
 }

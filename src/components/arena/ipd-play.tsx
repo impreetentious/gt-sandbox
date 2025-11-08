@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-  useState,
-  type KeyboardEvent,
-} from "react";
+import { useEffect, useMemo, useReducer, useRef, useState, type KeyboardEvent } from "react";
 import { AnalysisDrawer } from "@/components/analysis/analysis-drawer";
 import { GameWorkbench } from "@/components/build/game-workbench";
 import { ipdActionCopy, ipdOpponentOptions } from "@/content/ipd";
@@ -15,10 +8,7 @@ import { ipd } from "@/engine/catalog/ipd";
 import { payoffAt, profileKey } from "@/engine/game";
 import { formatRational } from "@/engine/rational";
 import { simulateIpdMatch } from "@/engine/repeated/match";
-import {
-  ipdStrategyById,
-  type IpdStrategy,
-} from "@/engine/repeated/strategies";
+import { ipdStrategyById, type IpdStrategy } from "@/engine/repeated/strategies";
 import { paretoEfficientProfiles } from "@/engine/solve/pareto";
 import { bestResponses, pureNashEquilibria } from "@/engine/solve/pure";
 import { decodeGameSearch } from "@/state/game-url";
@@ -84,27 +74,14 @@ function StrategyDiagram({ strategy }: { readonly strategy: IpdStrategy }) {
                 stroke="currentColor"
                 strokeWidth="1.5"
               />
-              <text
-                dominantBaseline="middle"
-                fontSize="11"
-                textAnchor="middle"
-                x={x}
-                y="43"
-              >
+              <text dominantBaseline="middle" fontSize="11" textAnchor="middle" x={x} y="43">
                 {state}
               </text>
             </g>
           );
         })}
         <defs>
-          <marker
-            id="ipd-arrow"
-            markerHeight="6"
-            markerWidth="6"
-            orient="auto"
-            refX="5"
-            refY="3"
-          >
+          <marker id="ipd-arrow" markerHeight="6" markerWidth="6" orient="auto" refX="5" refY="3">
             <path d="M 0 0 L 6 3 L 0 6 z" fill="currentColor" />
           </marker>
         </defs>
@@ -120,9 +97,7 @@ function StrategyDiagram({ strategy }: { readonly strategy: IpdStrategy }) {
 
 /** P6's interactive finite IPD match, backed by the same engine as tournaments. */
 export function IpdPlayExperience() {
-  const [state, dispatch] = useReducer(reduceIpdSession, undefined, () =>
-    createIpdSession(),
-  );
+  const [state, dispatch] = useReducer(reduceIpdSession, undefined, () => createIpdSession());
   const [paretoMode, setParetoMode] = useState(false);
   const reducedMotion = useReducedMotion();
   const firstChoiceRef = useRef<HTMLButtonElement>(null);
@@ -136,9 +111,7 @@ export function IpdPlayExperience() {
   const highlightedRound = state.pendingRound ?? latestRound;
   const opponentStrategy = ipdStrategyById[state.opponentStrategy];
   const opponentName =
-    state.mystery && state.status !== "complete"
-      ? "Mystery rival"
-      : opponentStrategy.name;
+    state.mystery && state.status !== "complete" ? "Mystery rival" : opponentStrategy.name;
   const counterfactual = useMemo(
     () =>
       state.status === "complete"
@@ -147,9 +120,7 @@ export function IpdPlayExperience() {
     [state.config, state.status],
   );
   const equilibria = new Set(pureNashEquilibria(ipd.game).map(profileKey));
-  const paretoEfficient = new Set(
-    paretoEfficientProfiles(ipd.game).map(profileKey),
-  );
+  const paretoEfficient = new Set(paretoEfficientProfiles(ipd.game).map(profileKey));
 
   useEffect(() => {
     const decoded = decodeGameSearch(window.location.search);
@@ -158,12 +129,9 @@ export function IpdPlayExperience() {
     }
     const rawPersona = decoded.state.extras.persona;
     const opponent =
-      rawPersona !== undefined && isIpdOpponentChoice(rawPersona)
-        ? rawPersona
-        : undefined;
+      rawPersona !== undefined && isIpdOpponentChoice(rawPersona) ? rawPersona : undefined;
     const seed = decoded.state.extras.seed;
-    const continuationProbability =
-      decoded.state.extras.continuationProbability;
+    const continuationProbability = decoded.state.extras.continuationProbability;
     const noise = decoded.state.extras.noise;
     if (
       opponent === undefined &&
@@ -201,14 +169,8 @@ export function IpdPlayExperience() {
     if (state.status === "complete") {
       playAgainRef.current?.focus();
     } else if (priorState.status === "resolving") {
-      (state.focusTarget === "choice-0"
-        ? firstChoiceRef
-        : secondChoiceRef
-      ).current?.focus();
-    } else if (
-      state.rounds.length === 0 &&
-      state.config.masterSeed !== priorState.seed
-    ) {
+      (state.focusTarget === "choice-0" ? firstChoiceRef : secondChoiceRef).current?.focus();
+    } else if (state.rounds.length === 0 && state.config.masterSeed !== priorState.seed) {
       firstChoiceRef.current?.focus();
     }
 
@@ -216,12 +178,7 @@ export function IpdPlayExperience() {
       seed: state.config.masterSeed,
       status: state.status,
     };
-  }, [
-    state.config.masterSeed,
-    state.focusTarget,
-    state.rounds.length,
-    state.status,
-  ]);
+  }, [state.config.masterSeed, state.focusTarget, state.rounds.length, state.status]);
 
   const handleShortcut = (event: KeyboardEvent<HTMLElement>) => {
     if (state.status !== "playing" || !["1", "2"].includes(event.key)) {
@@ -257,8 +214,8 @@ export function IpdPlayExperience() {
             Iterated Prisoner&apos;s Dilemma
           </h1>
           <p className="lede">
-            A price decision is no longer a one-off. The next round may arrive,
-            so today&apos;s move can change what a rival does tomorrow.
+            A price decision is no longer a one-off. The next round may arrive, so today&apos;s move
+            can change what a rival does tomorrow.
           </p>
         </header>
 
@@ -274,8 +231,7 @@ export function IpdPlayExperience() {
           <p>
             <span>Round</span>
             <strong>
-              {Math.min(state.rounds.length + 1, state.length.rounds)} /{" "}
-              {state.length.rounds}
+              {Math.min(state.rounds.length + 1, state.length.rounds)} / {state.length.rounds}
             </strong>
           </p>
         </div>
@@ -286,18 +242,14 @@ export function IpdPlayExperience() {
               <div>
                 <p className="eyebrow">Act</p>
                 <h2 id="ipd-arena-title">
-                  {state.status === "complete"
-                    ? "Match complete"
-                    : "Choose your move."}
+                  {state.status === "complete" ? "Match complete" : "Choose your move."}
                 </h2>
               </div>
               <label className="one-shot-persona">
                 <span>Rival</span>
                 <select
                   aria-label="Choose IPD rival"
-                  disabled={
-                    state.rounds.length > 0 || state.status === "resolving"
-                  }
+                  disabled={state.rounds.length > 0 || state.status === "resolving"}
                   onChange={(event) =>
                     dispatch({
                       type: "select-opponent",
@@ -329,9 +281,7 @@ export function IpdPlayExperience() {
                   className="one-shot-choice"
                   disabled={state.status !== "playing"}
                   key={action.label}
-                  onClick={() =>
-                    dispatch({ type: "submit-choice", action: index as 0 | 1 })
-                  }
+                  onClick={() => dispatch({ type: "submit-choice", action: index as 0 | 1 })}
                   ref={index === 0 ? firstChoiceRef : secondChoiceRef}
                   type="button"
                 >
@@ -341,10 +291,7 @@ export function IpdPlayExperience() {
               ))}
             </div>
 
-            <p
-              className="one-shot-observation"
-              data-resolving={state.status === "resolving"}
-            >
+            <p className="one-shot-observation" data-resolving={state.status === "resolving"}>
               {state.status === "resolving"
                 ? `${opponentName} is deciding…`
                 : state.status === "complete"
@@ -355,10 +302,7 @@ export function IpdPlayExperience() {
               {narration}
             </p>
 
-            <section
-              aria-labelledby="ipd-history-title"
-              className="one-shot-history"
-            >
+            <section aria-labelledby="ipd-history-title" className="one-shot-history">
               <div className="one-shot-history__heading">
                 <p className="eyebrow">Observe</p>
                 <h3 id="ipd-history-title">History</h3>
@@ -371,13 +315,11 @@ export function IpdPlayExperience() {
                     <li key={round.number}>
                       <span>Round {round.number}</span>
                       <span>
-                        You {ipdActionCopy[round.row.action].pastTense};{" "}
-                        {opponentName}{" "}
+                        You {ipdActionCopy[round.row.action].pastTense}; {opponentName}{" "}
                         {ipdActionCopy[round.column.action].pastTense}
                       </span>
                       <strong>
-                        {formatRational(round.rowPayoff)} —{" "}
-                        {formatRational(round.columnPayoff)}
+                        {formatRational(round.rowPayoff)} — {formatRational(round.columnPayoff)}
                       </strong>
                     </li>
                   ))}
@@ -393,16 +335,14 @@ export function IpdPlayExperience() {
                 </p>
                 {state.length.truncatedAtCap ? (
                   <p className="analysis-caveat" role="status">
-                    This seeded match reached the 5,000-round safety cap. The
-                    result is disclosed as truncated rather than treated as an
-                    unbounded match.
+                    This seeded match reached the 5,000-round safety cap. The result is disclosed as
+                    truncated rather than treated as an unbounded match.
                   </p>
                 ) : null}
                 {counterfactual ? (
                   <p className="ipd-counterfactual" role="status">
                     Tit for Tat in your seat would have scored{" "}
-                    {formatRational(counterfactual.rowTotal)} against this same
-                    rival and seed.
+                    {formatRational(counterfactual.rowTotal)} against this same rival and seed.
                   </p>
                 ) : null}
                 <StrategyDiagram strategy={opponentStrategy} />
@@ -418,10 +358,7 @@ export function IpdPlayExperience() {
             ) : null}
           </section>
 
-          <section
-            aria-labelledby="ipd-matrix-title"
-            className="one-shot-analysis"
-          >
+          <section aria-labelledby="ipd-matrix-title" className="one-shot-analysis">
             <div className="one-shot-analysis__heading">
               <p className="eyebrow">Stage-game matrix</p>
               <h2 id="ipd-matrix-title">The incentives persist</h2>
@@ -433,8 +370,8 @@ export function IpdPlayExperience() {
             >
               <table className="one-shot-matrix">
                 <caption>
-                  Prisoner&apos;s Dilemma stage-game payoff matrix. Each cell
-                  reads your payoff, then your rival&apos;s.
+                  Prisoner&apos;s Dilemma stage-game payoff matrix. Each cell reads your payoff,
+                  then your rival&apos;s.
                 </caption>
                 <thead>
                   <tr>
@@ -456,43 +393,26 @@ export function IpdPlayExperience() {
                         const isHighlighted =
                           highlightedRound?.row.action === row &&
                           highlightedRound.column.action === column;
-                        const isEquilibrium = equilibria.has(
-                          profileKey(profile),
-                        );
-                        const isParetoEfficient = paretoEfficient.has(
-                          profileKey(profile),
-                        );
-                        const youBestRespond = bestResponses(
-                          ipd.game,
-                          "row",
+                        const isEquilibrium = equilibria.has(profileKey(profile));
+                        const isParetoEfficient = paretoEfficient.has(profileKey(profile));
+                        const youBestRespond = bestResponses(ipd.game, "row", column).includes(row);
+                        const rivalBestRespond = bestResponses(ipd.game, "column", row).includes(
                           column,
-                        ).includes(row);
-                        const rivalBestRespond = bestResponses(
-                          ipd.game,
-                          "column",
-                          row,
-                        ).includes(column);
+                        );
 
                         return (
                           <td
                             className={[
                               "one-shot-matrix__cell",
-                              isHighlighted &&
-                                "one-shot-matrix__cell--highlighted",
+                              isHighlighted && "one-shot-matrix__cell--highlighted",
                               paretoMode &&
                                 !isParetoEfficient &&
                                 "one-shot-matrix__cell--dominated",
                             ]
                               .filter(Boolean)
                               .join(" ")}
-                            data-highlight={
-                              isHighlighted ? "current" : undefined
-                            }
-                            data-pareto={
-                              paretoMode && !isParetoEfficient
-                                ? "dominated"
-                                : undefined
-                            }
+                            data-highlight={isHighlighted ? "current" : undefined}
+                            data-pareto={paretoMode && !isParetoEfficient ? "dominated" : undefined}
                             data-testid={`ipd-matrix-cell-${row}-${column}`}
                             key={`${row}-${column}`}
                           >

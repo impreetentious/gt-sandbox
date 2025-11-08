@@ -3,11 +3,7 @@ import { notFound } from "next/navigation";
 import { ExtensivePlayExperience } from "@/components/arena/extensive-play";
 import type { ExtensiveSlug } from "@/engine/catalog/extensive";
 
-const games: readonly ExtensiveSlug[] = [
-  "entry-deterrence",
-  "ultimatum",
-  "centipede",
-];
+const games: readonly ExtensiveSlug[] = ["entry-deterrence", "ultimatum", "centipede"];
 
 const labels: Record<ExtensiveSlug, string> = {
   "entry-deterrence": "Entry Deterrence",
@@ -41,11 +37,7 @@ export async function generateMetadata({
   return { title: labels[slug], description: descriptions[slug] };
 }
 
-export default async function ExtensiveGamePage({
-  params,
-}: {
-  params: Promise<{ game: string }>;
-}) {
+export default async function ExtensiveGamePage({ params }: { params: Promise<{ game: string }> }) {
   const { game } = await params;
   if (!(games as readonly string[]).includes(game)) {
     notFound();

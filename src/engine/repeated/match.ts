@@ -67,9 +67,7 @@ function roundCap(config: IpdMatchConfig): number {
   const cap = config.roundCap ?? DEFAULT_IPD_ROUND_CAP;
 
   if (!Number.isSafeInteger(cap) || cap < 1 || cap > DEFAULT_IPD_ROUND_CAP) {
-    throw new RangeError(
-      `roundCap must be a safe integer from 1 to ${DEFAULT_IPD_ROUND_CAP}.`,
-    );
+    throw new RangeError(`roundCap must be a safe integer from 1 to ${DEFAULT_IPD_ROUND_CAP}.`);
   }
 
   return cap;
@@ -104,10 +102,7 @@ function eventDraw(
   }).next();
 }
 
-function environmentForRound(
-  config: IpdMatchConfig,
-  round: number,
-): RoundEnvironment {
+function environmentForRound(config: IpdMatchConfig, round: number): RoundEnvironment {
   return {
     rowPolicyDraw: eventDraw(config, "policy", round, "row"),
     columnPolicyDraw: eventDraw(config, "policy", round, "column"),
@@ -116,11 +111,7 @@ function environmentForRound(
   };
 }
 
-function flipIfNoisy(
-  intendedAction: BinaryAction,
-  draw: number,
-  noise: number,
-): IpdActionRecord {
+function flipIfNoisy(intendedAction: BinaryAction, draw: number, noise: number): IpdActionRecord {
   const noiseFlipped = draw < noise;
 
   return {
@@ -132,20 +123,12 @@ function flipIfNoisy(
   };
 }
 
-function actionHistory(
-  history: readonly IpdMatchRound[],
-  actor: "row" | "column",
-): BinaryAction[] {
+function actionHistory(history: readonly IpdMatchRound[], actor: "row" | "column"): BinaryAction[] {
   return history.map((round) => round[actor].action);
 }
 
-function payoffHistory(
-  history: readonly IpdMatchRound[],
-  actor: "row" | "column",
-): Rational[] {
-  return history.map((round) =>
-    actor === "row" ? round.rowPayoff : round.columnPayoff,
-  );
+function payoffHistory(history: readonly IpdMatchRound[], actor: "row" | "column"): Rational[] {
+  return history.map((round) => (actor === "row" ? round.rowPayoff : round.columnPayoff));
 }
 
 function strategyContext(
@@ -176,11 +159,7 @@ function buildRound(
     policyDraw: environment.rowPolicyDraw,
   };
   const column = {
-    ...flipIfNoisy(
-      columnIntendedAction,
-      environment.columnNoiseDraw,
-      config.noise,
-    ),
+    ...flipIfNoisy(columnIntendedAction, environment.columnNoiseDraw, config.noise),
     policyDraw: environment.columnPolicyDraw,
   };
   const [rowPayoff, columnPayoff] = payoffAt(ipd.game, {
@@ -236,13 +215,7 @@ export function resolveHumanIpdRound(
     strategyContext(history, "column", environment.columnPolicyDraw),
   );
 
-  return buildRound(
-    config,
-    history,
-    round,
-    rowIntendedAction,
-    columnIntendedAction,
-  );
+  return buildRound(config, history, round, rowIntendedAction, columnIntendedAction);
 }
 
 /** Runs a complete strategy-versus-strategy match using the event schedule. */
@@ -262,13 +235,7 @@ export function simulateIpdMatch(config: IpdMatchConfig): IpdMatchResult {
       config.columnStrategy,
       strategyContext(history, "column", environment.columnPolicyDraw),
     );
-    const resolved = buildRound(
-      config,
-      history,
-      round,
-      rowIntendedAction,
-      columnIntendedAction,
-    );
+    const resolved = buildRound(config, history, round, rowIntendedAction, columnIntendedAction);
     history.push(resolved);
     rowTotal = add(rowTotal, resolved.rowPayoff);
     columnTotal = add(columnTotal, resolved.columnPayoff);

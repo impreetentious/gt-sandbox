@@ -9,12 +9,8 @@ import {
 
 describe("seeded quiz generator", () => {
   it("is deterministic and cycles through all five question kinds", () => {
-    const first = Array.from({ length: 5 }, (_, index) =>
-      generateQuizQuestion(42, index),
-    );
-    const second = Array.from({ length: 5 }, (_, index) =>
-      generateQuizQuestion(42, index),
-    );
+    const first = Array.from({ length: 5 }, (_, index) => generateQuizQuestion(42, index));
+    const second = Array.from({ length: 5 }, (_, index) => generateQuizQuestion(42, index));
     expect(second).toEqual(first);
     expect(new Set(first.map((question) => question.kind))).toEqual(
       new Set([
@@ -27,9 +23,7 @@ describe("seeded quiz generator", () => {
     );
     expect(
       first.every((question) =>
-        question.choices.some(
-          (choice) => choice.id === question.correctChoiceId,
-        ),
+        question.choices.some((choice) => choice.id === question.correctChoiceId),
       ),
     ).toBe(true);
   });
@@ -42,6 +36,11 @@ describe("seeded quiz generator", () => {
     expect(first).toHaveLength(QUIZ_LENGTH);
     expect(second).toEqual(first);
     expect(scoreQuizRound(first, perfectAnswers)).toBe(QUIZ_LENGTH);
-    expect(scoreQuizRound(first, perfectAnswers.map(() => null))).toBe(0);
+    expect(
+      scoreQuizRound(
+        first,
+        perfectAnswers.map(() => null),
+      ),
+    ).toBe(0);
   });
 });

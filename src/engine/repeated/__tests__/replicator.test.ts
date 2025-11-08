@@ -4,10 +4,7 @@ import {
   evolutionPresets,
   predicateHolds,
 } from "@/content/evolution-presets";
-import {
-  runIpdEvolution,
-  runReplicatorDynamics,
-} from "@/engine/repeated/replicator";
+import { runIpdEvolution, runReplicatorDynamics } from "@/engine/repeated/replicator";
 
 const baseEvolutionConfig = {
   strategies: ["allc", "alld"] as const,
@@ -20,9 +17,7 @@ const baseEvolutionConfig = {
   generations: 100,
 };
 
-function finalShares(
-  result: ReturnType<typeof runIpdEvolution>,
-): readonly number[] {
+function finalShares(result: ReturnType<typeof runIpdEvolution>): readonly number[] {
   const final = result.result.generations.at(-1);
 
   if (!final) {
@@ -49,14 +44,8 @@ describe("P8 replicator dynamics", () => {
     }
 
     expect(result.generations[1]?.shares[1]).toBeCloseTo(2 / 3);
-    const defectShares = result.generations.map(
-      (generation) => generation.shares[1] ?? 0,
-    );
-    expect(
-      defectShares
-        .slice(1)
-        .every((share, index) => share > defectShares[index]!),
-    ).toBe(true);
+    const defectShares = result.generations.map((generation) => generation.shares[1] ?? 0);
+    expect(defectShares.slice(1).every((share, index) => share > defectShares[index]!)).toBe(true);
   });
 
   it("keeps all-one-strategy fixed points fixed", () => {
@@ -71,9 +60,12 @@ describe("P8 replicator dynamics", () => {
     ]) {
       const result = runReplicatorDynamics(matrix, initialShares, 3);
       expect(result.status).toBe("complete");
-      expect(result.generations.map((generation) => generation.shares)).toEqual(
-        [initialShares, initialShares, initialShares, initialShares],
-      );
+      expect(result.generations.map((generation) => generation.shares)).toEqual([
+        initialShares,
+        initialShares,
+        initialShares,
+        initialShares,
+      ]);
     }
   });
 
@@ -97,9 +89,7 @@ describe("P8 replicator dynamics", () => {
   it("rejects malformed population and payoff inputs before iterating", () => {
     expect(() => runReplicatorDynamics([[1]], [], 1)).toThrow(/at least one/);
     expect(() => runReplicatorDynamics([[1]], [1, 0], 1)).toThrow(/one row/);
-    expect(() => runReplicatorDynamics([[1], [0]], [1, 0], 1)).toThrow(
-      /square/,
-    );
+    expect(() => runReplicatorDynamics([[1], [0]], [1, 0], 1)).toThrow(/square/);
     expect(() => runReplicatorDynamics([[1]], [0], 1)).toThrow(/positive/);
     expect(() => runReplicatorDynamics([[-1]], [1], 1)).toThrow(/nonnegative/);
     expect(() => runReplicatorDynamics([[1]], [1], 501)).toThrow(/0 to 500/);
@@ -113,11 +103,7 @@ describe("P8 replicator dynamics", () => {
       expect(run.payoffMatrix, preset.id).toEqual(preset.payoffMatrix);
       expect(finalShares(run), preset.id).toEqual(preset.finalShares);
       expect(
-        predicateHolds(
-          finalShares(run),
-          run.config.strategies,
-          preset.metricPredicate,
-        ),
+        predicateHolds(finalShares(run), run.config.strategies, preset.metricPredicate),
         preset.id,
       ).toBe(true);
     }

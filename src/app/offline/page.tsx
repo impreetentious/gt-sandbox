@@ -3,8 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Offline",
-  description:
-    "This page has not been cached yet, and the network is unavailable.",
+  description: "This page has not been cached yet, and the network is unavailable.",
   robots: { index: false, follow: false },
 };
 
@@ -24,9 +23,9 @@ export default function OfflinePage() {
       <p className="eyebrow">Offline</p>
       <h1 className="display">Not cached yet.</h1>
       <p className="lede">
-        The sandbox keeps every page you have already opened, and this one has
-        not been opened on this device. Nothing was lost — reconnect and it will
-        load, then stay available offline afterwards.
+        The sandbox keeps every page you have already opened, and this one has not been opened on
+        this device. Nothing was lost — reconnect and it will load, then stay available offline
+        afterwards.
       </p>
       <p>
         <Link className="home-primary-link" href="/">

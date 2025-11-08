@@ -1,12 +1,4 @@
-import {
-  add,
-  compare,
-  divide,
-  rational,
-  subtract,
-  ZERO,
-  type Rational,
-} from "@/engine/rational";
+import { add, compare, divide, rational, subtract, ZERO, type Rational } from "@/engine/rational";
 
 /**
  * Exact two-bidder auction engine. Discretizing valuations, signals, and bids
@@ -43,9 +35,7 @@ function assertGridInteger(value: number, label: string): void {
 }
 
 /** Winning payoff `value − price`; the price depends on the format. */
-export function resolvePrivateValueRound(
-  input: PrivateValueRoundInput,
-): AuctionResolution {
+export function resolvePrivateValueRound(input: PrivateValueRoundInput): AuctionResolution {
   assertGridInteger(input.yourBid, "yourBid");
   assertGridInteger(input.rivalBid, "rivalBid");
   assertGridInteger(input.yourValue, "yourValue");
@@ -91,9 +81,7 @@ export interface AuctionPersona {
   readonly bid: (value: number, maxValue: number) => number;
 }
 
-export const auctionPersonas: Readonly<
-  Record<AuctionPersonaId, AuctionPersona>
-> = {
+export const auctionPersonas: Readonly<Record<AuctionPersonaId, AuctionPersona>> = {
   truthful: {
     id: "truthful",
     name: "Honest",
@@ -103,8 +91,7 @@ export const auctionPersonas: Readonly<
   shader: {
     id: "shader",
     name: "Shader",
-    description:
-      "Shades to half its valuation — the risk-neutral first-price benchmark.",
+    description: "Shades to half its valuation — the risk-neutral first-price benchmark.",
     bid: (value) => Math.floor(value / 2),
   },
   overbidder: {
@@ -159,10 +146,7 @@ export function expectedPrivateValuePayoff(params: {
       tieWinner: "rival",
     });
     // Average the two tie-break resolutions so a tie contributes half surplus.
-    const roundValue = divide(
-      add(win.yourPayoff, lose.yourPayoff),
-      rational(2n),
-    );
+    const roundValue = divide(add(win.yourPayoff, lose.yourPayoff), rational(2n));
     total = add(total, roundValue);
   }
 

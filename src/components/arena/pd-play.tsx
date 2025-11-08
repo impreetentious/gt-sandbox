@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-  type KeyboardEvent,
-} from "react";
+import { useEffect, useReducer, useRef, useState, type KeyboardEvent } from "react";
 import { AnalysisDrawer } from "@/components/analysis/analysis-drawer";
 import { GameWorkbench } from "@/components/build/game-workbench";
 import { pdActionCopy, pdPersonas } from "@/content/pd";
@@ -25,9 +19,7 @@ import {
 } from "@/state/pd-session";
 
 const equilibria = new Set(pureNashEquilibria(pd.game).map(profileKey));
-const paretoEfficient = new Set(
-  paretoEfficientProfiles(pd.game).map(profileKey),
-);
+const paretoEfficient = new Set(paretoEfficientProfiles(pd.game).map(profileKey));
 
 function useReducedMotion(): boolean {
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -49,15 +41,11 @@ function useReducedMotion(): boolean {
 }
 
 function personaName(personaId: string): string {
-  return (
-    pdPersonas.find((persona) => persona.id === personaId)?.name ?? "Rival"
-  );
+  return pdPersonas.find((persona) => persona.id === personaId)?.name ?? "Rival";
 }
 
 export function PdPlayExperience() {
-  const [state, dispatch] = useReducer(reducePdSession, undefined, () =>
-    createPdSession(),
-  );
+  const [state, dispatch] = useReducer(reducePdSession, undefined, () => createPdSession());
   const [paretoMode, setParetoMode] = useState(false);
   const reducedMotion = useReducedMotion();
   const firstChoiceRef = useRef<HTMLButtonElement>(null);
@@ -73,10 +61,7 @@ export function PdPlayExperience() {
       return;
     }
     const rawPersona = decoded.state.extras.persona;
-    const persona =
-      rawPersona !== undefined && isPdPersonaId(rawPersona)
-        ? rawPersona
-        : undefined;
+    const persona = rawPersona !== undefined && isPdPersonaId(rawPersona) ? rawPersona : undefined;
     const seed = decoded.state.extras.seed;
     if (persona === undefined && seed === undefined) {
       return;
@@ -103,10 +88,7 @@ export function PdPlayExperience() {
     if (state.status === "complete") {
       playAgainRef.current?.focus();
     } else if (priorState.status === "resolving") {
-      (state.focusTarget === "choice-0"
-        ? firstChoiceRef
-        : secondChoiceRef
-      ).current?.focus();
+      (state.focusTarget === "choice-0" ? firstChoiceRef : secondChoiceRef).current?.focus();
     } else if (state.rounds.length === 0 && state.seed !== priorState.seed) {
       firstChoiceRef.current?.focus();
     }
@@ -148,8 +130,8 @@ export function PdPlayExperience() {
             Prisoner&apos;s Dilemma
           </h1>
           <p className="lede">
-            Two firms set a price at the same time. Protect the margin together,
-            or chase the other firm&apos;s customers.
+            Two firms set a price at the same time. Protect the margin together, or chase the other
+            firm&apos;s customers.
           </p>
         </header>
 
@@ -165,8 +147,7 @@ export function PdPlayExperience() {
           <p>
             <span>Round</span>
             <strong>
-              {Math.min(state.rounds.length + 1, PD_SESSION_ROUNDS)} /{" "}
-              {PD_SESSION_ROUNDS}
+              {Math.min(state.rounds.length + 1, PD_SESSION_ROUNDS)} / {PD_SESSION_ROUNDS}
             </strong>
           </p>
         </div>
@@ -177,23 +158,18 @@ export function PdPlayExperience() {
               <div>
                 <p className="eyebrow">Act</p>
                 <h2 id="arena-title">
-                  {state.status === "complete"
-                    ? "Session complete"
-                    : "Set your price."}
+                  {state.status === "complete" ? "Session complete" : "Set your price."}
                 </h2>
               </div>
               <label className="pd-persona">
                 <span>Rival</span>
                 <select
                   aria-label="Choose rival"
-                  disabled={
-                    state.rounds.length > 0 || state.status === "resolving"
-                  }
+                  disabled={state.rounds.length > 0 || state.status === "resolving"}
                   onChange={(event) =>
                     dispatch({
                       type: "select-persona",
-                      persona: event.target
-                        .value as (typeof pdPersonas)[number]["id"],
+                      persona: event.target.value as (typeof pdPersonas)[number]["id"],
                     })
                   }
                   value={state.persona}
@@ -208,10 +184,7 @@ export function PdPlayExperience() {
             </div>
 
             <p className="pd-persona__description">
-              {
-                pdPersonas.find((persona) => persona.id === state.persona)
-                  ?.description
-              }
+              {pdPersonas.find((persona) => persona.id === state.persona)?.description}
             </p>
 
             <div className="pd-choices" aria-label="Choose your price move">
@@ -232,10 +205,7 @@ export function PdPlayExperience() {
               ))}
             </div>
 
-            <p
-              className="pd-observation"
-              data-resolving={state.status === "resolving"}
-            >
+            <p className="pd-observation" data-resolving={state.status === "resolving"}>
               {state.status === "resolving"
                 ? `${personaName(state.persona)} is deciding…`
                 : state.status === "complete"
@@ -261,8 +231,7 @@ export function PdPlayExperience() {
                       <span>Round {round.number}</span>
                       <span>
                         You {pdActionCopy[round.playerAction].pastTense};{" "}
-                        {personaName(state.persona)}{" "}
-                        {pdActionCopy[round.opponentAction].pastTense}
+                        {personaName(state.persona)} {pdActionCopy[round.opponentAction].pastTense}
                       </span>
                       <strong>
                         {formatRational(round.playerPayoff)} —{" "}
@@ -278,8 +247,7 @@ export function PdPlayExperience() {
               <div className="pd-post-session" id="post-session-controls">
                 <p>
                   Final score: {formatRational(state.playerScore)} for you,{" "}
-                  {formatRational(state.opponentScore)} for{" "}
-                  {personaName(state.persona)}.
+                  {formatRational(state.opponentScore)} for {personaName(state.persona)}.
                 </p>
                 <button
                   className="pd-play-again"
@@ -305,8 +273,7 @@ export function PdPlayExperience() {
             >
               <table className="pd-matrix">
                 <caption>
-                  Price-war payoff matrix. Each cell reads your payoff, then
-                  your rival&apos;s.
+                  Price-war payoff matrix. Each cell reads your payoff, then your rival&apos;s.
                 </caption>
                 <thead>
                   <tr>
@@ -328,42 +295,24 @@ export function PdPlayExperience() {
                         const isHighlighted =
                           highlightedRound?.playerAction === row &&
                           highlightedRound.opponentAction === column;
-                        const isEquilibrium = equilibria.has(
-                          profileKey(profile),
-                        );
-                        const isParetoEfficient = paretoEfficient.has(
-                          profileKey(profile),
-                        );
-                        const youBestRespond = bestResponses(
-                          pd.game,
-                          "row",
+                        const isEquilibrium = equilibria.has(profileKey(profile));
+                        const isParetoEfficient = paretoEfficient.has(profileKey(profile));
+                        const youBestRespond = bestResponses(pd.game, "row", column).includes(row);
+                        const rivalBestRespond = bestResponses(pd.game, "column", row).includes(
                           column,
-                        ).includes(row);
-                        const rivalBestRespond = bestResponses(
-                          pd.game,
-                          "column",
-                          row,
-                        ).includes(column);
+                        );
 
                         return (
                           <td
                             className={[
                               "pd-matrix__cell",
                               isHighlighted && "pd-matrix__cell--highlighted",
-                              paretoMode &&
-                                !isParetoEfficient &&
-                                "pd-matrix__cell--dominated",
+                              paretoMode && !isParetoEfficient && "pd-matrix__cell--dominated",
                             ]
                               .filter(Boolean)
                               .join(" ")}
-                            data-pareto={
-                              paretoMode && !isParetoEfficient
-                                ? "dominated"
-                                : undefined
-                            }
-                            data-highlight={
-                              isHighlighted ? "current" : undefined
-                            }
+                            data-pareto={paretoMode && !isParetoEfficient ? "dominated" : undefined}
+                            data-highlight={isHighlighted ? "current" : undefined}
                             data-testid={`matrix-cell-${row}-${column}`}
                             key={`${row}-${column}`}
                           >

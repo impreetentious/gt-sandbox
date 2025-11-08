@@ -1,10 +1,4 @@
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { TournamentExperience } from "@/components/evolve/tournament-experience";
 
@@ -29,13 +23,9 @@ describe("P8 evolution surface", () => {
     });
     fireEvent.change(scrubber, { target: { value: "20" } });
     expect(scrubber).toHaveValue("20");
-    await waitFor(() =>
-      expect(screen.getByText("Showing generation 20 of 100.")).toBeVisible(),
-    );
+    await waitFor(() => expect(screen.getByText("Showing generation 20 of 100.")).toBeVisible());
 
-    fireEvent.click(
-      screen.getByText("View each generation as an accessible data table"),
-    );
+    fireEvent.click(screen.getByText("View each generation as an accessible data table"));
     expect(
       screen.getByRole("table", {
         name: "Population share at every generation for this seeded evolution run.",

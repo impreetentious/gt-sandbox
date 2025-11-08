@@ -4,11 +4,7 @@ import { pd } from "@/engine/catalog/pd";
 import { pennies } from "@/engine/catalog/pennies";
 import type { Profile } from "@/engine/game";
 import { add, equals, rational } from "@/engine/rational";
-import {
-  empiricalActionMix,
-  fixedActionHindsight,
-  mixVersusNash,
-} from "@/engine/session-stats";
+import { empiricalActionMix, fixedActionHindsight, mixVersusNash } from "@/engine/session-stats";
 import { mixedNashEquilibria } from "@/engine/solve/mixed";
 
 const profiles = fc.array(
@@ -22,12 +18,9 @@ describe("session-analysis statistics", () => {
       fc.property(profiles, (sequence) => {
         const hindsight = fixedActionHindsight(pd.game, "row", sequence);
 
-        expect(
-          equals(
-            add(hindsight.actualPayoff, hindsight.gain),
-            hindsight.bestFixedPayoff,
-          ),
-        ).toBe(true);
+        expect(equals(add(hindsight.actualPayoff, hindsight.gain), hindsight.bestFixedPayoff)).toBe(
+          true,
+        );
         expect(equals(hindsight.gain, rational(0n))).toBe(
           equals(hindsight.actualPayoff, hindsight.bestFixedPayoff),
         );
@@ -40,11 +33,7 @@ describe("session-analysis statistics", () => {
       { row: 0, column: 0 },
       { row: 1, column: 1 },
     ];
-    const hindsight = fixedActionHindsight(
-      pennies.game,
-      "row",
-      matchingSequence,
-    );
+    const hindsight = fixedActionHindsight(pennies.game, "row", matchingSequence);
 
     expect(hindsight.gain).toEqual(rational(-2n));
     expect(hindsight.actualPayoff).toEqual(rational(2n));
@@ -76,11 +65,10 @@ describe("session-analysis statistics", () => {
       rational(0n),
       rational(0n),
     ]);
-    expect(fixedActionHindsight(pennies.game, "column", sequence).gain).toEqual(
-      rational(2n),
-    );
-    expect(
-      mixVersusNash(pennies.game, "column", sequence, equilibrium).nash,
-    ).toEqual([rational(1n, 2n), rational(1n, 2n)]);
+    expect(fixedActionHindsight(pennies.game, "column", sequence).gain).toEqual(rational(2n));
+    expect(mixVersusNash(pennies.game, "column", sequence, equilibrium).nash).toEqual([
+      rational(1n, 2n),
+      rational(1n, 2n),
+    ]);
   });
 });

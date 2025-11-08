@@ -61,6 +61,7 @@ export function ThemeToggle() {
         const stored = window.localStorage.getItem(THEME_KEY);
 
         if (isThemePreference(stored)) {
+          applyTheme(stored);
           setPreference(stored);
         }
       } catch {

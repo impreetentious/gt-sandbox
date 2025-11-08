@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-  type KeyboardEvent,
-} from "react";
+import { useEffect, useReducer, useRef, useState, type KeyboardEvent } from "react";
 import { AnalysisDrawer } from "@/components/analysis/analysis-drawer";
 import { hotSeatGameContent, type HotSeatSlug } from "@/content/hot-seat";
 import { catalogBySlug } from "@/engine/catalog";
@@ -21,11 +15,7 @@ import {
 } from "@/state/hot-seat-session";
 import { serializeSessionExport } from "@/state/session-export";
 
-export function HotSeatPlayExperience({
-  slug,
-}: {
-  readonly slug: HotSeatSlug;
-}) {
+export function HotSeatPlayExperience({ slug }: { readonly slug: HotSeatSlug }) {
   const content = hotSeatGameContent[slug];
   const { game } = catalogBySlug[slug];
   const [state, dispatch] = useReducer(reduceHotSeatSession, slug, () =>
@@ -43,9 +33,7 @@ export function HotSeatPlayExperience({
   const latestRound = state.rounds.at(-1);
   const showHighlight = state.phase === "reveal" || state.phase === "complete";
   const equilibria = new Set(pureNashEquilibria(game).map(profileKey));
-  const paretoEfficient = new Set(
-    paretoEfficientProfiles(game).map(profileKey),
-  );
+  const paretoEfficient = new Set(paretoEfficientProfiles(game).map(profileKey));
 
   useEffect(() => {
     switch (state.focusTarget) {
@@ -142,17 +130,13 @@ export function HotSeatPlayExperience({
           <p>
             <span>Round</span>
             <strong>
-              {Math.min(state.rounds.length + 1, content.roundLimit)} /{" "}
-              {content.roundLimit}
+              {Math.min(state.rounds.length + 1, content.roundLimit)} / {content.roundLimit}
             </strong>
           </p>
         </div>
 
         <div className="one-shot-layout">
-          <section
-            aria-labelledby={`${slug}-hotseat-arena`}
-            className="one-shot-arena"
-          >
+          <section aria-labelledby={`${slug}-hotseat-arena`} className="one-shot-arena">
             <div className="one-shot-arena__heading">
               <div>
                 <p className="eyebrow">Act</p>
@@ -186,9 +170,7 @@ export function HotSeatPlayExperience({
                       aria-label={`Player 1: ${label} (key ${index + 1})`}
                       className="one-shot-choice"
                       key={label}
-                      onClick={() =>
-                        dispatch({ type: "commit-row", action: index as 0 | 1 })
-                      }
+                      onClick={() => dispatch({ type: "commit-row", action: index as 0 | 1 })}
                       ref={index === 0 ? rowChoiceRef : null}
                       type="button"
                     >
@@ -201,14 +183,10 @@ export function HotSeatPlayExperience({
             ) : null}
 
             {state.phase === "handover" ? (
-              <div
-                className="hot-seat-handover"
-                data-testid="hot-seat-handover"
-              >
+              <div className="hot-seat-handover" data-testid="hot-seat-handover">
                 <p className="hot-seat-handover__prompt">
-                  Player 1 has locked in a hidden move. Pass the device to
-                  Player 2. The choice is concealed until both players have
-                  moved.
+                  Player 1 has locked in a hidden move. Pass the device to Player 2. The choice is
+                  concealed until both players have moved.
                 </p>
                 <button
                   className="one-shot-play-again"
@@ -228,8 +206,7 @@ export function HotSeatPlayExperience({
                 onKeyDown={handleColumnShortcut}
               >
                 <p className="hot-seat-turn__prompt">
-                  Player 2, choose your move. Player 1&apos;s choice stays
-                  hidden until you commit.
+                  Player 2, choose your move. Player 1&apos;s choice stays hidden until you commit.
                 </p>
                 <div className="one-shot-choices" aria-label="Player 2 move">
                   {content.columnActions.map((label, index) => (
@@ -258,13 +235,8 @@ export function HotSeatPlayExperience({
             {state.phase === "reveal" && latestRound ? (
               <div className="hot-seat-reveal" data-testid="hot-seat-reveal">
                 <p className="hot-seat-reveal__line">
-                  Player 1 chose{" "}
-                  <strong>{content.rowActions[latestRound.rowAction]}</strong>;
-                  Player 2 chose{" "}
-                  <strong>
-                    {content.columnActions[latestRound.columnAction]}
-                  </strong>
-                  .
+                  Player 1 chose <strong>{content.rowActions[latestRound.rowAction]}</strong>;
+                  Player 2 chose <strong>{content.columnActions[latestRound.columnAction]}</strong>.
                 </p>
                 <p className="hot-seat-reveal__scores">
                   Player 1 {formatRational(latestRound.rowPayoff)} — Player 2{" "}
@@ -276,9 +248,7 @@ export function HotSeatPlayExperience({
                   ref={advanceRef}
                   type="button"
                 >
-                  {state.rounds.length === content.roundLimit
-                    ? "See the analysis"
-                    : "Next round"}
+                  {state.rounds.length === content.roundLimit ? "See the analysis" : "Next round"}
                 </button>
               </div>
             ) : null}
@@ -287,10 +257,7 @@ export function HotSeatPlayExperience({
               {narration}
             </p>
 
-            <section
-              aria-labelledby={`${slug}-hotseat-history`}
-              className="one-shot-history"
-            >
+            <section aria-labelledby={`${slug}-hotseat-history`} className="one-shot-history">
               <div className="one-shot-history__heading">
                 <p className="eyebrow">Observe</p>
                 <h3 id={`${slug}-hotseat-history`}>History</h3>
@@ -307,8 +274,7 @@ export function HotSeatPlayExperience({
                         {content.columnActions[round.columnAction]}
                       </span>
                       <strong>
-                        {formatRational(round.rowPayoff)} —{" "}
-                        {formatRational(round.columnPayoff)}
+                        {formatRational(round.rowPayoff)} — {formatRational(round.columnPayoff)}
                       </strong>
                     </li>
                   ))}
@@ -331,11 +297,7 @@ export function HotSeatPlayExperience({
                   >
                     Play again
                   </button>
-                  <button
-                    className="hot-seat-export"
-                    onClick={downloadExport}
-                    type="button"
-                  >
+                  <button className="hot-seat-export" onClick={downloadExport} type="button">
                     Download session
                   </button>
                 </div>
@@ -343,10 +305,7 @@ export function HotSeatPlayExperience({
             ) : null}
           </section>
 
-          <section
-            aria-labelledby={`${slug}-hotseat-matrix`}
-            className="one-shot-analysis"
-          >
+          <section aria-labelledby={`${slug}-hotseat-matrix`} className="one-shot-analysis">
             <div className="one-shot-analysis__heading">
               <p className="eyebrow">Matrix</p>
               <h2 id={`${slug}-hotseat-matrix`}>The incentives on the table</h2>
@@ -358,8 +317,8 @@ export function HotSeatPlayExperience({
             >
               <table className="one-shot-matrix">
                 <caption>
-                  {game.title} payoff matrix. Each cell reads Player 1&apos;s
-                  payoff, then Player 2&apos;s.
+                  {game.title} payoff matrix. Each cell reads Player 1&apos;s payoff, then Player
+                  2&apos;s.
                 </caption>
                 <thead>
                   <tr>
@@ -382,38 +341,23 @@ export function HotSeatPlayExperience({
                           showHighlight &&
                           latestRound?.rowAction === row &&
                           latestRound.columnAction === column;
-                        const isEquilibrium = equilibria.has(
-                          profileKey(profile),
-                        );
-                        const isParetoEfficient = paretoEfficient.has(
-                          profileKey(profile),
-                        );
-                        const p1BestRespond = bestResponses(
-                          game,
-                          "row",
-                          column,
-                        ).includes(row);
-                        const p2BestRespond = bestResponses(
-                          game,
-                          "column",
-                          row,
-                        ).includes(column);
+                        const isEquilibrium = equilibria.has(profileKey(profile));
+                        const isParetoEfficient = paretoEfficient.has(profileKey(profile));
+                        const p1BestRespond = bestResponses(game, "row", column).includes(row);
+                        const p2BestRespond = bestResponses(game, "column", row).includes(column);
 
                         return (
                           <td
                             className={[
                               "one-shot-matrix__cell",
-                              isHighlighted &&
-                                "one-shot-matrix__cell--highlighted",
+                              isHighlighted && "one-shot-matrix__cell--highlighted",
                               paretoMode &&
                                 !isParetoEfficient &&
                                 "one-shot-matrix__cell--dominated",
                             ]
                               .filter(Boolean)
                               .join(" ")}
-                            data-highlight={
-                              isHighlighted ? "current" : undefined
-                            }
+                            data-highlight={isHighlighted ? "current" : undefined}
                             data-testid={`${slug}-hot-seat-cell-${row}-${column}`}
                             key={`${row}-${column}`}
                           >
@@ -434,11 +378,7 @@ export function HotSeatPlayExperience({
               </table>
             </div>
 
-            <div
-              className="hot-seat-perspective"
-              role="group"
-              aria-label="Analysis perspective"
-            >
+            <div className="hot-seat-perspective" role="group" aria-label="Analysis perspective">
               <span>Measure</span>
               <div className="hot-seat-perspective__buttons">
                 <button

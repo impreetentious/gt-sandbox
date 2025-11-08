@@ -40,8 +40,7 @@ export function strictlyParetoDominates(
   const [alternativeRow, alternativeColumn] = payoffAt(game, alternative);
 
   return (
-    compare(alternativeRow, candidateRow) === 1 &&
-    compare(alternativeColumn, candidateColumn) === 1
+    compare(alternativeRow, candidateRow) === 1 && compare(alternativeColumn, candidateColumn) === 1
   );
 }
 
@@ -52,8 +51,7 @@ export function paretoEfficientProfiles(game: NormalFormGame): Profile[] {
     (candidate) =>
       !profiles.some(
         (alternative) =>
-          !sameProfile(candidate, alternative) &&
-          paretoDominates(game, candidate, alternative),
+          !sameProfile(candidate, alternative) && paretoDominates(game, candidate, alternative),
       ),
   );
 }

@@ -3,10 +3,7 @@
 import { useMemo, useState } from "react";
 import { SPNEPanel } from "@/components/analysis/spne-panel";
 import { extensiveContent } from "@/content/extensive";
-import {
-  extensiveCatalogBySlug,
-  type ExtensiveSlug,
-} from "@/engine/catalog/extensive";
+import { extensiveCatalogBySlug, type ExtensiveSlug } from "@/engine/catalog/extensive";
 import {
   backwardInduction,
   type DecisionNode,
@@ -54,11 +51,7 @@ function layoutTree(root: GameNode): {
 
   const nodes: NodeLayout[] = [];
   const edges: EdgeLayout[] = [];
-  const layoutRec = (
-    node: GameNode,
-    depth: number,
-    leftUnits: number,
-  ): NodeLayout => {
+  const layoutRec = (node: GameNode, depth: number, leftUnits: number): NodeLayout => {
     const w = widthCache.get(node.id)!;
     const centerUnits = leftUnits + w / 2;
     const layout: NodeLayout = { node, depth, x: centerUnits, y: depth };
@@ -146,26 +139,15 @@ export function ExtensivePlayExperience({ slug }: Props) {
   const game = entry.game;
 
   const [rivalId, setRivalId] = useState(content.rivals[0].id);
-  const [userChoices, setUserChoices] = useState<ReadonlyMap<string, number>>(
-    () => new Map(),
-  );
+  const [userChoices, setUserChoices] = useState<ReadonlyMap<string, number>>(() => new Map());
 
-  const rival =
-    content.rivals.find((r) => r.id === rivalId) ?? content.rivals[0];
+  const rival = content.rivals.find((r) => r.id === rivalId) ?? content.rivals[0];
 
   const layout = useMemo(() => layoutTree(game.root), [game.root]);
   const spne = useMemo(() => backwardInduction(game), [game]);
-  const shortLabels = useMemo(
-    () => playerShortLabels(game.players),
-    [game.players],
-  );
+  const shortLabels = useMemo(() => playerShortLabels(game.players), [game.players]);
 
-  const walk = walkGame(
-    game.root,
-    content.userPlayer,
-    userChoices,
-    rival.strategy,
-  );
+  const walk = walkGame(game.root, content.userPlayer, userChoices, rival.strategy);
   const isComplete = walk.terminal !== null;
   const spnePath = useMemo(() => new Set(spne.path), [spne.path]);
   const currentPath = new Set(walk.path);
@@ -192,9 +174,7 @@ export function ExtensivePlayExperience({ slug }: Props) {
 
   const outcomeSentence = terminalPayoffs
     ? `Outcome: ${game.players
-        .map(
-          (name, index) => `${name} ${formatRational(terminalPayoffs[index])}`,
-        )
+        .map((name, index) => `${name} ${formatRational(terminalPayoffs[index])}`)
         .join(", ")}.`
     : null;
   const promptSentence =
@@ -204,11 +184,7 @@ export function ExtensivePlayExperience({ slug }: Props) {
         ? content.initialPrompt
         : `Your turn: choose ${walk.awaitingNode.actions.join(" or ")}.`;
 
-  const dataPhase = isComplete
-    ? "complete"
-    : walk.awaitingNode
-      ? "awaiting-user"
-      : "in-progress";
+  const dataPhase = isComplete ? "complete" : walk.awaitingNode ? "awaiting-user" : "in-progress";
 
   return (
     <section
@@ -225,21 +201,17 @@ export function ExtensivePlayExperience({ slug }: Props) {
         </h1>
         <p className="lede">{content.framing}</p>
         <p className="extensive-session__legend">
-          <strong>{content.playerLegend.user}</strong>{" "}
-          {content.playerLegend.rival}
+          <strong>{content.playerLegend.user}</strong> {content.playerLegend.rival}
         </p>
       </header>
 
       <div className="extensive-session__layout">
-        <section
-          aria-labelledby="extensive-tree-title"
-          className="extensive-session__tree"
-        >
+        <section aria-labelledby="extensive-tree-title" className="extensive-session__tree">
           <div className="extensive-session__tree-heading">
             <h2 id="extensive-tree-title">The game tree</h2>
             <p>
-              Every path from the root to a terminal is a possible play. The
-              pair at each terminal is {content.payoffPairLabel}.
+              Every path from the root to a terminal is a possible play. The pair at each terminal
+              is {content.payoffPairLabel}.
             </p>
           </div>
           <div className="extensive-session__tree-scroll">
@@ -251,19 +223,14 @@ export function ExtensivePlayExperience({ slug }: Props) {
             >
               {layout.edges.map((edge) => {
                 const highlighted =
-                  currentPath.has(edge.from.node.id) &&
-                  currentPath.has(edge.to.node.id);
-                const spneEdge =
-                  spnePath.has(edge.from.node.id) &&
-                  spnePath.has(edge.to.node.id);
+                  currentPath.has(edge.from.node.id) && currentPath.has(edge.to.node.id);
+                const spneEdge = spnePath.has(edge.from.node.id) && spnePath.has(edge.to.node.id);
                 const midX = (px(edge.from.x) + px(edge.to.x)) / 2;
                 const midY = (py(edge.from.y) + py(edge.to.y)) / 2;
                 return (
                   <g
                     key={`${edge.from.node.id}-${edge.to.node.id}`}
-                    data-highlight={
-                      highlighted ? "current" : spneEdge ? "spne" : "none"
-                    }
+                    data-highlight={highlighted ? "current" : spneEdge ? "spne" : "none"}
                   >
                     <line
                       className="extensive-tree__edge"
@@ -294,18 +261,11 @@ export function ExtensivePlayExperience({ slug }: Props) {
                   const playerIndex = game.players.indexOf(node.player);
                   return (
                     <g
-                      data-highlight={
-                        highlighted ? "current" : onSpne ? "spne" : "none"
-                      }
+                      data-highlight={highlighted ? "current" : onSpne ? "spne" : "none"}
                       data-testid={`tree-node-${node.id}`}
                       key={node.id}
                     >
-                      <circle
-                        className="extensive-tree__decision"
-                        cx={cx}
-                        cy={cy}
-                        r={11}
-                      />
+                      <circle className="extensive-tree__decision" cx={cx} cy={cy} r={11} />
                       <text
                         className="extensive-tree__decision-label"
                         dominantBaseline="middle"
@@ -320,9 +280,7 @@ export function ExtensivePlayExperience({ slug }: Props) {
                 }
                 return (
                   <g
-                    data-highlight={
-                      highlighted ? "current" : onSpne ? "spne" : "none"
-                    }
+                    data-highlight={highlighted ? "current" : onSpne ? "spne" : "none"}
                     data-testid={`tree-node-${node.id}`}
                     key={node.id}
                   >
@@ -349,9 +307,7 @@ export function ExtensivePlayExperience({ slug }: Props) {
             </svg>
           </div>
           <table className="extensive-session__terminals">
-            <caption>
-              Every terminal of the tree, with its exact payoff pair.
-            </caption>
+            <caption>Every terminal of the tree, with its exact payoff pair.</caption>
             <thead>
               <tr>
                 <th scope="col">Terminal</th>
@@ -380,10 +336,7 @@ export function ExtensivePlayExperience({ slug }: Props) {
           </table>
         </section>
 
-        <section
-          aria-labelledby="extensive-controls-title"
-          className="extensive-session__controls"
-        >
+        <section aria-labelledby="extensive-controls-title" className="extensive-session__controls">
           <h2 id="extensive-controls-title">Play as {content.userPlayer}</h2>
           <fieldset className="extensive-session__rival">
             <legend>{content.rivalLegend}</legend>
@@ -430,22 +383,14 @@ export function ExtensivePlayExperience({ slug }: Props) {
           </p>
 
           {isComplete ? (
-            <button
-              className="extensive-session__reset"
-              onClick={reset}
-              type="button"
-            >
+            <button className="extensive-session__reset" onClick={reset} type="button">
               Play again
             </button>
           ) : null}
 
           <details className="analysis-drawer extensive-session__analysis">
             <summary>Analysis / Extensive form</summary>
-            <SPNEPanel
-              game={game}
-              oracle={entry.oracle}
-              reveal={content.reveal}
-            />
+            <SPNEPanel game={game} oracle={entry.oracle} reveal={content.reveal} />
           </details>
         </section>
       </div>

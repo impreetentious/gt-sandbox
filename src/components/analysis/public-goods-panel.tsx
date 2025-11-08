@@ -26,14 +26,8 @@ export function PublicGoodsPanel({ config, othersEach }: Props) {
   const nash = useMemo(() => nashEquilibrium(config), [config]);
   const optimum = useMemo(() => welfareOptimum(config), [config]);
   const dividend = useMemo(() => cooperationDividend(config), [config]);
-  const sweep = useMemo(
-    () => deviationSweep(config, othersEach),
-    [config, othersEach],
-  );
-  const allDefect = useMemo(
-    () => evaluateProfile(config, uniformProfile(config, 0)),
-    [config],
-  );
+  const sweep = useMemo(() => deviationSweep(config, othersEach), [config, othersEach]);
+  const allDefect = useMemo(() => evaluateProfile(config, uniformProfile(config, 0)), [config]);
   const [sweepOpen, setSweepOpen] = useState(false);
 
   const reveal = publicGoodsContent.reveal;
@@ -49,9 +43,7 @@ export function PublicGoodsPanel({ config, othersEach }: Props) {
         <p>{reveal.dominance}</p>
         <p className="public-goods-panel__algebra">
           Private return per token ={" "}
-          <strong>
-            MPCR − 1 = {formatRational(verdict.privateMarginalReturn)}
-          </strong>
+          <strong>MPCR − 1 = {formatRational(verdict.privateMarginalReturn)}</strong>
           {verdict.freeRidingIsDominant
             ? " — strictly negative, so every token you contribute costs you exactly that much."
             : " — not negative here, so contributing is privately worthwhile."}
@@ -63,9 +55,7 @@ export function PublicGoodsPanel({ config, othersEach }: Props) {
         <p>{reveal.efficiency}</p>
         <p className="public-goods-panel__algebra">
           Social return per token ={" "}
-          <strong>
-            MPCR × N − 1 = {formatRational(verdict.socialMarginalReturn)}
-          </strong>
+          <strong>MPCR × N − 1 = {formatRational(verdict.socialMarginalReturn)}</strong>
           {verdict.cooperationIsEfficient
             ? " — strictly positive, so each token grows the pie by that much."
             : " — not positive here, so the pot no longer grows the pie."}
@@ -77,10 +67,7 @@ export function PublicGoodsPanel({ config, othersEach }: Props) {
           The <GlossaryTerm term="marginal-per-capita-return" /> window
         </h3>
         <p>{reveal.window}</p>
-        <p
-          className="public-goods-panel__verdict"
-          data-dilemma={verdict.isSocialDilemma}
-        >
+        <p className="public-goods-panel__verdict" data-dilemma={verdict.isSocialDilemma}>
           {verdict.isSocialDilemma
             ? `With N = ${config.playerCount} this MPCR sits inside the dilemma window: 1/${config.playerCount} < MPCR < 1.`
             : `With N = ${config.playerCount} this MPCR sits outside the dilemma window, so the tension disappears.`}
@@ -93,9 +80,7 @@ export function PublicGoodsPanel({ config, othersEach }: Props) {
           <GlossaryTerm term="pareto-efficient" /> outcome
         </h3>
         <table className="public-goods-panel__outcomes">
-          <caption>
-            Exact per-player payoffs at the two reference profiles.
-          </caption>
+          <caption>Exact per-player payoffs at the two reference profiles.</caption>
           <thead>
             <tr>
               <th scope="col">Profile</th>
@@ -107,17 +92,9 @@ export function PublicGoodsPanel({ config, othersEach }: Props) {
           <tbody>
             <tr>
               <th scope="row">Nash equilibrium</th>
-              <td>
-                {nash.equilibriumContribution === null
-                  ? "—"
-                  : nash.equilibriumContribution}
-              </td>
-              <td>
-                {nash.outcome ? formatRational(nash.outcome.payoffs[0]) : "—"}
-              </td>
-              <td>
-                {nash.outcome ? formatRational(nash.outcome.welfare) : "—"}
-              </td>
+              <td>{nash.equilibriumContribution === null ? "—" : nash.equilibriumContribution}</td>
+              <td>{nash.outcome ? formatRational(nash.outcome.payoffs[0]) : "—"}</td>
+              <td>{nash.outcome ? formatRational(nash.outcome.welfare) : "—"}</td>
             </tr>
             <tr>
               <th scope="row">Welfare optimum</th>
@@ -130,24 +107,19 @@ export function PublicGoodsPanel({ config, othersEach }: Props) {
         <p>{nash.reason}</p>
         {verdict.isSocialDilemma ? (
           <p className="public-goods-panel__dividend">
-            Every player would be <strong>{formatRational(dividend)}</strong>{" "}
-            better off under full contribution than at the equilibrium (
-            {formatRational(optimum.payoffs[0])} against{" "}
-            {formatRational(allDefect.payoffs[0])}) — and not one of them can
-            reach it alone.
+            Every player would be <strong>{formatRational(dividend)}</strong> better off under full
+            contribution than at the equilibrium ({formatRational(optimum.payoffs[0])} against{" "}
+            {formatRational(allDefect.payoffs[0])}) — and not one of them can reach it alone.
           </p>
         ) : null}
       </section>
 
-      <section
-        aria-labelledby="pg-sweep-title"
-        className="public-goods-panel__sweep"
-      >
+      <section aria-labelledby="pg-sweep-title" className="public-goods-panel__sweep">
         <h3 id="pg-sweep-title">The arithmetic, token by token</h3>
         <p>
-          Holding the other {config.playerCount - 1} players at {othersEach}{" "}
-          token{othersEach === 1 ? "" : "s"} each, here is what every choice you
-          could make pays you — and pays the group.
+          Holding the other {config.playerCount - 1} players at {othersEach} token
+          {othersEach === 1 ? "" : "s"} each, here is what every choice you could make pays you —
+          and pays the group.
         </p>
         <button
           aria-expanded={sweepOpen}
@@ -160,8 +132,8 @@ export function PublicGoodsPanel({ config, othersEach }: Props) {
         {sweepOpen ? (
           <table className="public-goods-panel__sweep-table">
             <caption>
-              Your payoff and total welfare at every contribution you could
-              choose, in exact rationals.
+              Your payoff and total welfare at every contribution you could choose, in exact
+              rationals.
             </caption>
             <thead>
               <tr>

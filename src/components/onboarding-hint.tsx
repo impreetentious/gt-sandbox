@@ -39,8 +39,8 @@ export function OnboardingHint() {
         <p className="eyebrow">First visit</p>
         <h2 id="onboarding-title">Choose first. Open Analysis second.</h2>
         <p>
-          The sandbox teaches in that order: act, observe the outcome, then use
-          the drawer to name the pattern you just experienced.
+          The sandbox teaches in that order: act, observe the outcome, then use the drawer to name
+          the pattern you just experienced.
         </p>
       </div>
       <button onClick={dismiss} ref={dismissRef} type="button">

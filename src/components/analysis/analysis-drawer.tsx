@@ -2,18 +2,8 @@
 
 import { useId, useMemo, useState } from "react";
 import { GlossaryTerm } from "@/components/ui/glossary-term";
-import {
-  isZeroSum,
-  type NormalFormGame,
-  type Player,
-  type Profile,
-} from "@/engine/game";
-import {
-  formatRational,
-  multiply,
-  rational,
-  type Rational,
-} from "@/engine/rational";
+import { isZeroSum, type NormalFormGame, type Player, type Profile } from "@/engine/game";
+import { formatRational, multiply, rational, type Rational } from "@/engine/rational";
 import { fixedActionHindsight, mixVersusNash } from "@/engine/session-stats";
 import { classifyTwoByTwo } from "@/engine/solve/classify";
 import {
@@ -21,10 +11,7 @@ import {
   type EliminationStep,
   type MixedDominanceRelation,
 } from "@/engine/solve/dominance";
-import {
-  analyzeMixedEquilibria,
-  type MixedNashEquilibrium,
-} from "@/engine/solve/mixed";
+import { analyzeMixedEquilibria, type MixedNashEquilibrium } from "@/engine/solve/mixed";
 import { paretoEfficientProfiles } from "@/engine/solve/pareto";
 import { bestResponses, pureNashEquilibria } from "@/engine/solve/pure";
 import { analyzeEquilibriumSelection } from "@/engine/solve/riskDominance";
@@ -50,11 +37,7 @@ function otherPlayer(player: Player): Player {
   return player === "row" ? "column" : "row";
 }
 
-function actionLabel(
-  game: NormalFormGame,
-  player: Player,
-  action: number,
-): string {
+function actionLabel(game: NormalFormGame, player: Player, action: number): string {
   return (player === "row" ? game.rowActions : game.columnActions)[action];
 }
 
@@ -67,16 +50,10 @@ function decimal(value: Rational): string {
 }
 
 function percent(value: Rational): number {
-  return Math.min(
-    100,
-    Math.max(0, (Number(value.numerator) / Number(value.denominator)) * 100),
-  );
+  return Math.min(100, Math.max(0, (Number(value.numerator) / Number(value.denominator)) * 100));
 }
 
-function equilibriumPayoff(
-  equilibrium: MixedNashEquilibrium,
-  player: Player,
-): Rational {
+function equilibriumPayoff(equilibrium: MixedNashEquilibrium, player: Player): Rational {
   return player === "row" ? equilibrium.rowPayoff : equilibrium.columnPayoff;
 }
 
@@ -84,8 +61,7 @@ function BestResponsePanel({ game }: { readonly game: NormalFormGame }) {
   const titleId = useId();
   const renderResponses = (player: Player) => {
     const opponent = otherPlayer(player);
-    const opponentActions =
-      opponent === "row" ? game.rowActions : game.columnActions;
+    const opponentActions = opponent === "row" ? game.rowActions : game.columnActions;
 
     return opponentActions.map((opponentAction, index) => {
       const responses = bestResponses(game, player, index).map((action) =>
@@ -115,10 +91,7 @@ function BestResponsePanel({ game }: { readonly game: NormalFormGame }) {
   );
 }
 
-function describeElimination(
-  game: NormalFormGame,
-  step: EliminationStep,
-): string {
+function describeElimination(game: NormalFormGame, step: EliminationStep): string {
   const player = step.player === "row" ? "You" : "Your rival";
   const dominated = actionLabel(game, step.player, step.dominated);
   const dominator = actionLabel(game, step.player, step.dominator);
@@ -126,10 +99,7 @@ function describeElimination(
   return `${player}: ${dominator} eliminates ${dominated}.`;
 }
 
-function describeMixture(
-  game: NormalFormGame,
-  relation: MixedDominanceRelation,
-): string {
+function describeMixture(game: NormalFormGame, relation: MixedDominanceRelation): string {
   return relation.support
     .map(
       (action) =>
@@ -160,26 +130,23 @@ function MixedDominanceSection({
         <GlossaryTerm term="dominance-by-mixtures" />
       </h4>
       <p>
-        Pure comparison misses these. No single action beats them, so nothing
-        above eliminates them — but a randomization does.
+        Pure comparison misses these. No single action beats them, so nothing above eliminates them
+        — but a randomization does.
       </p>
       <ul className="analysis-list">
         {relations.map((relation) => (
           <li key={`${relation.player}-${relation.dominated}`}>
             {relation.player === "row" ? "You" : "Your rival"}:{" "}
-            <strong>
-              {actionLabel(game, relation.player, relation.dominated)}
-            </strong>{" "}
-            is beaten by mixing {describeMixture(game, relation)}, which earns
-            at least {formatRational(relation.margin)} more against every
-            opposing action.
+            <strong>{actionLabel(game, relation.player, relation.dominated)}</strong> is beaten by
+            mixing {describeMixture(game, relation)}, which earns at least{" "}
+            {formatRational(relation.margin)} more against every opposing action.
           </li>
         ))}
       </ul>
       <p className="analysis-caveat">
-        Equivalently: there is no belief about the opponent that makes these
-        actions worth playing. The margin is the exact worst case, solved as a
-        linear program over fractions rather than estimated.
+        Equivalently: there is no belief about the opponent that makes these actions worth playing.
+        The margin is the exact worst case, solved as a linear program over fractions rather than
+        estimated.
       </p>
     </>
   );
@@ -203,8 +170,8 @@ function DominancePanel({ game }: { readonly game: NormalFormGame }) {
       ) : (
         <>
           <p>
-            Step through the engine&apos;s iterated elimination. Each step is
-            discrete, so it is also the reduced-motion presentation.
+            Step through the engine&apos;s iterated elimination. Each step is discrete, so it is
+            also the reduced-motion presentation.
           </p>
           <ol aria-live="polite" className="analysis-list" id={stepsId}>
             {trace.steps.slice(0, visibleSteps).map((step, index) => (
@@ -224,22 +191,19 @@ function DominancePanel({ game }: { readonly game: NormalFormGame }) {
             </button>
           ) : (
             <p className="analysis-result" role="status">
-              No dominated actions remain after these {trace.steps.length}{" "}
-              eliminations.
+              No dominated actions remain after these {trace.steps.length} eliminations.
             </p>
           )}
         </>
       )}
       <MixedDominanceSection
         game={game}
-        relations={analysis.mixedStrict.filter(
-          (relation) => relation.requiresMixing,
-        )}
+        relations={analysis.mixedStrict.filter((relation) => relation.requiresMixing)}
       />
       {trace.steps.length === 0 && analysis.weakTrace.steps.length > 0 ? (
         <p className="analysis-caveat">
-          Weak-dominance elimination can depend on the order of elimination;
-          this drawer does not present it as a unique prediction.
+          Weak-dominance elimination can depend on the order of elimination; this drawer does not
+          present it as a unique prediction.
         </p>
       ) : null}
     </section>
@@ -269,9 +233,7 @@ function EquilibriaPanel({
   const titleId = useId();
   const pure = pureNashEquilibria(game);
   const genuinelyMixed = mixed.equilibria.filter(
-    (equilibrium) =>
-      equilibrium.row.support.length > 1 ||
-      equilibrium.column.support.length > 1,
+    (equilibrium) => equilibrium.row.support.length > 1 || equilibrium.column.support.length > 1,
   );
 
   return (
@@ -281,38 +243,30 @@ function EquilibriaPanel({
       </h3>
       {mixed.degeneracyWitness ? (
         <p className="analysis-warning" role="status">
-          This game is <GlossaryTerm term="degenerate" />. Tied best responses
-          mean its equilibrium set needs a careful disclosure rather than a
-          single tidy list.
+          This game is <GlossaryTerm term="degenerate" />. Tied best responses mean its equilibrium
+          set needs a careful disclosure rather than a single tidy list.
         </p>
       ) : null}
       <p>
         Pure equilibria:{" "}
-        {pure.length === 0
-          ? "none"
-          : pure.map((profile) => profileLabel(game, profile)).join(", ")}
+        {pure.length === 0 ? "none" : pure.map((profile) => profileLabel(game, profile)).join(", ")}
         .
       </p>
       {genuinelyMixed.length === 0 ? (
         mixed.degeneracyWitness ? (
           <p>
-            Equal-size support enumeration found no further mixed sample here. A
-            degenerate game can still hold entire families of equilibria beyond
-            the pure outcomes listed above.
+            Equal-size support enumeration found no further mixed sample here. A degenerate game can
+            still hold entire families of equilibria beyond the pure outcomes listed above.
           </p>
         ) : (
-          <p>
-            No additional mixed equilibrium is needed beyond those pure
-            outcomes.
-          </p>
+          <p>No additional mixed equilibrium is needed beyond those pure outcomes.</p>
         )
       ) : (
         <ul className="analysis-list">
           {genuinelyMixed.map((equilibrium, index) => (
             <li key={index}>
               <GlossaryTerm term="mixed-strategy" /> {index + 1}: you play{" "}
-              {strategyLabel(game, "row", equilibrium.row.probabilities)}; your
-              rival plays{" "}
+              {strategyLabel(game, "row", equilibrium.row.probabilities)}; your rival plays{" "}
               {strategyLabel(game, "column", equilibrium.column.probabilities)}.
             </li>
           ))}
@@ -339,10 +293,7 @@ function EfficiencyPanel({
       <h3 id={titleId}>
         <GlossaryTerm term="pareto-efficient" /> outcomes
       </h3>
-      <p>
-        Efficient cells:{" "}
-        {efficient.map((profile) => profileLabel(game, profile)).join(", ")}.
-      </p>
+      <p>Efficient cells: {efficient.map((profile) => profileLabel(game, profile)).join(", ")}.</p>
       <label className="analysis-toggle">
         <input
           checked={enabled}
@@ -367,11 +318,7 @@ function MixBars({
   readonly nash: readonly Rational[];
 }) {
   return (
-    <div
-      className="mix-bars"
-      role="list"
-      aria-label="Your empirical mix compared with Nash mix"
-    >
+    <div className="mix-bars" role="list" aria-label="Your empirical mix compared with Nash mix">
       {empirical.map((probability, action) => (
         <div className="mix-bars__row" key={action} role="listitem">
           <strong>{actionLabel(game, player, action)}</strong>
@@ -422,12 +369,7 @@ function YourPlayPanel({
 
   const hindsight = fixedActionHindsight(game, player, profiles);
   const comparison = mixVersusNash(game, player, profiles, equilibrium);
-  const opponentComparison = mixVersusNash(
-    game,
-    otherPlayer(player),
-    profiles,
-    equilibrium,
-  );
+  const opponentComparison = mixVersusNash(game, otherPlayer(player), profiles, equilibrium);
   const perRoundEquilibriumPayoff = equilibriumPayoff(equilibrium, player);
   const sessionEquilibriumPayoff = multiply(
     perRoundEquilibriumPayoff,
@@ -441,8 +383,7 @@ function YourPlayPanel({
     <section aria-labelledby={titleId} className="analysis-panel">
       <h3 id={titleId}>Your play</h3>
       <p>
-        Your realized payoff:{" "}
-        <strong>{formatRational(hindsight.actualPayoff)}</strong>. The best
+        Your realized payoff: <strong>{formatRational(hindsight.actualPayoff)}</strong>. The best
         fixed action against {opponentName}&apos;s realized sequence was{" "}
         <strong>{bestActionNames}</strong>, worth{" "}
         <strong>{formatRational(hindsight.bestFixedPayoff)}</strong>.
@@ -461,16 +402,14 @@ function YourPlayPanel({
         player={player}
       />
       <p>
-        The selected equilibrium pays{" "}
-        {formatRational(perRoundEquilibriumPayoff)} per round, or{" "}
-        {formatRational(sessionEquilibriumPayoff)} across this many rounds when
-        both players use that equilibrium.
+        The selected equilibrium pays {formatRational(perRoundEquilibriumPayoff)} per round, or{" "}
+        {formatRational(sessionEquilibriumPayoff)} across this many rounds when both players use
+        that equilibrium.
       </p>
       {!opponentComparison.matchesNash ? (
         <p className="analysis-caveat">
-          {opponentName} did not play the equilibrium mix. Beating the
-          equilibrium payoff can be rational when it is a best response to the
-          opponent you actually faced.
+          {opponentName} did not play the equilibrium mix. Beating the equilibrium payoff can be
+          rational when it is a best response to the opponent you actually faced.
         </p>
       ) : null}
       {comparison.matchesNash ? (
@@ -500,8 +439,8 @@ function StructurePanel({ game }: { readonly game: NormalFormGame }) {
       </p>
       {isZeroSum(game) ? (
         <p>
-          This is a <GlossaryTerm term="zero-sum" /> game: every gain for one
-          player is a loss for the other.
+          This is a <GlossaryTerm term="zero-sum" /> game: every gain for one player is a loss for
+          the other.
         </p>
       ) : null}
       {selection.riskDominance.kind === "equilibrium" ? (
@@ -511,15 +450,12 @@ function StructurePanel({ game }: { readonly game: NormalFormGame }) {
         </p>
       ) : null}
       {selection.payoffDominance.kind === "equilibrium" ? (
-        <p>
-          Payoff-dominant outcome:{" "}
-          {profileLabel(game, selection.payoffDominance.profile)}.
-        </p>
+        <p>Payoff-dominant outcome: {profileLabel(game, selection.payoffDominance.profile)}.</p>
       ) : null}
       {selection.riskDominance.kind === "tie" ? (
         <p className="analysis-caveat">
-          Risk dominance is tied here: theory is silent, so{" "}
-          <GlossaryTerm term="focal-point" />s and commitment can decide.
+          Risk dominance is tied here: theory is silent, so <GlossaryTerm term="focal-point" />s and
+          commitment can decide.
         </p>
       ) : null}
     </section>
@@ -551,10 +487,7 @@ export function AnalysisDrawer({
         : game,
     [game, actionLabels],
   );
-  const mixed = useMemo(
-    () => analyzeMixedEquilibria(displayGame),
-    [displayGame],
-  );
+  const mixed = useMemo(() => analyzeMixedEquilibria(displayGame), [displayGame]);
 
   return (
     <details className="analysis-drawer" open={defaultOpen || undefined}>
@@ -564,8 +497,8 @@ export function AnalysisDrawer({
           <p>Play one round to connect the matrix to an outcome.</p>
         ) : (
           <p>
-            What just happened: this outcome came from the same incentives shown
-            in the matrix, not a scripted verdict.
+            What just happened: this outcome came from the same incentives shown in the matrix, not
+            a scripted verdict.
           </p>
         )}
         {showAllPanels || profiles.length >= 3 ? (
@@ -590,8 +523,7 @@ export function AnalysisDrawer({
           </div>
         ) : profiles.length > 0 ? (
           <p className="analysis-caveat">
-            Full analysis unlocks after round 3, once there is a small pattern
-            to inspect.
+            Full analysis unlocks after round 3, once there is a small pattern to inspect.
           </p>
         ) : null}
       </div>

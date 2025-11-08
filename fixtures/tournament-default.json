@@ -1,15 +1,6 @@
 {
   "config": {
-    "strategies": [
-      "allc",
-      "alld",
-      "tft",
-      "grim",
-      "pavlov",
-      "gtft",
-      "joss",
-      "random"
-    ],
+    "strategies": ["allc", "alld", "tft", "grim", "pavlov", "gtft", "joss", "random"],
     "masterSeed": 259187,
     "repetitions": 20,
     "continuationProbability": 0.95,

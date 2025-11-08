@@ -24,9 +24,7 @@ interface InstallPromptEvent extends Event {
  * disclosure honest: this component writes no storage of its own.
  */
 export function OfflineReady({ version }: { readonly version: string }) {
-  const [installEvent, setInstallEvent] = useState<InstallPromptEvent | null>(
-    null,
-  );
+  const [installEvent, setInstallEvent] = useState<InstallPromptEvent | null>(null);
 
   useEffect(() => {
     if (!("serviceWorker" in navigator)) {
@@ -36,12 +34,10 @@ export function OfflineReady({ version }: { readonly version: string }) {
     // The version rides on the URL so a release produces a different script
     // URL, which is what makes the browser install a fresh worker and drop the
     // previous cache. See the comment at the top of `public/sw.js`.
-    void navigator.serviceWorker
-      .register(`/sw.js?v=${encodeURIComponent(version)}`)
-      .catch(() => {
-        // An unavailable worker costs nothing: the app is fully static and
-        // works exactly as before, just without the offline cache.
-      });
+    void navigator.serviceWorker.register(`/sw.js?v=${encodeURIComponent(version)}`).catch(() => {
+      // An unavailable worker costs nothing: the app is fully static and
+      // works exactly as before, just without the offline cache.
+    });
   }, [version]);
 
   useEffect(() => {

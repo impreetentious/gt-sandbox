@@ -13,12 +13,7 @@ import {
   type Neighborhood,
   type SpatialGrid,
 } from "@/engine/spatial";
-import {
-  formatRational,
-  multiply,
-  rational,
-  type Rational,
-} from "@/engine/rational";
+import { formatRational, multiply, rational, type Rational } from "@/engine/rational";
 
 const TEMPTATION_DENOMINATOR = 10n;
 const MAX_GENERATIONS = 40;
@@ -36,19 +31,13 @@ function temptationToStep(temptation: Rational): number {
 
 export function SpatialExperience() {
   const [presetId, setPresetId] = useState(spatialPresets[0].id);
-  const preset =
-    spatialPresets.find((option) => option.id === presetId) ??
-    spatialPresets[0];
+  const preset = spatialPresets.find((option) => option.id === presetId) ?? spatialPresets[0];
 
   const [temptationStep, setTemptationStep] = useState(16);
   const [size, setSize] = useState(preset.size);
-  const [neighborhood, setNeighborhood] = useState<Neighborhood>(
-    preset.neighborhood,
-  );
+  const [neighborhood, setNeighborhood] = useState<Neighborhood>(preset.neighborhood);
   const [boundary, setBoundary] = useState<Boundary>(preset.boundary);
-  const [selfInteraction, setSelfInteraction] = useState(
-    preset.selfInteraction,
-  );
+  const [selfInteraction, setSelfInteraction] = useState(preset.selfInteraction);
   const [opening, setOpening] = useState(preset.opening);
   const [generation, setGeneration] = useState(0);
 
@@ -56,8 +45,7 @@ export function SpatialExperience() {
   // configurations, not just a payoff, because the neighbourhood and the
   // opening matter as much as b does.
   function applyPreset(id: string): void {
-    const next =
-      spatialPresets.find((option) => option.id === id) ?? spatialPresets[0];
+    const next = spatialPresets.find((option) => option.id === id) ?? spatialPresets[0];
     setPresetId(id);
     setTemptationStep(temptationToStep(next.temptation));
     setSize(next.size);
@@ -91,15 +79,7 @@ export function SpatialExperience() {
         : seededGrid(config, preset.seed, rational(1n, 2n));
 
     return runSpatial(config, start, MAX_GENERATIONS);
-  }, [
-    boundary,
-    neighborhood,
-    opening,
-    preset.seed,
-    selfInteraction,
-    size,
-    temptation,
-  ]);
+  }, [boundary, neighborhood, opening, preset.seed, selfInteraction, size, temptation]);
 
   const lastGeneration = run.generations.length - 1;
   const clamped = Math.min(generation, lastGeneration);
@@ -139,10 +119,7 @@ export function SpatialExperience() {
       </header>
 
       <div className="spatial__layout">
-        <section
-          aria-labelledby="spatial-controls-title"
-          className="spatial__controls"
-        >
+        <section aria-labelledby="spatial-controls-title" className="spatial__controls">
           <h2 id="spatial-controls-title">The lattice</h2>
 
           <div className="spatial__control">
@@ -163,10 +140,7 @@ export function SpatialExperience() {
 
           <div className="spatial__control">
             <label htmlFor="spatial-temptation">
-              Temptation b
-              <output htmlFor="spatial-temptation">
-                {formatRational(temptation)}
-              </output>
+              Temptation b<output htmlFor="spatial-temptation">{formatRational(temptation)}</output>
             </label>
             <input
               id="spatial-temptation"
@@ -181,8 +155,8 @@ export function SpatialExperience() {
               value={temptationStep}
             />
             <p className="spatial__control-note">
-              A defector meeting a cooperator earns b; two cooperators earn 1
-              each; anything involving a defector on both sides earns 0.
+              A defector meeting a cooperator earns b; two cooperators earn 1 each; anything
+              involving a defector on both sides earns 0.
             </p>
           </div>
 
@@ -218,9 +192,7 @@ export function SpatialExperience() {
               value={neighborhood}
             >
               <option value="moore">Moore — all 8 surrounding cells</option>
-              <option value="von-neumann">
-                von Neumann — the 4 orthogonal cells
-              </option>
+              <option value="von-neumann">von Neumann — the 4 orthogonal cells</option>
             </select>
           </div>
 
@@ -249,9 +221,7 @@ export function SpatialExperience() {
               }}
               value={opening}
             >
-              <option value="single-defector">
-                One defector in a cooperator field
-              </option>
+              <option value="single-defector">One defector in a cooperator field</option>
               <option value="seeded">Seeded half-and-half scatter</option>
             </select>
           </div>
@@ -269,18 +239,14 @@ export function SpatialExperience() {
             <label htmlFor="spatial-self">
               Cells also play themselves
               <span className="spatial__control-note">
-                Nowak &amp; May&apos;s variant. It adds a different constant to
-                each strategy, so it moves the threshold rather than shifting
-                every score equally.
+                Nowak &amp; May&apos;s variant. It adds a different constant to each strategy, so it
+                moves the threshold rather than shifting every score equally.
               </span>
             </label>
           </div>
         </section>
 
-        <section
-          aria-labelledby="spatial-lattice-title"
-          className="spatial__results"
-        >
+        <section aria-labelledby="spatial-lattice-title" className="spatial__results">
           <h2 id="spatial-lattice-title">Generation {clamped}</h2>
 
           <figure className="spatial__figure">
@@ -310,9 +276,7 @@ export function SpatialExperience() {
             </svg>
             <figcaption>
               Filled cells cooperate; outlined cells defect. Cooperators hold{" "}
-              <strong data-testid="spatial-share">
-                {formatRational(current.cooperatorShare)}
-              </strong>{" "}
+              <strong data-testid="spatial-share">{formatRational(current.cooperatorShare)}</strong>{" "}
               of the lattice ({percentLabel(cooperators, total)}).
             </figcaption>
           </figure>
@@ -344,20 +308,13 @@ export function SpatialExperience() {
             </div>
             <button
               disabled={clamped === lastGeneration}
-              onClick={() =>
-                setGeneration(Math.min(lastGeneration, clamped + 1))
-              }
+              onClick={() => setGeneration(Math.min(lastGeneration, clamped + 1))}
               type="button"
             >
               Step forward
             </button>
           </div>
-          <p
-            aria-live="polite"
-            className="sr-only"
-            ref={statusRef}
-            role="status"
-          />
+          <p aria-live="polite" className="sr-only" ref={statusRef} role="status" />
 
           <p className="spatial__termination" data-testid="spatial-termination">
             {terminationNote}
@@ -367,9 +324,7 @@ export function SpatialExperience() {
             <summary>View the run as an accessible data table</summary>
             <div className="spatial__table-scroll" tabIndex={0}>
               <table>
-                <caption>
-                  Exact cooperator share at every generation of this run.
-                </caption>
+                <caption>Exact cooperator share at every generation of this run.</caption>
                 <thead>
                   <tr>
                     <th scope="col">Generation</th>

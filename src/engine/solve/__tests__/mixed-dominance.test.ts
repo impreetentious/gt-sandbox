@@ -6,13 +6,7 @@ import {
   eliminateMixedDominatedStrategies,
   mixedDominanceRelations,
 } from "@/engine/solve/dominance";
-import {
-  add,
-  compare,
-  formatRational,
-  multiply,
-  ZERO,
-} from "@/engine/rational";
+import { add, compare, formatRational, multiply, ZERO } from "@/engine/rational";
 
 /**
  * The canonical example this phase exists for: Steady is safe against every
@@ -51,9 +45,7 @@ describe("mixed dominance over a normal-form game", () => {
     expect(analysis.strict).toEqual([]);
     expect(analysis.strictTrace.steps).toEqual([]);
 
-    const mixed = analysis.mixedStrict.filter(
-      (relation) => relation.player === "row",
-    );
+    const mixed = analysis.mixedStrict.filter((relation) => relation.player === "row");
 
     expect(mixed).toHaveLength(1);
     expect(mixed[0].dominated).toBe(2);
@@ -105,9 +97,7 @@ describe("mixed dominance over a normal-form game", () => {
 
     expect(analysis.strict).toHaveLength(2);
     expect(analysis.mixedStrict).toHaveLength(2);
-    expect(
-      analysis.mixedStrict.every((relation) => !relation.requiresMixing),
-    ).toBe(true);
+    expect(analysis.mixedStrict.every((relation) => !relation.requiresMixing)).toBe(true);
     expect(analysis.mixedStrictTrace.remaining).toEqual({
       row: [1],
       column: [1],
@@ -121,36 +111,31 @@ describe("mixed dominance over a normal-form game", () => {
     const payoff = fc.integer({ min: -4, max: 4 });
 
     fc.assert(
-      fc.property(
-        fc.array(payoff, { minLength: 8, maxLength: 8 }),
-        (values) => {
-          const game = createNormalFormGame({
-            id: "random-2x2",
-            title: "Random 2×2",
-            rowActions: ["A", "B"],
-            columnActions: ["X", "Y"],
-            payoffs: [
-              [
-                [values[0], values[1]],
-                [values[2], values[3]],
-              ],
-              [
-                [values[4], values[5]],
-                [values[6], values[7]],
-              ],
+      fc.property(fc.array(payoff, { minLength: 8, maxLength: 8 }), (values) => {
+        const game = createNormalFormGame({
+          id: "random-2x2",
+          title: "Random 2×2",
+          rowActions: ["A", "B"],
+          columnActions: ["X", "Y"],
+          payoffs: [
+            [
+              [values[0], values[1]],
+              [values[2], values[3]],
             ],
-          });
+            [
+              [values[4], values[5]],
+              [values[6], values[7]],
+            ],
+          ],
+        });
 
-          const analysis = analyzeDominance(game);
+        const analysis = analyzeDominance(game);
 
-          expect(
-            analysis.mixedStrict.map((relation) => relation.dominated),
-          ).toEqual(analysis.strict.map((relation) => relation.dominated));
-          expect(
-            analysis.mixedStrict.every((relation) => !relation.requiresMixing),
-          ).toBe(true);
-        },
-      ),
+        expect(analysis.mixedStrict.map((relation) => relation.dominated)).toEqual(
+          analysis.strict.map((relation) => relation.dominated),
+        );
+        expect(analysis.mixedStrict.every((relation) => !relation.requiresMixing)).toBe(true);
+      }),
       { numRuns: 120 },
     );
   });
@@ -165,9 +150,7 @@ describe("mixed dominance over a normal-form game", () => {
       column: [0, 1, 2],
     });
 
-    expect(restricted.filter((relation) => relation.player === "row")).toEqual(
-      [],
-    );
+    expect(restricted.filter((relation) => relation.player === "row")).toEqual([]);
   });
 
   it("finds weak mixed dominance where strict mixed dominance fails", () => {
@@ -219,10 +202,10 @@ describe("mixed dominance over a normal-form game", () => {
 
     fc.assert(
       fc.property(
-        fc.array(
-          fc.array(fc.tuple(payoff, payoff), { minLength: 3, maxLength: 3 }),
-          { minLength: 3, maxLength: 3 },
-        ),
+        fc.array(fc.array(fc.tuple(payoff, payoff), { minLength: 3, maxLength: 3 }), {
+          minLength: 3,
+          maxLength: 3,
+        }),
         (payoffs) => {
           const game = createNormalFormGame({
             id: "random-3x3",
@@ -257,8 +240,7 @@ describe("mixed dominance over a normal-form game", () => {
                   : game.payoffs[opponent][action][slot];
 
               const mixedPayoff = relation.weights.reduce(
-                (total, weight, action) =>
-                  add(total, multiply(weight, cell(action))),
+                (total, weight, action) => add(total, multiply(weight, cell(action))),
                 ZERO,
               );
 

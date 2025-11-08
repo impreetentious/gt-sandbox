@@ -1,12 +1,4 @@
-import {
-  add,
-  compare,
-  divide,
-  subtract,
-  ONE,
-  ZERO,
-  type Rational,
-} from "@/engine/rational";
+import { add, compare, divide, subtract, ONE, ZERO, type Rational } from "@/engine/rational";
 import type { SymmetricPayoffs } from "@/engine/moran";
 
 /**
@@ -101,8 +93,7 @@ export interface ESSReport {
   /** Present only when an interior rest point exists strictly between 0 and 1. */
   readonly mixed: MixedESS | null;
   /** Plain-language classification of the whole contest. */
-  readonly regime:
-    "A dominant" | "B dominant" | "bistable" | "mixed" | "neutral";
+  readonly regime: "A dominant" | "B dominant" | "bistable" | "mixed" | "neutral";
 }
 
 /**

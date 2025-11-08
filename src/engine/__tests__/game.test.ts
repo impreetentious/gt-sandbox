@@ -21,21 +21,15 @@ describe("normal-form game helpers", () => {
       payoffs: [[[rational(3n, 2n), 2n]]],
     });
 
-    expect(
-      formatRational(payoffFor(game, { row: 0, column: 0 }, "row")).toString(),
-    ).toBe("3/2");
+    expect(formatRational(payoffFor(game, { row: 0, column: 0 }, "row")).toString()).toBe("3/2");
     expect(payoffFor(game, { row: 0, column: 0 }, "column")).toEqual({
       numerator: 2n,
       denominator: 1n,
     });
     expect(allProfiles(game)).toEqual([{ row: 0, column: 0 }]);
     expect(profileKey({ row: 1, column: 2 })).toBe("1,2");
-    expect(sameProfile({ row: 1, column: 2 }, { row: 1, column: 2 })).toBe(
-      true,
-    );
-    expect(sameProfile({ row: 1, column: 2 }, { row: 2, column: 1 })).toBe(
-      false,
-    );
+    expect(sameProfile({ row: 1, column: 2 }, { row: 1, column: 2 })).toBe(true);
+    expect(sameProfile({ row: 1, column: 2 }, { row: 2, column: 1 })).toBe(false);
 
     const stringInput = createNormalFormGame({
       id: "string-input",
@@ -44,9 +38,7 @@ describe("normal-form game helpers", () => {
       columnActions: ["B"],
       payoffs: [[["1.5", "2"]]],
     });
-    expect(
-      formatRational(payoffFor(stringInput, { row: 0, column: 0 }, "row")),
-    ).toBe("3/2");
+    expect(formatRational(payoffFor(stringInput, { row: 0, column: 0 }, "row"))).toBe("3/2");
   });
 
   it("validates game shapes, labels, and profiles", () => {
@@ -59,18 +51,12 @@ describe("normal-form game helpers", () => {
     } as const;
 
     expect(() => createNormalFormGame({ ...base, id: " " })).toThrow(TypeError);
-    expect(() =>
-      createNormalFormGame({ ...base, rowActions: [], payoffs: [] }),
-    ).toThrow(RangeError);
-    expect(() =>
-      createNormalFormGame({ ...base, rowActions: ["A", "A"] }),
-    ).toThrow(TypeError);
-    expect(() =>
-      createNormalFormGame({ ...base, columnActions: [" "] }),
-    ).toThrow(TypeError);
-    expect(() => createNormalFormGame({ ...base, payoffs: [] })).toThrow(
+    expect(() => createNormalFormGame({ ...base, rowActions: [], payoffs: [] })).toThrow(
       RangeError,
     );
+    expect(() => createNormalFormGame({ ...base, rowActions: ["A", "A"] })).toThrow(TypeError);
+    expect(() => createNormalFormGame({ ...base, columnActions: [" "] })).toThrow(TypeError);
+    expect(() => createNormalFormGame({ ...base, payoffs: [] })).toThrow(RangeError);
     expect(() =>
       createNormalFormGame({
         ...base,
@@ -82,9 +68,7 @@ describe("normal-form game helpers", () => {
         ],
       }),
     ).toThrow(RangeError);
-    expect(() =>
-      createNormalFormGame({ ...base, payoffs: [[[1.5, 1]]] }),
-    ).toThrow(TypeError);
+    expect(() => createNormalFormGame({ ...base, payoffs: [[[1.5, 1]]] })).toThrow(TypeError);
 
     const game = createNormalFormGame(base);
     expect(() => payoffAt(game, { row: 2, column: 0 })).toThrow(RangeError);

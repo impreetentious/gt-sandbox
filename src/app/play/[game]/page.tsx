@@ -27,10 +27,8 @@ const labels: Record<GameSlug, string> = {
 const descriptions: Record<GameSlug, string> = {
   pd: "Play a price-war Prisoner's Dilemma, then inspect its exact dominance and equilibrium analysis.",
   "stag-hunt": "Test trust against safety in a standards-adoption Stag Hunt.",
-  "battle-of-the-sexes":
-    "Experience commitment and focal points in mixed-motive coordination.",
-  chicken:
-    "Play a capacity-war game of brinkmanship and inspect its exact mixed equilibrium.",
+  "battle-of-the-sexes": "Experience commitment and focal points in mixed-motive coordination.",
+  chicken: "Play a capacity-war game of brinkmanship and inspect its exact mixed equilibrium.",
   "matching-pennies":
     "Face a pattern exploiter and see why an unpredictable mixed strategy can be rational.",
   "iterated-pd":
@@ -79,11 +77,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function PlayGamePage({
-  params,
-}: {
-  params: Promise<{ game: string }>;
-}) {
+export default async function PlayGamePage({ params }: { params: Promise<{ game: string }> }) {
   const { game } = await params;
 
   if (!games.includes(game as GameSlug)) {
@@ -106,11 +100,7 @@ export default async function PlayGamePage({
   } as const;
 
   if (game in oneShotSlugs) {
-    return (
-      <OneShotPlayExperience
-        slug={oneShotSlugs[game as keyof typeof oneShotSlugs]}
-      />
-    );
+    return <OneShotPlayExperience slug={oneShotSlugs[game as keyof typeof oneShotSlugs]} />;
   }
 
   notFound();

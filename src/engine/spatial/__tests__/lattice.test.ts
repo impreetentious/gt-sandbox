@@ -95,15 +95,9 @@ describe("lattice geometry", () => {
     expect(neighborsOf(moore, cellIndex(moore, 4, 0))).toHaveLength(5);
     expect(neighborsOf(moore, cellIndex(moore, 4, 4))).toHaveLength(8);
 
-    expect(neighborsOf(vonNeumann, cellIndex(vonNeumann, 0, 0))).toHaveLength(
-      2,
-    );
-    expect(neighborsOf(vonNeumann, cellIndex(vonNeumann, 4, 0))).toHaveLength(
-      3,
-    );
-    expect(neighborsOf(vonNeumann, cellIndex(vonNeumann, 4, 4))).toHaveLength(
-      4,
-    );
+    expect(neighborsOf(vonNeumann, cellIndex(vonNeumann, 0, 0))).toHaveLength(2);
+    expect(neighborsOf(vonNeumann, cellIndex(vonNeumann, 4, 0))).toHaveLength(3);
+    expect(neighborsOf(vonNeumann, cellIndex(vonNeumann, 4, 4))).toHaveLength(4);
   });
 
   it("wraps the torus across both axes", () => {
@@ -141,16 +135,10 @@ describe("lattice geometry", () => {
   });
 
   it("rejects a lattice smaller than 2×2 and a mis-sized grid", () => {
-    expect(() => createSpatialConfig({ ...config(), width: 1 })).toThrow(
-      RangeError,
-    );
-    expect(() => createSpatialConfig({ ...config(), height: 0 })).toThrow(
-      RangeError,
-    );
+    expect(() => createSpatialConfig({ ...config(), width: 1 })).toThrow(RangeError);
+    expect(() => createSpatialConfig({ ...config(), height: 0 })).toThrow(RangeError);
     expect(() => scoreGrid(config(), homogeneous(80, 0))).toThrow(RangeError);
-    expect(() => runSpatial(config(), homogeneous(81, 0), -1)).toThrow(
-      RangeError,
-    );
+    expect(() => runSpatial(config(), homogeneous(81, 0), -1)).toThrow(RangeError);
   });
 });
 
@@ -246,18 +234,14 @@ describe("synchronous update", () => {
     const grid = config({ payoffs: weakPd([9n, 5n]) }); // b = 1.8
     const run = runSpatial(grid, singleDefectorGrid(grid), 4);
 
-    const shares = run.generations.map((generation) =>
-      formatRational(generation.cooperatorShare),
-    );
+    const shares = run.generations.map((generation) => formatRational(generation.cooperatorShare));
 
     expect(shares[0]).toBe("80/81");
     // The defector spreads, but the lattice does not go all-defect: that
     // survival is the whole Nowak–May result.
     expect(shares[1]).not.toBe("80/81");
     expect(
-      run.generations.some(
-        (generation) => !equals(generation.cooperatorShare, rational(0n)),
-      ),
+      run.generations.some((generation) => !equals(generation.cooperatorShare, rational(0n))),
     ).toBe(true);
   });
 
@@ -315,9 +299,7 @@ describe("seeded openings", () => {
     const share = rational(1n, 2n);
 
     expect(seededGrid(grid, 42, share)).toEqual(seededGrid(grid, 42, share));
-    expect(seededGrid(grid, 42, share)).not.toEqual(
-      seededGrid(grid, 43, share),
-    );
+    expect(seededGrid(grid, 42, share)).not.toEqual(seededGrid(grid, 43, share));
   });
 
   it("honours the extreme shares exactly", () => {
@@ -367,33 +349,31 @@ describe("frozen canonical runs", () => {
     const run = runSpatial(grid, singleDefectorGrid(grid), 20);
 
     expect(run.termination).toEqual({ kind: "generations-exhausted" });
-    expect(
-      run.generations.map((generation) =>
-        formatRational(generation.cooperatorShare),
-      ),
-    ).toEqual([
-      "440/441",
-      "48/49",
-      "61/63",
-      "419/441",
-      "419/441",
-      "410/441",
-      "137/147",
-      "397/441",
-      "380/441",
-      "379/441",
-      "377/441",
-      "362/441",
-      "355/441",
-      "314/441",
-      "304/441",
-      "271/441",
-      "269/441",
-      "74/147",
-      "236/441",
-      "29/49",
-      "260/441",
-    ]);
+    expect(run.generations.map((generation) => formatRational(generation.cooperatorShare))).toEqual(
+      [
+        "440/441",
+        "48/49",
+        "61/63",
+        "419/441",
+        "419/441",
+        "410/441",
+        "137/147",
+        "397/441",
+        "380/441",
+        "379/441",
+        "377/441",
+        "362/441",
+        "355/441",
+        "314/441",
+        "304/441",
+        "271/441",
+        "269/441",
+        "74/147",
+        "236/441",
+        "29/49",
+        "260/441",
+      ],
+    );
 
     expect(render(run.generations[20].grid, 21)).toEqual([
       "DDCCDDDCCCCCCDDCCCCCC",
@@ -439,30 +419,24 @@ describe("frozen canonical runs", () => {
       boundary: "torus",
       selfInteraction: true,
     });
-    const run = runSpatial(
-      grid,
-      seededGrid(grid, 681568, rational(1n, 2n)),
-      40,
-    );
+    const run = runSpatial(grid, seededGrid(grid, 681568, rational(1n, 2n)), 40);
 
     expect(run.termination).toEqual({ kind: "fixed-point", generation: 10 });
-    expect(
-      run.generations.map((generation) =>
-        formatRational(generation.cooperatorShare),
-      ),
-    ).toEqual([
-      "229/441",
-      "4/21",
-      "19/63",
-      "214/441",
-      "41/63",
-      "346/441",
-      "388/441",
-      "134/147",
-      "407/441",
-      "410/441",
-      "410/441",
-    ]);
+    expect(run.generations.map((generation) => formatRational(generation.cooperatorShare))).toEqual(
+      [
+        "229/441",
+        "4/21",
+        "19/63",
+        "214/441",
+        "41/63",
+        "346/441",
+        "388/441",
+        "134/147",
+        "407/441",
+        "410/441",
+        "410/441",
+      ],
+    );
 
     // The survivors are clusters and lattice-spanning lines, not scattered
     // singletons — the structural claim the whole module exists to make.

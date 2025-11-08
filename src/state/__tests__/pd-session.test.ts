@@ -1,19 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { equals } from "@/engine/rational";
-import {
-  createPdSession,
-  PD_SESSION_ROUNDS,
-  reducePdSession,
-} from "@/state/pd-session";
+import { createPdSession, PD_SESSION_ROUNDS, reducePdSession } from "@/state/pd-session";
 
-function commitChoice(
-  state: ReturnType<typeof createPdSession>,
-  action: 0 | 1,
-) {
-  return reducePdSession(
-    reducePdSession(state, { type: "submit-choice", action }),
-    { type: "commit-outcome" },
-  );
+function commitChoice(state: ReturnType<typeof createPdSession>, action: 0 | 1) {
+  return reducePdSession(reducePdSession(state, { type: "submit-choice", action }), {
+    type: "commit-outcome",
+  });
 }
 
 describe("P2 PD session reducer", () => {
@@ -38,12 +30,8 @@ describe("P2 PD session reducer", () => {
     const committed = reducePdSession(resolving, { type: "commit-outcome" });
     expect(committed.status).toBe("playing");
     expect(committed.rounds).toHaveLength(1);
-    expect(
-      equals(committed.playerScore, { numerator: 0n, denominator: 1n }),
-    ).toBe(true);
-    expect(
-      equals(committed.opponentScore, { numerator: 5n, denominator: 1n }),
-    ).toBe(true);
+    expect(equals(committed.playerScore, { numerator: 0n, denominator: 1n })).toBe(true);
+    expect(equals(committed.opponentScore, { numerator: 5n, denominator: 1n })).toBe(true);
     expect(committed.focusTarget).toBe("choice-0");
   });
 

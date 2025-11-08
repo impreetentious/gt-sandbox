@@ -78,21 +78,14 @@ function actionPayoffAgainstOpponentMix(
 ): Rational {
   let total = ZERO;
 
-  for (
-    let opponentAction = 0;
-    opponentAction < opponentProbabilities.length;
-    opponentAction += 1
-  ) {
+  for (let opponentAction = 0; opponentAction < opponentProbabilities.length; opponentAction += 1) {
     const profile =
       player === "row"
         ? { row: action, column: opponentAction }
         : { row: opponentAction, column: action };
     total = add(
       total,
-      multiply(
-        payoffFor(game, profile, player),
-        opponentProbabilities[opponentAction],
-      ),
+      multiply(payoffFor(game, profile, player), opponentProbabilities[opponentAction]),
     );
   }
 
@@ -124,11 +117,7 @@ function combinations(length: number, size: number): number[][] {
       return;
     }
 
-    for (
-      let value = next;
-      value <= length - (size - current.length);
-      value += 1
-    ) {
+    for (let value = next; value <= length - (size - current.length); value += 1) {
       current.push(value);
       visit(value + 1);
       current.pop();
@@ -178,13 +167,9 @@ function solveSquareSystem(
   return matrix.map((row) => row[size]);
 }
 
-function dot(
-  coefficients: readonly Rational[],
-  values: readonly Rational[],
-): Rational {
+function dot(coefficients: readonly Rational[], values: readonly Rational[]): Rational {
   return coefficients.reduce(
-    (total, coefficient, index) =>
-      add(total, multiply(coefficient, values[index])),
+    (total, coefficient, index) => add(total, multiply(coefficient, values[index])),
     ZERO,
   );
 }
@@ -194,9 +179,7 @@ function satisfiesEqualities(
   constraints: readonly LinearConstraint[],
 ): boolean {
   return constraints.every(
-    (constraint) =>
-      compare(dot(constraint.coefficients, solution), constraint.constant) ===
-      0,
+    (constraint) => compare(dot(constraint.coefficients, solution), constraint.constant) === 0,
   );
 }
 
@@ -205,9 +188,7 @@ function satisfiesInequalities(
   constraints: readonly LinearConstraint[],
 ): boolean {
   return constraints.every(
-    (constraint) =>
-      compare(dot(constraint.coefficients, solution), constraint.constant) !==
-      1,
+    (constraint) => compare(dot(constraint.coefficients, solution), constraint.constant) !== 1,
   );
 }
 
@@ -267,9 +248,7 @@ function solveStrategyForSupport(
   const opponent = otherPlayer(player);
   const size = support.length;
   const equations: Rational[][] = opponentSupport.map((opponentAction) => [
-    ...support.map((playerAction) =>
-      payoffCoefficient(game, player, playerAction, opponentAction),
-    ),
+    ...support.map((playerAction) => payoffCoefficient(game, player, playerAction, opponentAction)),
     subtract(ZERO, ONE),
   ]);
   const constants = opponentSupport.map(() => ZERO);
@@ -290,19 +269,10 @@ function solveStrategyForSupport(
   }
 
   const opponentPayoff = solution[size];
-  const strategy = strategyFromSupport(
-    actionCount(game, player),
-    support,
-    probabilities,
-  );
+  const strategy = strategyFromSupport(actionCount(game, player), support, probabilities);
 
   for (let action = 0; action < actionCount(game, opponent); action += 1) {
-    const payoff = actionPayoffAgainstOpponentMix(
-      game,
-      opponent,
-      action,
-      strategy.probabilities,
-    );
+    const payoff = actionPayoffAgainstOpponentMix(game, opponent, action, strategy.probabilities);
 
     if (compare(payoff, opponentPayoff) === 1) {
       return null;
@@ -316,34 +286,16 @@ function solveStrategyForSupport(
  * Enumerates every equal-size support pair and returns exact Nash equilibria.
  * This is complete for nondegenerate games up to the 4×4 product bound.
  */
-export function mixedNashEquilibria(
-  game: NormalFormGame,
-): MixedNashEquilibrium[] {
+export function mixedNashEquilibria(game: NormalFormGame): MixedNashEquilibrium[] {
   assertSolverBounds(game);
   const equilibria: MixedNashEquilibrium[] = [];
-  const maximumSupport = Math.min(
-    game.rowActions.length,
-    game.columnActions.length,
-  );
+  const maximumSupport = Math.min(game.rowActions.length, game.columnActions.length);
 
   for (let size = 1; size <= maximumSupport; size += 1) {
     for (const rowSupport of combinations(game.rowActions.length, size)) {
-      for (const columnSupport of combinations(
-        game.columnActions.length,
-        size,
-      )) {
-        const rowCandidate = solveStrategyForSupport(
-          game,
-          "row",
-          rowSupport,
-          columnSupport,
-        );
-        const columnCandidate = solveStrategyForSupport(
-          game,
-          "column",
-          columnSupport,
-          rowSupport,
-        );
+      for (const columnSupport of combinations(game.columnActions.length, size)) {
+        const rowCandidate = solveStrategyForSupport(game, "row", rowSupport, columnSupport);
+        const columnCandidate = solveStrategyForSupport(game, "column", columnSupport, rowSupport);
 
         if (rowCandidate && columnCandidate) {
           equilibria.push({
@@ -380,16 +332,8 @@ function findDegeneracyWitnessForPlayer(
 
   for (let supportSize = 1; supportSize < opponentActions; supportSize += 1) {
     for (const support of combinations(playerActions, supportSize)) {
-      for (const bestResponses of combinations(
-        opponentActions,
-        supportSize + 1,
-      )) {
-        const reference = mixedPayoffCoefficients(
-          game,
-          player,
-          support,
-          bestResponses[0],
-        );
+      for (const bestResponses of combinations(opponentActions, supportSize + 1)) {
+        const reference = mixedPayoffCoefficients(game, player, support, bestResponses[0]);
         const variableCount = supportSize + 1;
         const equalities: LinearConstraint[] = [
           {
@@ -398,8 +342,8 @@ function findDegeneracyWitnessForPlayer(
           },
           ...bestResponses.slice(1).map((action) => ({
             coefficients: [
-              ...mixedPayoffCoefficients(game, player, support, action).map(
-                (value, index) => subtract(value, reference[index]),
+              ...mixedPayoffCoefficients(game, player, support, action).map((value, index) =>
+                subtract(value, reference[index]),
               ),
               ZERO,
             ],
@@ -408,16 +352,13 @@ function findDegeneracyWitnessForPlayer(
         ];
         const inequalities: LinearConstraint[] = [
           ...support.map((_, index) => ({
-            coefficients: Array.from(
-              { length: variableCount },
-              (_, variable) => {
-                if (variable === index) {
-                  return subtract(ZERO, ONE);
-                }
+            coefficients: Array.from({ length: variableCount }, (_, variable) => {
+              if (variable === index) {
+                return subtract(ZERO, ONE);
+              }
 
-                return variable === variableCount - 1 ? ONE : ZERO;
-              },
-            ),
+              return variable === variableCount - 1 ? ONE : ZERO;
+            }),
             constant: ZERO,
           })),
           {
@@ -428,19 +369,15 @@ function findDegeneracyWitnessForPlayer(
             .filter((action) => !bestResponses.includes(action))
             .map((action) => ({
               coefficients: [
-                ...mixedPayoffCoefficients(game, player, support, action).map(
-                  (value, index) => subtract(value, reference[index]),
+                ...mixedPayoffCoefficients(game, player, support, action).map((value, index) =>
+                  subtract(value, reference[index]),
                 ),
                 ZERO,
               ],
               constant: ZERO,
             })),
         ];
-        const solution = solveStrictFeasibility(
-          equalities,
-          inequalities,
-          variableCount,
-        );
+        const solution = solveStrictFeasibility(equalities, inequalities, variableCount);
 
         if (solution) {
           const x = Array.from({ length: playerActions }, () => ZERO);
@@ -458,13 +395,10 @@ function findDegeneracyWitnessForPlayer(
 }
 
 /** Returns a formal support-size/best-response-count degeneracy witness. */
-export function degeneracyWitness(
-  game: NormalFormGame,
-): DegeneracyWitness | null {
+export function degeneracyWitness(game: NormalFormGame): DegeneracyWitness | null {
   assertSolverBounds(game);
   return (
-    findDegeneracyWitnessForPlayer(game, "row") ??
-    findDegeneracyWitnessForPlayer(game, "column")
+    findDegeneracyWitnessForPlayer(game, "row") ?? findDegeneracyWitnessForPlayer(game, "column")
   );
 }
 
@@ -472,9 +406,7 @@ export function isDegenerate(game: NormalFormGame): boolean {
   return degeneracyWitness(game) !== null;
 }
 
-export function analyzeMixedEquilibria(
-  game: NormalFormGame,
-): MixedEquilibriumAnalysis {
+export function analyzeMixedEquilibria(game: NormalFormGame): MixedEquilibriumAnalysis {
   return {
     equilibria: mixedNashEquilibria(game),
     degeneracyWitness: degeneracyWitness(game),

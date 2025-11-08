@@ -1,9 +1,6 @@
 import presetFixture from "../../fixtures/evolution-presets.json";
 import type { IpdEvolutionConfig } from "@/engine/repeated/replicator";
-import {
-  ipdStrategyById,
-  type IpdStrategyId,
-} from "@/engine/repeated/strategies";
+import { ipdStrategyById, type IpdStrategyId } from "@/engine/repeated/strategies";
 
 export type EvolutionPresetId =
   | "exploitation"
@@ -62,13 +59,10 @@ function isStrategyId(value: string): value is IpdStrategyId {
   return value in ipdStrategyById;
 }
 
-function readPreset(
-  source: (typeof presetFixture.presets)[number],
-): EvolutionPreset {
+function readPreset(source: (typeof presetFixture.presets)[number]): EvolutionPreset {
   if (
     !isStrategyId(source.metricPredicate.strategy) ||
-    (source.metricPredicate.comparison !== ">" &&
-      source.metricPredicate.comparison !== "<") ||
+    (source.metricPredicate.comparison !== ">" && source.metricPredicate.comparison !== "<") ||
     !(source.id in authoredCopy) ||
     source.config.strategies.some((strategy) => !isStrategyId(strategy))
   ) {
@@ -99,8 +93,7 @@ function readPreset(
  * P8's calibration records. The JSON is the reviewed source of numerical
  * truth; copy is intentionally authored only after those results were frozen.
  */
-export const evolutionPresets: readonly EvolutionPreset[] =
-  presetFixture.presets.map(readPreset);
+export const evolutionPresets: readonly EvolutionPreset[] = presetFixture.presets.map(readPreset);
 
 export const defaultEvolutionPreset = evolutionPresets[0] as EvolutionPreset;
 
@@ -124,8 +117,6 @@ export function predicateHolds(
 
   return (
     value !== undefined &&
-    (predicate.comparison === ">"
-      ? value > predicate.threshold
-      : value < predicate.threshold)
+    (predicate.comparison === ">" ? value > predicate.threshold : value < predicate.threshold)
   );
 }

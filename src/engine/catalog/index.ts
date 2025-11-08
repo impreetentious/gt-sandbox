@@ -6,20 +6,9 @@ import { pennies } from "@/engine/catalog/pennies";
 import { stag } from "@/engine/catalog/stag";
 import type { CatalogGame, GameSlug } from "@/engine/catalog/types";
 
-export type {
-  CatalogGame,
-  GameSlug,
-  PureGameOracle,
-} from "@/engine/catalog/types";
+export type { CatalogGame, GameSlug, PureGameOracle } from "@/engine/catalog/types";
 
-export const catalog: readonly CatalogGame[] = [
-  pd,
-  stag,
-  bos,
-  chicken,
-  pennies,
-  ipd,
-];
+export const catalog: readonly CatalogGame[] = [pd, stag, bos, chicken, pennies, ipd];
 
 export const catalogBySlug: Readonly<Record<GameSlug, CatalogGame>> = {
   pd,

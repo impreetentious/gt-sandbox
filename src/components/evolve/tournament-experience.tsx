@@ -11,10 +11,7 @@ import {
   defaultTournamentRoster,
   runIpdTournament,
 } from "@/engine/repeated/tournament";
-import {
-  ipdStrategyById,
-  type IpdStrategyId,
-} from "@/engine/repeated/strategies";
+import { ipdStrategyById, type IpdStrategyId } from "@/engine/repeated/strategies";
 
 function decimalPayoff(value: Rational): string {
   const decimal = Number(value.numerator) / Number(value.denominator);
@@ -44,12 +41,8 @@ function heatFraction(value: Rational, low: number, high: number): number {
 
 /** P7's client surface for the pure, seeded IPD tournament engine. */
 export function TournamentExperience() {
-  const [view, setView] = useState<"tournament" | "evolution" | "finite">(
-    "tournament",
-  );
-  const [roster, setRoster] = useState<readonly IpdStrategyId[]>(
-    defaultTournamentRoster,
-  );
+  const [view, setView] = useState<"tournament" | "evolution" | "finite">("tournament");
+  const [roster, setRoster] = useState<readonly IpdStrategyId[]>(defaultTournamentRoster);
   const [announcement, setAnnouncement] = useState("");
   const result = useMemo(
     () =>
@@ -75,9 +68,7 @@ export function TournamentExperience() {
 
     const next = roster.includes(strategy)
       ? roster.filter((entry) => entry !== strategy)
-      : defaultTournamentRoster.filter(
-          (entry) => entry === strategy || roster.includes(entry),
-        );
+      : defaultTournamentRoster.filter((entry) => entry === strategy || roster.includes(entry));
 
     setRoster(next);
     setAnnouncement(
@@ -159,27 +150,22 @@ export function TournamentExperience() {
           <section className="tournament__method">
             <p className="eyebrow">Method</p>
             <p>
-              Robert Axelrod&apos;s <cite>The Evolution of Cooperation</cite>{" "}
-              (1984) used computer tournaments to compare Iterated
-              Prisoner&apos;s Dilemma strategies. This is a deliberately
-              smaller, reproducible model—not a reconstruction of those
-              historical entrants or scoring rules.
+              Robert Axelrod&apos;s <cite>The Evolution of Cooperation</cite> (1984) used computer
+              tournaments to compare Iterated Prisoner&apos;s Dilemma strategies. This is a
+              deliberately smaller, reproducible model—not a reconstruction of those historical
+              entrants or scoring rules.
             </p>
             <p>
-              Each ordered pair, including self-play, runs{" "}
-              {DEFAULT_TOURNAMENT_REPETITIONS} seeded matches at δ ={" "}
-              {DEFAULT_TOURNAMENT_CONTINUATION_PROBABILITY}. Every cell is the
-              exact mean of each match&apos;s per-round payoff; the displayed
-              decimal is rounded only for reading.
+              Each ordered pair, including self-play, runs {DEFAULT_TOURNAMENT_REPETITIONS} seeded
+              matches at δ = {DEFAULT_TOURNAMENT_CONTINUATION_PROBABILITY}. Every cell is the exact
+              mean of each match&apos;s per-round payoff; the displayed decimal is rounded only for
+              reading.
             </p>
           </section>
 
           <fieldset className="tournament__roster">
             <legend>Roster</legend>
-            <p>
-              Select at least two strategies. Results recompute from the same
-              seed.
-            </p>
+            <p>Select at least two strategies. Results recompute from the same seed.</p>
             <div className="tournament__roster-options">
               {defaultTournamentRoster.map((strategy) => (
                 <label key={strategy}>
@@ -192,20 +178,12 @@ export function TournamentExperience() {
                 </label>
               ))}
             </div>
-            <p
-              aria-label="Tournament changes"
-              aria-live="polite"
-              className="sr-only"
-              role="status"
-            >
+            <p aria-label="Tournament changes" aria-live="polite" className="sr-only" role="status">
               {announcement}
             </p>
           </fieldset>
 
-          <dl
-            aria-label="Tournament configuration"
-            className="tournament__config"
-          >
+          <dl aria-label="Tournament configuration" className="tournament__config">
             <div>
               <dt>Seed</dt>
               <dd>{result.config.masterSeed}</dd>
@@ -220,16 +198,11 @@ export function TournamentExperience() {
             </div>
           </dl>
 
-          <section
-            aria-labelledby="ranking-title"
-            className="tournament__ranking"
-          >
+          <section aria-labelledby="ranking-title" className="tournament__ranking">
             <div className="tournament__section-heading">
               <div>
                 <p className="eyebrow">Ranking</p>
-                <h2 id="ranking-title">
-                  Mean payoff across the selected field
-                </h2>
+                <h2 id="ranking-title">Mean payoff across the selected field</h2>
               </div>
               <p>Exact fractions are available in the table below.</p>
             </div>
@@ -246,43 +219,28 @@ export function TournamentExperience() {
             </ol>
           </section>
 
-          <section
-            aria-labelledby="heatmap-title"
-            className="tournament__matrix"
-          >
+          <section aria-labelledby="heatmap-title" className="tournament__matrix">
             <div className="tournament__section-heading">
               <div>
                 <p className="eyebrow">Pairwise payoff matrix</p>
-                <h2 id="heatmap-title">
-                  How each strategy fares against every rival
-                </h2>
+                <h2 id="heatmap-title">How each strategy fares against every rival</h2>
               </div>
-              <p>
-                Row strategy&apos;s payoff per round; darker cells are higher.
-              </p>
+              <p>Row strategy&apos;s payoff per round; darker cells are higher.</p>
             </div>
             <div
               aria-label="Tournament payoff heatmap. Each cell also includes its numeric value; the accessible data table follows."
               className="tournament-heatmap__scroll"
               tabIndex={0}
             >
-              <div
-                className="tournament-heatmap"
-                style={{ gridTemplateColumns }}
-              >
-                <span className="tournament-heatmap__corner">
-                  Row → / rival ↓
-                </span>
+              <div className="tournament-heatmap" style={{ gridTemplateColumns }}>
+                <span className="tournament-heatmap__corner">Row → / rival ↓</span>
                 {roster.map((strategy) => (
                   <strong className="tournament-heatmap__column" key={strategy}>
                     {ipdStrategyById[strategy].name}
                   </strong>
                 ))}
                 {result.matrix.flatMap((row) => [
-                  <strong
-                    className="tournament-heatmap__row"
-                    key={row.strategy + "-label"}
-                  >
+                  <strong className="tournament-heatmap__row" key={row.strategy + "-label"}>
                     {ipdStrategyById[row.strategy].name}
                   </strong>,
                   ...row.payoffs.map((entry) => (
@@ -318,8 +276,7 @@ export function TournamentExperience() {
               <div className="tournament-table__scroll" tabIndex={0}>
                 <table>
                   <caption>
-                    Exact mean per-round payoff for each row strategy against
-                    each column strategy.
+                    Exact mean per-round payoff for each row strategy against each column strategy.
                   </caption>
                   <thead>
                     <tr>
@@ -334,14 +291,10 @@ export function TournamentExperience() {
                   <tbody>
                     {result.matrix.map((row) => (
                       <tr key={row.strategy}>
-                        <th scope="row">
-                          {ipdStrategyById[row.strategy].name}
-                        </th>
+                        <th scope="row">{ipdStrategyById[row.strategy].name}</th>
                         {row.payoffs.map((entry) => (
                           <td key={entry.opponent}>
-                            <output
-                              title={"Rounded: " + decimalPayoff(entry.payoff)}
-                            >
+                            <output title={"Rounded: " + decimalPayoff(entry.payoff)}>
                               {formatRational(entry.payoff)}
                             </output>
                           </td>

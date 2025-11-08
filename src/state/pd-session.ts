@@ -94,10 +94,7 @@ function stageRound(state: PdSessionState, action: PdAction): PdRound {
  * Semantic PD session reducer. A visual transition only delays
  * `commit-outcome`; it cannot alter the already staged round.
  */
-export function reducePdSession(
-  state: PdSessionState,
-  action: PdSessionAction,
-): PdSessionState {
+export function reducePdSession(state: PdSessionState, action: PdSessionAction): PdSessionState {
   switch (action.type) {
     case "select-persona":
       if (state.status !== "playing" || state.rounds.length !== 0) {
@@ -147,11 +144,7 @@ export function reducePdSession(
         pendingRound: null,
         playerScore: add(state.playerScore, round.playerPayoff),
         opponentScore: add(state.opponentScore, round.opponentPayoff),
-        focusTarget: isComplete
-          ? "play-again"
-          : round.playerAction === 0
-            ? "choice-0"
-            : "choice-1",
+        focusTarget: isComplete ? "play-again" : round.playerAction === 0 ? "choice-0" : "choice-1",
       };
     }
 

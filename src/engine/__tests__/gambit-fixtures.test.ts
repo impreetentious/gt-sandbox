@@ -47,9 +47,7 @@ const fixturePath = resolve(process.cwd(), "fixtures/gambit-16.3.0.json");
 const manifestPath = resolve(process.cwd(), "fixtures/manifest.json");
 const fixtureBytes = readFileSync(fixturePath);
 const fixture = JSON.parse(fixtureBytes.toString()) as FixtureCorpus;
-const manifest = JSON.parse(
-  readFileSync(manifestPath, "utf8"),
-) as FixtureManifest;
+const manifest = JSON.parse(readFileSync(manifestPath, "utf8")) as FixtureManifest;
 
 function canonicalEquilibrium(equilibrium: FixtureEquilibrium): string {
   return `${equilibrium.row.join(",")};${equilibrium.column.join(",")}`;
@@ -80,9 +78,7 @@ describe("Gambit 16.3.0 external fixture corpus", () => {
     expect(manifest.caseCount).toBe(39);
     expect(manifest.gambitVersion).toBe("16.3.0");
     expect(manifest.sourceSeed).toBe("gt-sandbox-p3-gambit-fixtures-v1");
-    expect(createHash("sha256").update(fixtureBytes).digest("hex")).toBe(
-      manifest.sha256,
-    );
+    expect(createHash("sha256").update(fixtureBytes).digest("hex")).toBe(manifest.sha256);
     expect(fixture.provenance).toMatchObject({
       solver: "gambit-enummixed",
       command: "gambit-enummixed -q",
@@ -91,9 +87,7 @@ describe("Gambit 16.3.0 external fixture corpus", () => {
       network: "none",
       hostMounts: "none",
     });
-    expect(fixture.provenance.containerImageId).toMatch(
-      /^sha256:[a-f0-9]{64}$/,
-    );
+    expect(fixture.provenance.containerImageId).toMatch(/^sha256:[a-f0-9]{64}$/);
   });
 
   it("matches Gambit's complete equilibrium set for every nondegenerate fixture", () => {

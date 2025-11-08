@@ -19,9 +19,7 @@ describe("P7 tournament surface", () => {
       }),
     ).toBeVisible();
     expect(screen.getByText("View as an accessible data table")).toBeVisible();
-    expect(
-      screen.getByTitle("12870870635796287981/5007090051190656000"),
-    ).toHaveTextContent("2.57");
+    expect(screen.getByTitle("12870870635796287981/5007090051190656000")).toHaveTextContent("2.57");
   });
 
   it("recomputes a canonical roster selection and preserves the two-strategy floor", () => {
@@ -31,9 +29,7 @@ describe("P7 tournament surface", () => {
     });
 
     fireEvent.click(allCooperate);
-    expect(
-      screen.getByRole("status", { name: "Tournament changes" }),
-    ).toHaveTextContent(
+    expect(screen.getByRole("status", { name: "Tournament changes" })).toHaveTextContent(
       "Always Cooperate removed from the tournament. 7 strategies selected.",
     );
     expect(allCooperate).not.toBeChecked();
@@ -50,9 +46,9 @@ describe("P7 tournament surface", () => {
 
     const joss = screen.getByRole("checkbox", { name: "Joss" });
     fireEvent.click(joss);
-    expect(
-      screen.getByRole("status", { name: "Tournament changes" }),
-    ).toHaveTextContent("Keep at least two strategies in the tournament.");
+    expect(screen.getByRole("status", { name: "Tournament changes" })).toHaveTextContent(
+      "Keep at least two strategies in the tournament.",
+    );
     expect(joss).toBeChecked();
   });
 });

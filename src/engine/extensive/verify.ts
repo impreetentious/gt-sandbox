@@ -18,10 +18,7 @@ export interface SPNEVerdict {
  * chosen action produces the maximum player-payoff over all alternatives, taking
  * the strategy as fixed in every subtree. Perfect-information trees only.
  */
-export function verifySubgamePerfect(
-  game: ExtensiveGame,
-  strategy: PureStrategy,
-): SPNEVerdict {
+export function verifySubgamePerfect(game: ExtensiveGame, strategy: PureStrategy): SPNEVerdict {
   let violation: SPNEVerdict["violation"] = null;
 
   const walk = (node: GameNode): readonly Rational[] => {
@@ -46,12 +43,7 @@ export function verifySubgamePerfect(
     }
     for (let index = 0; index < node.children.length; index += 1) {
       if (index === chosen) continue;
-      if (
-        compare(
-          childPayoffs[index][playerIndex],
-          childPayoffs[chosen][playerIndex],
-        ) === 1
-      ) {
+      if (compare(childPayoffs[index][playerIndex], childPayoffs[chosen][playerIndex]) === 1) {
         violation = {
           nodeId: node.id,
           player: node.player,
@@ -69,10 +61,7 @@ export function verifySubgamePerfect(
 }
 
 /** Convenience: full payoff vector at the terminal reached by following `strategy` from the root. */
-export function payoffsUnder(
-  game: ExtensiveGame,
-  strategy: PureStrategy,
-): readonly Rational[] {
+export function payoffsUnder(game: ExtensiveGame, strategy: PureStrategy): readonly Rational[] {
   const walk = (node: GameNode): readonly Rational[] => {
     if (node.kind === "terminal") return node.payoffs;
     const chosen = strategy.get(node.id);

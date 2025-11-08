@@ -19,9 +19,7 @@ function keys(profiles: readonly { row: number; column: number }[]): string[] {
   return profiles.map(profileKey);
 }
 
-function dominatedByPlayer(
-  relations: readonly { player: "row" | "column"; dominated: number }[],
-) {
+function dominatedByPlayer(relations: readonly { player: "row" | "column"; dominated: number }[]) {
   return {
     row: relations
       .filter((relation) => relation.player === "row")
@@ -40,12 +38,8 @@ describe("P1 strategic-analysis catalog oracles", () => {
       const dominance = analyzeDominance(entry.game);
       const selection = analyzeEquilibriumSelection(entry.game);
 
-      expect(dominatedByPlayer(dominance.strict)).toEqual(
-        entry.oracle.strictlyDominated,
-      );
-      expect(keys(paretoEfficientProfiles(entry.game))).toEqual(
-        keys(entry.oracle.paretoEfficient),
-      );
+      expect(dominatedByPlayer(dominance.strict)).toEqual(entry.oracle.strictlyDominated);
+      expect(keys(paretoEfficientProfiles(entry.game))).toEqual(keys(entry.oracle.paretoEfficient));
       expect(classifyTwoByTwo(entry.game)).toBe(entry.oracle.classification);
       expect(selection.riskDominance).toEqual(entry.oracle.riskDominance);
       expect(selection.payoffDominance).toEqual(entry.oracle.payoffDominance);
@@ -102,15 +96,9 @@ describe("P1 strategic-analysis catalog oracles", () => {
     expect(bestResponses(catalog[4].game, "row", 1)).toEqual([1]);
     expect(isBestResponse(pd, "row", 1, 0)).toBe(true);
     expect(isBestResponse(pd, "row", 0, 0)).toBe(false);
-    expect(
-      paretoDominates(pd, { row: 1, column: 1 }, { row: 0, column: 0 }),
-    ).toBe(true);
-    expect(
-      strictlyParetoDominates(pd, { row: 1, column: 1 }, { row: 0, column: 0 }),
-    ).toBe(true);
-    expect(
-      strictlyParetoDominates(pd, { row: 0, column: 1 }, { row: 0, column: 0 }),
-    ).toBe(false);
+    expect(paretoDominates(pd, { row: 1, column: 1 }, { row: 0, column: 0 })).toBe(true);
+    expect(strictlyParetoDominates(pd, { row: 1, column: 1 }, { row: 0, column: 0 })).toBe(true);
+    expect(strictlyParetoDominates(pd, { row: 0, column: 1 }, { row: 0, column: 0 })).toBe(false);
   });
 });
 

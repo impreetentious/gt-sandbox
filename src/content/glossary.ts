@@ -31,9 +31,7 @@ export interface GlossaryTermDefinition {
 }
 
 /** Canonical in-product definitions, kept concise and consistent across routes. */
-export const glossary: Readonly<
-  Record<GlossaryTermId, GlossaryTermDefinition>
-> = {
+export const glossary: Readonly<Record<GlossaryTermId, GlossaryTermDefinition>> = {
   "backward-induction": {
     label: "backward induction",
     definition:
@@ -46,8 +44,7 @@ export const glossary: Readonly<
   },
   "continuation-probability": {
     label: "continuation probability",
-    definition:
-      "The probability that an iterated interaction continues for one more round.",
+    definition: "The probability that an iterated interaction continues for one more round.",
   },
   "credible-threat": {
     label: "credible threat",

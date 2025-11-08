@@ -9,11 +9,7 @@ import {
   ZERO,
   type Rational,
 } from "@/engine/rational";
-import {
-  solveLinearProgram,
-  type LinearConstraint,
-  type LinearProgram,
-} from "@/engine/lp/simplex";
+import { solveLinearProgram, type LinearConstraint, type LinearProgram } from "@/engine/lp/simplex";
 
 /**
  * Dominance by mixed strategies, decided exactly.
@@ -58,28 +54,19 @@ export type MixtureVerdict =
   | { readonly kind: "dominated"; readonly certificate: MixtureCertificate }
   | { readonly kind: "not-dominated" };
 
-function gainTable(
-  candidates: PayoffTable,
-  target: readonly Rational[],
-): Rational[][] {
-  return candidates.map((row) =>
-    row.map((value, column) => subtract(value, target[column])),
-  );
+function gainTable(candidates: PayoffTable, target: readonly Rational[]): Rational[][] {
+  return candidates.map((row) => row.map((value, column) => subtract(value, target[column])));
 }
 
 function assertTable(candidates: PayoffTable, target: readonly Rational[]) {
   for (const row of candidates) {
     if (row.length !== target.length) {
-      throw new RangeError(
-        "Every candidate row needs one payoff per opponent action.",
-      );
+      throw new RangeError("Every candidate row needs one payoff per opponent action.");
     }
   }
 
   if (target.length === 0) {
-    throw new RangeError(
-      "A dominance test needs at least one opponent action.",
-    );
+    throw new RangeError("A dominance test needs at least one opponent action.");
   }
 }
 
@@ -89,10 +76,7 @@ function certificateFor(
 ): MixtureCertificate {
   const opponentActions = gains[0].length;
   const perAction = Array.from({ length: opponentActions }, (_, column) =>
-    gains.reduce(
-      (total, row, index) => add(total, multiply(weights[index], row[column])),
-      ZERO,
-    ),
+    gains.reduce((total, row, index) => add(total, multiply(weights[index], row[column])), ZERO),
   );
 
   return {
@@ -101,12 +85,8 @@ function certificateFor(
       .map((weight, index) => ({ weight, index }))
       .filter((entry) => compare(entry.weight, ZERO) === 1)
       .map((entry) => entry.index),
-    margin: perAction.reduce((least, value) =>
-      compare(value, least) === -1 ? value : least,
-    ),
-    bestGain: perAction.reduce((most, value) =>
-      compare(value, most) === 1 ? value : most,
-    ),
+    margin: perAction.reduce((least, value) => (compare(value, least) === -1 ? value : least)),
+    bestGain: perAction.reduce((most, value) => (compare(value, most) === 1 ? value : most)),
   };
 }
 
@@ -208,9 +188,7 @@ export function weaklyDominatedByMixture(
   });
 
   const result = solveLinearProgram({
-    objective: gains.map((row) =>
-      row.reduce((sum, value) => add(sum, value), ZERO),
-    ),
+    objective: gains.map((row) => row.reduce((sum, value) => add(sum, value), ZERO)),
     constraints,
   });
 

@@ -1,9 +1,4 @@
-import {
-  allProfiles,
-  payoffFor,
-  type NormalFormGame,
-  type Profile,
-} from "@/engine/game";
+import { allProfiles, payoffFor, type NormalFormGame, type Profile } from "@/engine/game";
 import {
   add,
   compare,
@@ -68,15 +63,11 @@ function assertTwoPlayerBinary(game: NormalFormGame): void {
 }
 
 function maxRational(values: readonly Rational[]): Rational {
-  return values.reduce((best, value) =>
-    compare(value, best) === 1 ? value : best,
-  );
+  return values.reduce((best, value) => (compare(value, best) === 1 ? value : best));
 }
 
 function minRational(values: readonly Rational[]): Rational {
-  return values.reduce((best, value) =>
-    compare(value, best) === -1 ? value : best,
-  );
+  return values.reduce((best, value) => (compare(value, best) === -1 ? value : best));
 }
 
 /**
@@ -85,12 +76,7 @@ function minRational(values: readonly Rational[]): Rational {
  * column. This is the exact mixed-strategy minimax (security) value — the
  * quantity the folk theorem uses to bound the individually-rational region.
  */
-function matrixGameValue(
-  a: Rational,
-  b: Rational,
-  c: Rational,
-  d: Rational,
-): Rational {
+function matrixGameValue(a: Rational, b: Rational, c: Rational, d: Rational): Rational {
   const maximin = maxRational([minRational([a, b]), minRational([c, d])]);
   const minimax = minRational([maxRational([a, c]), maxRational([b, d])]);
   if (compare(maximin, minimax) === 0) {
@@ -128,8 +114,7 @@ function convexHull(points: readonly PayoffPoint[]): PayoffPoint[] {
     if (
       !unique.some(
         (existing) =>
-          compare(existing.row, point.row) === 0 &&
-          compare(existing.column, point.column) === 0,
+          compare(existing.row, point.row) === 0 && compare(existing.column, point.column) === 0,
       )
     ) {
       unique.push(point);
@@ -190,25 +175,18 @@ function thresholdForPlayer(
       reason: "The punishment payoff is not below the deviation payoff.",
     };
   }
-  const value = divide(
-    subtract(bestDeviation, cooperate),
-    subtract(bestDeviation, punishment),
-  );
+  const value = divide(subtract(bestDeviation, cooperate), subtract(bestDeviation, punishment));
   // δ must be a probability < 1; a threshold at or above 1 is unreachable.
   if (compare(value, ONE) >= 0) {
     return {
       kind: "never",
-      reason:
-        "Cooperation cannot be sustained for any discount factor below 1.",
+      reason: "Cooperation cannot be sustained for any discount factor below 1.",
     };
   }
   return { kind: "threshold", value };
 }
 
-function combineThresholds(
-  row: DeltaThreshold,
-  column: DeltaThreshold,
-): DeltaThreshold {
+function combineThresholds(row: DeltaThreshold, column: DeltaThreshold): DeltaThreshold {
   if (row.kind === "never" || column.kind === "never") {
     return row.kind === "never" ? row : column;
   }
@@ -269,11 +247,7 @@ export function analyzeFolkTheorem(
   // same quantity that bounds the individually-rational region. For the PD this
   // coincides with mutual defection; for Chicken it is stricter than (and more
   // honest than) reverting to the non-credible mutual-Straight corner.
-  const rowThreshold = thresholdForPlayer(
-    cooperativePayoff.row,
-    rowBestDeviation,
-    rowMinimax,
-  );
+  const rowThreshold = thresholdForPlayer(cooperativePayoff.row, rowBestDeviation, rowMinimax);
   const columnThreshold = thresholdForPlayer(
     cooperativePayoff.column,
     columnBestDeviation,

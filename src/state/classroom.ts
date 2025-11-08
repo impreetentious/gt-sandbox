@@ -93,12 +93,8 @@ export function aggregateSubmissions(
 
   const byGame: GameSummary[] = [...groups.values()].map((entries) => {
     const first = entries[0].session;
-    const rowTotals = entries.map((entry) =>
-      parseRational(entry.session.rowTotal),
-    );
-    const columnTotals = entries.map((entry) =>
-      parseRational(entry.session.columnTotal),
-    );
+    const rowTotals = entries.map((entry) => parseRational(entry.session.rowTotal));
+    const columnTotals = entries.map((entry) => parseRational(entry.session.columnTotal));
     return {
       game: first.game,
       title: first.title,
@@ -106,10 +102,7 @@ export function aggregateSubmissions(
       count: entries.length,
       meanRowTotal: mean(rowTotals),
       meanColumnTotal: mean(columnTotals),
-      totalRounds: entries.reduce(
-        (sum, entry) => sum + entry.session.rounds.length,
-        0,
-      ),
+      totalRounds: entries.reduce((sum, entry) => sum + entry.session.rounds.length, 0),
     };
   });
 
@@ -117,10 +110,7 @@ export function aggregateSubmissions(
 
   return {
     count: submissions.length,
-    totalRounds: submissions.reduce(
-      (sum, submission) => sum + submission.session.rounds.length,
-      0,
-    ),
+    totalRounds: submissions.reduce((sum, submission) => sum + submission.session.rounds.length, 0),
     byGame,
   };
 }
@@ -130,9 +120,7 @@ function csvCell(value: string | number): string {
   return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }
 
-export function submissionsToCsv(
-  submissions: readonly ClassroomSubmission[],
-): string {
+export function submissionsToCsv(submissions: readonly ClassroomSubmission[]): string {
   const header = [
     "file",
     "kind",

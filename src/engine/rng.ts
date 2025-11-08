@@ -1,9 +1,6 @@
 export interface SeededRng {
   readonly next: () => number;
-  readonly integer: (
-    minimumInclusive: number,
-    maximumExclusive: number,
-  ) => number;
+  readonly integer: (minimumInclusive: number, maximumExclusive: number) => number;
 }
 
 /** Identifies an event-addressed random stream in a repeated-game match. */
@@ -34,23 +31,15 @@ export function createRng(seed: number): SeededRng {
     return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
   };
 
-  const integer = (
-    minimumInclusive: number,
-    maximumExclusive: number,
-  ): number => {
+  const integer = (minimumInclusive: number, maximumExclusive: number): number => {
     assertSafeInteger(minimumInclusive, "minimumInclusive");
     assertSafeInteger(maximumExclusive, "maximumExclusive");
 
     if (maximumExclusive <= minimumInclusive) {
-      throw new RangeError(
-        "maximumExclusive must be greater than minimumInclusive.",
-      );
+      throw new RangeError("maximumExclusive must be greater than minimumInclusive.");
     }
 
-    return (
-      minimumInclusive +
-      Math.floor(next() * (maximumExclusive - minimumInclusive))
-    );
+    return minimumInclusive + Math.floor(next() * (maximumExclusive - minimumInclusive));
   };
 
   return { next, integer };
@@ -82,10 +71,7 @@ export function deriveRngSeed(address: RngStreamAddress): number {
     throw new TypeError("matchId must be non-empty.");
   }
 
-  if (
-    address.round !== undefined &&
-    (!Number.isSafeInteger(address.round) || address.round < 0)
-  ) {
+  if (address.round !== undefined && (!Number.isSafeInteger(address.round) || address.round < 0)) {
     throw new RangeError("round must be a non-negative safe integer.");
   }
 

@@ -90,12 +90,7 @@ describe("exact payoff arithmetic", () => {
     const outcome = evaluateProfile(config, [10, 0, 0, 0]);
     expect(outcome.groupTotal).toBe(10);
     // Contributor: (10 − 10) + (2/5)(10) = 4. Free-riders: 10 + 4 = 14.
-    expect(outcome.payoffs.map(formatRational)).toEqual([
-      "4",
-      "14",
-      "14",
-      "14",
-    ]);
+    expect(outcome.payoffs.map(formatRational)).toEqual(["4", "14", "14", "14"]);
     expect(formatRational(outcome.welfare)).toBe("46");
   });
 });
@@ -150,12 +145,7 @@ describe("analytic Nash equilibrium", () => {
   it("m < 1 gives universal free-riding", () => {
     const verdict = nashEquilibrium(canonical());
     expect(verdict.equilibriumContribution).toBe(0);
-    expect(verdict.outcome?.payoffs.map(formatRational)).toEqual([
-      "10",
-      "10",
-      "10",
-      "10",
-    ]);
+    expect(verdict.outcome?.payoffs.map(formatRational)).toEqual(["10", "10", "10", "10"]);
     expect(verdict.reason).toMatch(/strictly dominant/);
   });
 
@@ -209,9 +199,7 @@ describe("deviation sweep", () => {
     const rows = deviationSweep(config, 10);
     expect(rows).toHaveLength(11);
     for (let index = 1; index < rows.length; index += 1) {
-      expect(compare(rows[index].ownPayoff, rows[index - 1].ownPayoff)).toBe(
-        -1,
-      );
+      expect(compare(rows[index].ownPayoff, rows[index - 1].ownPayoff)).toBe(-1);
       expect(compare(rows[index].welfare, rows[index - 1].welfare)).toBe(1);
     }
     // Free-riding on three full contributors: 10 + (2/5)(30) = 22.
@@ -242,10 +230,7 @@ function allProfiles(playerCount: number, endowment: number): number[][] {
 }
 
 /** A profile is Nash iff no single player can strictly raise their own payoff. */
-function isNash(
-  config: PublicGoodsConfig,
-  profile: readonly number[],
-): boolean {
+function isNash(config: PublicGoodsConfig, profile: readonly number[]): boolean {
   const base = evaluateProfile(config, profile);
   for (let player = 0; player < config.playerCount; player += 1) {
     for (let value = 0; value <= config.endowment; value += 1) {
@@ -268,8 +253,8 @@ describe("brute-force cross-check of the analytic claims", () => {
       endowment: 4,
       mpcr: rational(2n, 5n),
     });
-    const nash = allProfiles(config.playerCount, config.endowment).filter(
-      (profile) => isNash(config, profile),
+    const nash = allProfiles(config.playerCount, config.endowment).filter((profile) =>
+      isNash(config, profile),
     );
     expect(nash).toEqual([[0, 0, 0]]);
     expect(nashEquilibrium(config).equilibriumContribution).toBe(0);
@@ -281,8 +266,8 @@ describe("brute-force cross-check of the analytic claims", () => {
       endowment: 3,
       mpcr: rational(5n, 4n),
     });
-    const nash = allProfiles(config.playerCount, config.endowment).filter(
-      (profile) => isNash(config, profile),
+    const nash = allProfiles(config.playerCount, config.endowment).filter((profile) =>
+      isNash(config, profile),
     );
     expect(nash).toEqual([[3, 3, 3]]);
     expect(nashEquilibrium(config).equilibriumContribution).toBe(3);
@@ -302,14 +287,9 @@ describe("brute-force cross-check of the analytic claims", () => {
   it("confirms full contribution Pareto-dominates the equilibrium in the dilemma window", () => {
     const config = canonical();
     const equilibrium = evaluateProfile(config, uniformProfile(config, 0));
-    const cooperative = evaluateProfile(
-      config,
-      uniformProfile(config, config.endowment),
-    );
+    const cooperative = evaluateProfile(config, uniformProfile(config, config.endowment));
     for (let player = 0; player < config.playerCount; player += 1) {
-      expect(
-        compare(cooperative.payoffs[player], equilibrium.payoffs[player]),
-      ).toBe(1);
+      expect(compare(cooperative.payoffs[player], equilibrium.payoffs[player])).toBe(1);
     }
   });
 });
@@ -332,9 +312,7 @@ describe("property: the dominance claim holds across the grid", () => {
           const othersEach = othersEachRaw % (endowment + 1);
           const rows = deviationSweep(config, othersEach);
           for (let index = 1; index < rows.length; index += 1) {
-            expect(
-              compare(rows[index].ownPayoff, rows[index - 1].ownPayoff),
-            ).toBe(-1);
+            expect(compare(rows[index].ownPayoff, rows[index - 1].ownPayoff)).toBe(-1);
           }
         },
       ),
@@ -358,9 +336,7 @@ describe("property: the dominance claim holds across the grid", () => {
           fc.pre(classifyDilemma(config).cooperationIsEfficient);
           const rows = deviationSweep(config, 0);
           for (let index = 1; index < rows.length; index += 1) {
-            expect(compare(rows[index].welfare, rows[index - 1].welfare)).toBe(
-              1,
-            );
+            expect(compare(rows[index].welfare, rows[index - 1].welfare)).toBe(1);
           }
         },
       ),

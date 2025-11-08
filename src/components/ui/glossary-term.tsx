@@ -32,11 +32,7 @@ export function GlossaryTerm({ term, children }: GlossaryTermProps) {
         {children ?? definition.label}
       </button>
       {open ? (
-        <span
-          className="glossary-term__definition"
-          id={definitionId}
-          role="tooltip"
-        >
+        <span className="glossary-term__definition" id={definitionId} role="tooltip">
           {definition.definition}
         </span>
       ) : null}

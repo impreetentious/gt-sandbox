@@ -1,18 +1,5 @@
-import {
-  payoffFor,
-  type NormalFormGame,
-  type Player,
-  type Profile,
-} from "@/engine/game";
-import {
-  add,
-  compare,
-  divide,
-  equals,
-  subtract,
-  ZERO,
-  type Rational,
-} from "@/engine/rational";
+import { payoffFor, type NormalFormGame, type Player, type Profile } from "@/engine/game";
+import { add, compare, divide, equals, subtract, ZERO, type Rational } from "@/engine/rational";
 import type { MixedNashEquilibrium, MixedStrategy } from "@/engine/solve/mixed";
 
 export interface ActionMix {
@@ -105,22 +92,12 @@ export function fixedActionHindsight(
     actualPayoff = add(actualPayoff, payoffFor(game, profile, player));
   }
 
-  const fixedTotals = Array.from(
-    { length: actionCount(game, player) },
-    (_, action) =>
-      profiles.reduce(
-        (total, profile) =>
-          add(
-            total,
-            payoffAgainstAction(
-              game,
-              player,
-              action,
-              opponentActionAt(profile, player),
-            ),
-          ),
-        ZERO,
-      ),
+  const fixedTotals = Array.from({ length: actionCount(game, player) }, (_, action) =>
+    profiles.reduce(
+      (total, profile) =>
+        add(total, payoffAgainstAction(game, player, action, opponentActionAt(profile, player))),
+      ZERO,
+    ),
   );
   const bestFixedPayoff = fixedTotals.reduce(
     (best, total) => (compare(total, best) === 1 ? total : best),
@@ -145,8 +122,7 @@ export function mixVersusNash(
   equilibrium: MixedNashEquilibrium,
 ): MixVersusNash {
   const empirical = empiricalActionMix(game, player, profiles);
-  const target: MixedStrategy =
-    player === "row" ? equilibrium.row : equilibrium.column;
+  const target: MixedStrategy = player === "row" ? equilibrium.row : equilibrium.column;
 
   return {
     empirical,

@@ -1,14 +1,6 @@
 import { describe, expect, it } from "vitest";
-import {
-  centipede,
-  extensiveCatalog,
-  extensiveCatalogBySlug,
-} from "@/engine/catalog/extensive";
-import {
-  backwardInduction,
-  inductionTrace,
-  verifySubgamePerfect,
-} from "@/engine/extensive";
+import { centipede, extensiveCatalog, extensiveCatalogBySlug } from "@/engine/catalog/extensive";
+import { backwardInduction, inductionTrace, verifySubgamePerfect } from "@/engine/extensive";
 import { formatRational } from "@/engine/rational";
 
 describe("centipede catalog oracle", () => {
@@ -21,8 +13,7 @@ describe("centipede catalog oracle", () => {
   it("has a 4-node take/pass tree alternating between the two players", () => {
     const { game } = centipede;
     expect(game.players).toEqual(["Player 1", "Player 2"]);
-    if (game.root.kind !== "decision")
-      throw new Error("expected decision root");
+    if (game.root.kind !== "decision") throw new Error("expected decision root");
     expect(game.root.id).toBe("node-1");
     expect(game.root.actions).toEqual(["Take", "Pass"]);
   });
@@ -43,12 +34,7 @@ describe("centipede catalog oracle", () => {
 
   it("emits a post-order induction trace that unravels from node-4 back to node-1", () => {
     const trace = inductionTrace(centipede.game);
-    expect(trace.map((step) => step.nodeId)).toEqual([
-      "node-4",
-      "node-3",
-      "node-2",
-      "node-1",
-    ]);
+    expect(trace.map((step) => step.nodeId)).toEqual(["node-4", "node-3", "node-2", "node-1"]);
     for (const step of trace) {
       expect(step.chosenAction).toBe("Take");
     }

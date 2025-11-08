@@ -43,8 +43,7 @@ function actualGains(
   return target.map((value, column) =>
     subtract(
       candidates.reduce(
-        (total, row, index) =>
-          add(total, multiply(weights[index], row[column])),
+        (total, row, index) => add(total, multiply(weights[index], row[column])),
         ZERO,
       ),
       value,
@@ -69,10 +68,7 @@ function sum(values: readonly Rational[]): Rational {
  * phase one — so when the two agree across a randomized sweep it is evidence
  * about the LP rather than a restatement of it.
  */
-function strictlyDominatedByPair(
-  candidates: PayoffTable,
-  target: readonly Rational[],
-): boolean {
+function strictlyDominatedByPair(candidates: PayoffTable, target: readonly Rational[]): boolean {
   const [first, second] = candidates;
   let low = ZERO;
   let high = ONE;
@@ -91,10 +87,7 @@ function strictlyDominatedByPair(
       continue;
     }
 
-    const bound = divide(
-      subtract(ZERO, intercept),
-      slope,
-    ); /* λ = −intercept/slope */
+    const bound = divide(subtract(ZERO, intercept), slope); /* λ = −intercept/slope */
 
     if (compare(slope, ZERO) === 1) {
       if (compare(bound, low) === 1) {
@@ -132,9 +125,7 @@ describe("dominance by mixtures", () => {
     const candidates = table([6, 0, 3], [0, 6, 3]);
     const target = [r(2), r(2), r(2)];
 
-    const certificate = dominated(
-      strictlyDominatedByMixture(candidates, target),
-    );
+    const certificate = dominated(strictlyDominatedByMixture(candidates, target));
 
     expect(certificate.weights.map(formatRational)).toEqual(["1/2", "1/2"]);
     expect(certificate.support).toEqual([0, 1]);
@@ -142,9 +133,7 @@ describe("dominance by mixtures", () => {
 
     // And neither candidate manages it alone, which is the entire point.
     for (const row of candidates) {
-      expect(strictlyDominatedByMixture([row], target).kind).toBe(
-        "not-dominated",
-      );
+      expect(strictlyDominatedByMixture([row], target).kind).toBe("not-dominated");
     }
   });
 
@@ -153,21 +142,13 @@ describe("dominance by mixtures", () => {
     // any tilt towards Top loses ground in the centre and vice versa, so the
     // worst-case gain of 1 is the best any mixture can promise.
     const certificate = dominated(
-      strictlyDominatedByMixture(table([6, 0, 3], [0, 6, 3]), [
-        r(2),
-        r(2),
-        r(2),
-      ]),
+      strictlyDominatedByMixture(table([6, 0, 3], [0, 6, 3]), [r(2), r(2), r(2)]),
     );
 
     for (const shift of [r(1, 4), r(3, 4), r(1, 10)]) {
       const weights = [shift, subtract(ONE, shift)];
-      const worst = actualGains(
-        table([6, 0, 3], [0, 6, 3]),
-        [r(2), r(2), r(2)],
-        weights,
-      ).reduce((least, value) =>
-        compare(value, least) === -1 ? value : least,
+      const worst = actualGains(table([6, 0, 3], [0, 6, 3]), [r(2), r(2), r(2)], weights).reduce(
+        (least, value) => (compare(value, least) === -1 ? value : least),
       );
 
       expect(compare(certificate.margin, worst)).not.toBe(-1);
@@ -175,31 +156,23 @@ describe("dominance by mixtures", () => {
   });
 
   it("keeps exact fractions where the optimal mixture is not a round number", () => {
-    const certificate = dominated(
-      strictlyDominatedByMixture(table([9, 0], [0, 3]), [r(2), r(2)]),
-    );
+    const certificate = dominated(strictlyDominatedByMixture(table([9, 0], [0, 3]), [r(2), r(2)]));
 
     expect(formatRational(sum(certificate.weights))).toBe("1");
     expect(compare(certificate.margin, ZERO)).toBe(1);
     expect(
-      actualGains(
-        table([9, 0], [0, 3]),
-        [r(2), r(2)],
-        certificate.weights,
-      ).every((gain) => compare(gain, ZERO) === 1),
+      actualGains(table([9, 0], [0, 3]), [r(2), r(2)], certificate.weights).every(
+        (gain) => compare(gain, ZERO) === 1,
+      ),
     ).toBe(true);
   });
 
   it("reports a strategy no mixture beats", () => {
     // Bottom now earns 4 against the third column, which neither candidate can
     // reach at any weighting.
-    expect(
-      strictlyDominatedByMixture(table([6, 0, 3], [0, 6, 3]), [
-        r(2),
-        r(2),
-        r(4),
-      ]).kind,
-    ).toBe("not-dominated");
+    expect(strictlyDominatedByMixture(table([6, 0, 3], [0, 6, 3]), [r(2), r(2), r(4)]).kind).toBe(
+      "not-dominated",
+    );
   });
 
   it("separates weak dominance from strict dominance on an exact tie", () => {
@@ -211,9 +184,7 @@ describe("dominance by mixtures", () => {
     const candidates = table([6, 2, 5], [2, 6, 5]);
     const target = [r(4), r(4), r(4)];
 
-    expect(strictlyDominatedByMixture(candidates, target).kind).toBe(
-      "not-dominated",
-    );
+    expect(strictlyDominatedByMixture(candidates, target).kind).toBe("not-dominated");
 
     const certificate = dominated(weaklyDominatedByMixture(candidates, target));
     const gains = actualGains(candidates, target, certificate.weights);
@@ -228,15 +199,13 @@ describe("dominance by mixtures", () => {
   it("does not call an exactly matched strategy weakly dominated", () => {
     // A duplicate row ties everywhere. Never worse, but never better either —
     // reporting that as dominance is the classic off-by-one in the definition.
-    expect(
-      weaklyDominatedByMixture(table([3, 1], [3, 1]), [r(3), r(1)]).kind,
-    ).toBe("not-dominated");
+    expect(weaklyDominatedByMixture(table([3, 1], [3, 1]), [r(3), r(1)]).kind).toBe(
+      "not-dominated",
+    );
   });
 
   it("recognizes a pure dominator as a degenerate mixture", () => {
-    const certificate = dominated(
-      strictlyDominatedByMixture(table([5, 5], [0, 0]), [r(1), r(1)]),
-    );
+    const certificate = dominated(strictlyDominatedByMixture(table([5, 5], [0, 0]), [r(1), r(1)]));
 
     expect(certificate.support).toEqual([0]);
     expect(certificate.weights.map(formatRational)).toEqual(["1", "0"]);
@@ -248,9 +217,7 @@ describe("dominance by mixtures", () => {
   });
 
   it("rejects ragged tables and empty opponent action sets", () => {
-    expect(() => strictlyDominatedByMixture(table([1, 2]), [r(1)])).toThrow(
-      RangeError,
-    );
+    expect(() => strictlyDominatedByMixture(table([1, 2]), [r(1)])).toThrow(RangeError);
     expect(() => strictlyDominatedByMixture([], [])).toThrow(RangeError);
   });
 
@@ -266,9 +233,7 @@ describe("dominance by mixtures", () => {
           const candidates = table(first, second);
           const targetRow = target.map((value) => r(value));
 
-          const bySimplex =
-            strictlyDominatedByMixture(candidates, targetRow).kind ===
-            "dominated";
+          const bySimplex = strictlyDominatedByMixture(candidates, targetRow).kind === "dominated";
           const byInterval = strictlyDominatedByPair(candidates, targetRow);
 
           expect(bySimplex).toBe(byInterval);
@@ -300,15 +265,11 @@ describe("dominance by mixtures", () => {
           const { weights, margin } = verdict.certificate;
 
           expect(formatRational(sum(weights))).toBe("1");
-          expect(weights.every((weight) => compare(weight, ZERO) !== -1)).toBe(
-            true,
-          );
+          expect(weights.every((weight) => compare(weight, ZERO) !== -1)).toBe(true);
 
           const gains = actualGains(candidates, targetRow, weights);
           expect(gains.every((gain) => compare(gain, ZERO) === 1)).toBe(true);
-          expect(gains.every((gain) => compare(gain, margin) !== -1)).toBe(
-            true,
-          );
+          expect(gains.every((gain) => compare(gain, margin) !== -1)).toBe(true);
         },
       ),
       { numRuns: 300 },
@@ -329,13 +290,8 @@ describe("dominance by mixtures", () => {
           const candidates = table(...rows);
           const targetRow = target.map((value) => r(value));
 
-          if (
-            strictlyDominatedByMixture(candidates, targetRow).kind ===
-            "dominated"
-          ) {
-            expect(weaklyDominatedByMixture(candidates, targetRow).kind).toBe(
-              "dominated",
-            );
+          if (strictlyDominatedByMixture(candidates, targetRow).kind === "dominated") {
+            expect(weaklyDominatedByMixture(candidates, targetRow).kind).toBe("dominated");
           }
         },
       ),
