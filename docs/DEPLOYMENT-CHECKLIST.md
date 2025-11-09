@@ -6,7 +6,17 @@ The repository is a static Next.js export. Deployment is intentionally an owner 
 
 1. Review the local commit series.
 2. Run `CI=true pnpm verify:full` on Node 24 with pnpm 10 in an environment that permits the local exported-site server.
-3. Confirm `out/` serves through `pnpm serve:export` and that a direct `/play/pd/` request plus `/play/unknown/` behave correctly.
+3. Confirm `out/` serves through `pnpm serve:export` and that direct requests for every exported route below behave correctly. The current static export contains 37 pages:
+   `/`, `/404/`, `/_not-found/`, `/auctions/common-value/`, `/auctions/first-price/`,
+   `/auctions/second-price/`, `/build/`, `/classroom/`, `/embed/bos/`,
+   `/embed/chicken/`, `/embed/ipd/`, `/embed/pd/`, `/embed/pennies/`, `/embed/stag/`,
+   `/evolve/`, `/evolve/spatial/`, `/extensive/centipede/`,
+   `/extensive/entry-deterrence/`, `/extensive/ultimatum/`,
+   `/hot-seat/battle-of-the-sexes/`, `/hot-seat/chicken/`,
+   `/hot-seat/matching-pennies/`, `/hot-seat/pd/`, `/hot-seat/stag-hunt/`, `/learn/`,
+   `/methods/`, `/nplayer/public-goods/`, `/offline/`, `/play/battle-of-the-sexes/`,
+   `/play/chicken/`, `/play/iterated-pd/`, `/play/matching-pennies/`, `/play/pd/`,
+   `/play/stag-hunt/`, `/quiz/`, `/repeat/`, `/topology/`.
 4. Complete the manual matrix in [ACCESSIBILITY-AUDIT.md](ACCESSIBILITY-AUDIT.md).
 5. Capture the final README screenshots/GIF from the reviewed production candidate and run Lighthouse; record scores of at least 95 in every category.
 6. Choose the release version and update every active version surface only in the owner-authorized commit.
@@ -23,9 +33,9 @@ The repository is a static Next.js export. Deployment is intentionally an owner 
 
 ## Production smoke
 
-After the owner’s launch push:
+After the launch deploy:
 
-1. Visit `/`, all six `/play/*/` routes, `/evolve/`, `/build/`, `/methods/`, `/repeat/`, one `/hot-seat/*/` route, one `/auctions/*/` route, `/classroom/`, one direct deep link, and `/play/unknown/`.
+1. Visit every route listed in the preflight route list, plus one invalid play route such as `/play/unknown/`.
 2. Confirm the footer version matches the release tag and route titles/OG image resolve at the production origin.
 3. In browser developer tools, verify the CSP is present, there are no CSP errors, and a full browse makes no off-origin requests.
 4. Complete one PD round, one Evolution preset, one Build edit, one hot-seat handover, one auction bid, and one classroom JSON→CSV ingest.

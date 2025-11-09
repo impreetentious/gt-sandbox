@@ -1,17 +1,17 @@
 # Accessibility audit
 
-This is the v1 audit ledger. Automated checks are part of `pnpm verify:full`; assistive-technology checks remain explicit human release work and must not be inferred from axe. The current component/unit suite passes, but the managed local environment cannot bind the exported-site server port, so the authored browser scenarios still need an unrestricted release run.
+This is the v1 audit ledger. Automated checks are part of `pnpm verify:full`; assistive-technology checks remain explicit human release work and must not be inferred from axe. The current component/unit suite and exported-site Playwright suite pass in an unrestricted local browser run.
 
 ## Automated acceptance
 
-| Check          | Coverage                                                                                                                                                  | Status                                                                   |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| axe            | Every exported route; Play, Evolve, Build, and additional-feature interaction states                                                                      | Automated in Playwright (22/22 on S28 tree); owner AT pass still pending |
-| Keyboard       | Primary navigation, full Play sessions, Analysis disclosure/stepper, Evolve tabs/scrubber/table, Build controls, hot-seat / repeat / auctions / classroom | Automated scenarios authored; owner spot-check pending                   |
-| Reduced motion | Outcome highlighting and Evolution scrubber path                                                                                                          | Scenario authored; unrestricted browser run pending                      |
-| Reflow         | Evolution and bounded 4×4 Build at 320px; wide data remains inside labelled scroll regions                                                                | Scenario authored; unrestricted browser run pending                      |
-| Forced colors  | Selected game outcome and core control outlines                                                                                                           | Scenario authored; unrestricted browser run pending                      |
-| Semantics      | Real tables and headers for payoff matrices/data; live regions for outcomes, validation, and settled generation changes                                   | Component suite passes; browser scan pending                             |
+| Check          | Coverage                                                                                                                                                  | Status                                                                 |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| axe            | Every exported route; Play, Evolve, Build, and additional-feature interaction states                                                                      | Automated in Playwright (37/37 on v0.18.2 tree); owner AT pass pending |
+| Keyboard       | Primary navigation, full Play sessions, Analysis disclosure/stepper, Evolve tabs/scrubber/table, Build controls, hot-seat / repeat / auctions / classroom | Automated scenarios pass; owner spot-check pending                     |
+| Reduced motion | Outcome highlighting and Evolution scrubber path                                                                                                          | Automated scenario passes                                              |
+| Reflow         | Evolution and bounded 4×4 Build at 320px; wide data remains inside labelled scroll regions                                                                | Automated scenario passes                                              |
+| Forced colors  | Selected game outcome and core control outlines                                                                                                           | Automated scenario passes                                              |
+| Semantics      | Real tables and headers for payoff matrices/data; live regions for outcomes, validation, and settled generation changes                                   | Component suite and browser scan pass                                  |
 
 ## Manual release matrix
 
