@@ -2,28 +2,42 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 
-const fixture = resolve("src/engine/__p0-invariant-violation.ts");
+const engineFixture = resolve("src/engine/__p0-invariant-violation.ts");
+const decoyFixture = resolve("src/state/__p0-rng-invariant-violation.ts");
 
-try {
+function expectInvariantFailure(fixture, contents, message) {
   mkdirSync(dirname(fixture), { recursive: true });
-  writeFileSync(fixture, "import React from 'react';\nexport const seeded = React;\n");
+  writeFileSync(fixture, contents);
 
-  let failedAsExpected = false;
   try {
     execFileSync("bash", ["scripts/check-invariants.sh"], { stdio: "pipe" });
   } catch {
-    failedAsExpected = true;
+    return;
+  } finally {
+    rmSync(fixture, { force: true });
   }
 
-  if (!failedAsExpected) {
-    throw new Error("The seeded engine React import did not fail invariant checks.");
-  }
+  throw new Error(message);
+}
+
+try {
+  expectInvariantFailure(
+    engineFixture,
+    "import React from 'react';\nexport const seeded = React;\n",
+    "The seeded engine React import did not fail invariant checks.",
+  );
+  expectInvariantFailure(
+    decoyFixture,
+    "export const seeded = Math.random();\n",
+    "A Math.random call in a non-engine rng.ts path did not fail invariant checks.",
+  );
 } finally {
-  rmSync(fixture, { force: true });
+  rmSync(engineFixture, { force: true });
+  rmSync(decoyFixture, { force: true });
 }
 
 // Keep the engine directory in the intended shape even before P1 adds its files.
-const engineDirectory = dirname(fixture);
+const engineDirectory = dirname(engineFixture);
 try {
   execFileSync("rmdir", [engineDirectory], { stdio: "ignore" });
 } catch {
@@ -31,4 +45,4 @@ try {
 }
 
 execFileSync("bash", ["scripts/check-invariants.sh"], { stdio: "inherit" });
-console.log("Seeded invariant violation was rejected and removed.");
+console.log("Seeded invariant violations were rejected and removed.");

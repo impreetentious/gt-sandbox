@@ -116,7 +116,7 @@ export function RepeatedGameExperience() {
       <header className="repeat__header">
         <p className="eyebrow">Repeat / The shadow of the future</p>
         <h1 className="display" id="repeat-title">
-          Iterate any game.
+          Iterate catalog games.
         </h1>
         <p className="lede">{content.framing}</p>
       </header>

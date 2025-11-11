@@ -31,6 +31,29 @@ has_matches() {
   rg --quiet --glob '*.{ts,tsx,js,jsx,mjs,cjs}' "$pattern" "$@"
 }
 
+has_forbidden_math_random() {
+  local matches
+  local file
+
+  if matches=$(rg --files-with-matches --glob '*.{ts,tsx}' 'Math\.random\(' src); then
+    :
+  else
+    local status=$?
+    if [[ "$status" -eq 1 ]]; then
+      return 1
+    fi
+    return "$status"
+  fi
+
+  while IFS= read -r file; do
+    if [[ "$file" != 'src/engine/rng.ts' ]]; then
+      return 0
+    fi
+  done <<< "$matches"
+
+  return 1
+}
+
 if [[ -d src/engine ]]; then
   report_violation \
     'src/engine must not import React or Next.' \
@@ -39,7 +62,7 @@ fi
 
 report_violation \
   'Math.random is permitted only in src/engine/rng.ts.' \
-  rg --quiet --glob '*.{ts,tsx}' --glob '!rng.ts' 'Math\.random\(' src
+  has_forbidden_math_random
 
 report_violation \
   'Date.now() and zero-argument new Date() are forbidden under src/.' \
