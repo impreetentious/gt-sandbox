@@ -61,10 +61,10 @@ const path = [
   },
   {
     href: "/repeat/",
-    title: "Repeat Any Game",
+    title: "Repeat Catalog Games",
     concept: "The folk theorem",
     description:
-      "Iterate a 2×2 with the full roster and read the exact discount threshold that sustains cooperation.",
+      "Iterate one of five catalog 2×2 games with the full roster and read the exact discount threshold that sustains cooperation.",
   },
   {
     href: "/hot-seat/pd/",

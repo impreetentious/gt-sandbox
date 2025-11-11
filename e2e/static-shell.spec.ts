@@ -351,7 +351,7 @@ test("the common-value auction surfaces the winner's curse", async ({ page }) =>
 
 test("the repeat surface shows the folk-theorem threshold and switches games", async ({ page }) => {
   await page.goto("/repeat/");
-  await expect(page.getByRole("heading", { name: "Iterate any game." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Iterate catalog games." })).toBeVisible();
   await expect(page.getByText(/continuation probability is at least 1\/2/)).toBeVisible();
 
   await page.getByLabel("Stage game").selectOption("pennies");
@@ -854,6 +854,97 @@ test("the manifest is same-origin, installable, and names only local icons", asy
     const iconResponse = await page.request.get(new URL(icon.src, origin).href);
     expect(iconResponse.ok(), `icon should exist: ${icon.src}`).toBeTruthy();
   }
+});
+
+test("Play routes inherit the branded social card instead of a blank payoff-matrix image", async ({
+  page,
+}) => {
+  for (const game of [
+    "pd",
+    "stag-hunt",
+    "battle-of-the-sexes",
+    "chicken",
+    "matching-pennies",
+    "iterated-pd",
+  ]) {
+    await page.goto(`/play/${game}/`);
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+      "content",
+      /\/og-image\.png$/,
+    );
+    await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute(
+      "content",
+      "Game Theory Sandbox — act, observe, reveal",
+    );
+  }
+});
+
+test("embed routes are framable and every other route refuses to be framed", async ({
+  page,
+  baseURL,
+}) => {
+  const origin = new URL(baseURL ?? "http://127.0.0.1:4002").origin;
+
+  const embedHeaders = (await page.request.get(`${origin}/embed/pd/`)).headers();
+  expect(embedHeaders["content-security-policy"]).toContain("frame-ancestors 'self' https:");
+  const pageHeaders = (await page.request.get(`${origin}/play/pd/`)).headers();
+  expect(pageHeaders["content-security-policy"]).toContain("frame-ancestors 'none'");
+
+  const cspErrors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error" && /content security policy|\bcsp\b/i.test(message.text())) {
+      cspErrors.push(message.text());
+    }
+  });
+
+  // The harness stands in for a third-party blog post, so it is served by route
+  // interception rather than from `out/`: every real route ships `frame-src
+  // 'none'` and would refuse to hold an iframe at all, which would test this
+  // app's own policy instead of the embed route's `frame-ancestors`. It sits on
+  // the app origin because `'self'` is the only clause reachable over http —
+  // the `https:` clause is what a real off-origin embedder matches.
+  const harnessUrl = `${origin}/__embed-harness`;
+  await page.route(harnessUrl, (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "text/html",
+      body: `<!doctype html><meta charset="utf-8"><title>harness</title>
+<iframe id="embed-probe" src="${origin}/embed/pd/" width="640" height="720"></iframe>
+<iframe id="blocked-probe" src="${origin}/play/pd/" width="640" height="720"></iframe>`,
+    }),
+  );
+  await page.goto(harnessUrl);
+
+  // A refused frame yields an empty document; a permitted one runs the app and
+  // renders the workbench, so asserting on frame content is the real check.
+  await expect(page.frameLocator("#embed-probe").getByTestId("game-workbench")).toBeVisible();
+  await expect(page.frameLocator("#blocked-probe").getByTestId("game-workbench")).toBeHidden();
+
+  // Exactly one refusal, and it is the `/play/` probe. Anything else — in
+  // particular a second refusal — would mean the embed route was blocked too.
+  expect(cspErrors).toHaveLength(1);
+  expect(cspErrors[0]).toContain("frame-ancestors 'none'");
+});
+
+test("the Play surface offers a copyable embed snippet", async ({ page, baseURL }) => {
+  const origin = new URL(baseURL ?? "http://127.0.0.1:4002").origin;
+  await page.goto("/play/pd/");
+
+  // Deny clipboard access so the manual-copy fallback is what gets asserted —
+  // it is the affordance that has to carry the snippet when the API is absent.
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "clipboard", { value: undefined, configurable: true });
+  });
+  await page.reload();
+
+  await page.getByRole("button", { name: "Copy embed snippet" }).click();
+  const snippet = page.locator(".game-workbench__manual-copy textarea");
+  await expect(snippet).toBeVisible();
+
+  const value = await snippet.inputValue();
+  expect(value).toContain(`src="${origin}/embed/pd/`);
+  expect(value).toContain('loading="lazy"');
+  expect(value).toContain("<iframe");
 });
 
 test("the learn path gates by default and opens entirely from one control", async ({ page }) => {

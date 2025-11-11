@@ -153,6 +153,12 @@ export default function MethodsPage() {
               labels are sensitive.
             </li>
             <li>
+              Every route refuses to be framed except <code>/embed/*</code>, which any{" "}
+              <code>https:</code> page may embed. The embedded copy is the same static build with no
+              chrome — it still makes no network call beyond this origin, and it cannot read or be
+              read by the page that frames it.
+            </li>
+            <li>
               Local storage contains three optional keys and nothing else:{" "}
               <code>seenOnboarding</code>, which hides the first-visit hint after dismissal;{" "}
               <code>theme</code>, written only if you pin light or dark rather than following your
