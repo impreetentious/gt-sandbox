@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { AnalysisDrawer } from "@/components/analysis/analysis-drawer";
 import { createNormalFormGame, profileKey, type NormalFormGame } from "@/engine/game";
+import type { GameSlug } from "@/engine/catalog/types";
 import { classifyTwoByTwo, type StrategicStructure } from "@/engine/solve/classify";
 import { analyzeMixedEquilibria } from "@/engine/solve/mixed";
 import { paretoEfficientProfiles } from "@/engine/solve/pareto";
@@ -41,6 +42,10 @@ interface GameWorkbenchProps {
   readonly defaultGame?: NormalFormGame;
   readonly extras?: GameShareExtras;
   readonly variant?: "page" | "embedded";
+  // V2-P13 — set only where a chromeless `/embed/<slug>/` route exists, which
+  // is the six catalog games. A custom Build draft has no embed route, so the
+  // snippet control stays hidden rather than emitting a dead iframe.
+  readonly embedSlug?: GameSlug;
 }
 
 function structureFor(game: NormalFormGame): StrategicStructure | null {
@@ -103,6 +108,16 @@ function updatePayoff(
   return { ...draft, payoffs };
 }
 
+// The snippet is pasted into someone else's HTML, so both the title (author
+// text) and the URL (`&` between query parameters) must be attribute-safe.
+function escapeAttribute(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 function structureSentence(structure: StrategicStructure | null): string {
   return structure
     ? `This is ${structure === "anti-coordination" ? "an" : "a"} ${structure} game.`
@@ -113,6 +128,7 @@ export function GameWorkbench({
   defaultGame = blankGame,
   extras = emptyExtras,
   variant = "page",
+  embedSlug,
 }: GameWorkbenchProps) {
   const [draft, setDraft] = useState<EditableGameDraft>(() => gameToDraft(defaultGame));
   const [game, setGame] = useState(defaultGame);
@@ -122,10 +138,13 @@ export function GameWorkbench({
   const [paretoMode, setParetoMode] = useState(false);
   const [copied, setCopied] = useState(false);
   const [manualCopy, setManualCopy] = useState(false);
+  const [embedCopied, setEmbedCopied] = useState(false);
+  const [manualEmbedCopy, setManualEmbedCopy] = useState(false);
   const [annotation, setAnnotationText] = useState("");
   const [annotationError, setAnnotationError] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
   const manualCopyRef = useRef<HTMLInputElement>(null);
+  const manualEmbedCopyRef = useRef<HTMLTextAreaElement>(null);
   const previousStructureRef = useRef(structureFor(defaultGame));
   const loadedSharedStateRef = useRef(false);
 
@@ -196,6 +215,17 @@ export function GameWorkbench({
     typeof window === "undefined"
       ? `?${shareSearch}`
       : `${window.location.origin}${window.location.pathname}?${shareSearch}`;
+  // The embed route runs the same client-side decode as every other surface,
+  // so carrying `shareSearch` makes the framed copy show the edited game
+  // rather than the catalog default.
+  const embedUrl =
+    embedSlug === undefined
+      ? null
+      : `${typeof window === "undefined" ? "" : window.location.origin}/embed/${embedSlug}/?${shareSearch}`;
+  const embedSnippet =
+    embedUrl === null
+      ? null
+      : `<iframe src="${escapeAttribute(embedUrl)}" width="640" height="720" title="${escapeAttribute(game.title)} — interactive game" loading="lazy" style="border:0;max-width:100%"></iframe>`;
 
   useEffect(() => {
     if (dirty) {
@@ -209,6 +239,13 @@ export function GameWorkbench({
       manualCopyRef.current?.select();
     }
   }, [manualCopy]);
+
+  useEffect(() => {
+    if (manualEmbedCopy) {
+      manualEmbedCopyRef.current?.focus();
+      manualEmbedCopyRef.current?.select();
+    }
+  }, [manualEmbedCopy]);
 
   const analysis = useMemo(() => analyzeMixedEquilibria(game), [game]);
   const equilibria = useMemo(() => new Set(pureNashEquilibria(game).map(profileKey)), [game]);
@@ -229,19 +266,29 @@ export function GameWorkbench({
     );
   };
 
-  const copyLink = async () => {
+  const copyToClipboard = async (
+    text: string,
+    onCopied: (copied: boolean) => void,
+    onManual: (manual: boolean) => void,
+  ) => {
     try {
       if (!navigator.clipboard?.writeText) {
         throw new Error("Clipboard API unavailable");
       }
-      await navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      setManualCopy(false);
+      await navigator.clipboard.writeText(text);
+      onCopied(true);
+      onManual(false);
     } catch {
-      setCopied(false);
-      setManualCopy(true);
+      onCopied(false);
+      onManual(true);
     }
   };
+
+  const copyLink = () => copyToClipboard(shareUrl, setCopied, setManualCopy);
+  const copyEmbedSnippet = () =>
+    embedSnippet === null
+      ? undefined
+      : copyToClipboard(embedSnippet, setEmbedCopied, setManualEmbedCopy);
 
   return (
     <section
@@ -551,6 +598,24 @@ export function GameWorkbench({
             <span>Clipboard access is unavailable. Copy this link manually.</span>
             <input readOnly ref={manualCopyRef} value={shareUrl} />
           </label>
+        ) : null}
+        {embedSnippet !== null ? (
+          <>
+            <button className="analysis-button" onClick={copyEmbedSnippet} type="button">
+              Copy embed snippet
+            </button>
+            {embedCopied ? (
+              <p className="game-workbench__copied" role="status">
+                Copied. Paste the iframe into any https: page.
+              </p>
+            ) : null}
+            {manualEmbedCopy ? (
+              <label className="game-workbench__manual-copy">
+                <span>Clipboard access is unavailable. Copy this snippet manually.</span>
+                <textarea readOnly ref={manualEmbedCopyRef} rows={3} value={embedSnippet} />
+              </label>
+            ) : null}
+          </>
         ) : null}
       </section>
 

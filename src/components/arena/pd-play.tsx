@@ -357,6 +357,7 @@ export function PdPlayExperience() {
       </section>
       <GameWorkbench
         defaultGame={pd.game}
+        embedSlug="pd"
         extras={{ persona: state.persona, seed: state.seed }}
         variant="embedded"
       />

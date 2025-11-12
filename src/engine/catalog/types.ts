@@ -14,13 +14,13 @@ export type SelectionOracle =
   | { readonly kind: "tie" }
   | { readonly kind: "equilibrium"; readonly profile: Profile };
 
-/** Hand-derived non-pure equilibrium probabilities. */
+/** Hand-derived non-pure equilibrium probabilities from the game catalog's correctness oracle. */
 export interface MixedNashOracle {
   readonly row: readonly RationalInput[];
   readonly column: readonly RationalInput[];
 }
 
-/** Hand-derived pure-analysis facts. */
+/** Hand-derived pure-analysis facts from the game catalog's correctness oracle. */
 export interface PureGameOracle {
   readonly pureNash: readonly Profile[];
   readonly strictlyDominated: DominatedActionOracle;

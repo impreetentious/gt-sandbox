@@ -8,7 +8,7 @@ Game Theory Sandbox is a static, private interactive tool for strategy-curious p
 
 - **Play** six games against deterministic opponents: Prisoner's Dilemma, Stag Hunt, Battle of the Sexes, Chicken, Matching Pennies, and the Iterated Prisoner's Dilemma. Each has session scoring and a progressive analytical reveal.
 - **Hot-seat** the same games with two humans at one keyboard.
-- **Repeat** any 2×2 game with the full strategy roster and read the folk-theorem region: feasible and individually-rational payoffs, with the exact discount threshold that sustains cooperation.
+- **Repeat** the five catalog 2×2 games with the full strategy roster and read the folk-theorem region: feasible and individually-rational payoffs, with the exact discount threshold that sustains cooperation.
 - **Evolve** eight classic repeated-game strategies through a seeded round-robin and five replicator-dynamics stories, plus a spatial variant on a lattice where cooperator clusters survive a game that has no cooperative equilibrium when the population is well mixed.
 - **Step through extensive-form games** — entry deterrence, the ultimatum game, and the centipede game — on the game tree.
 - **Bid** in first-price, second-price, and common-value auctions.
@@ -18,7 +18,7 @@ Game Theory Sandbox is a static, private interactive tool for strategy-curious p
 - **Browse** all 144 strict ordinal 2×2 structures in a keyboard-operable topology atlas.
 - **Quiz** yourself with a deterministic five-question equilibrium round, optionally sourced from a shared 2×2 Build game.
 - **Teach** with the classroom kit: build an assignment link that pins one exercise for a whole class, then aggregate the sessions students download — entirely on your device, with nothing uploaded.
-- **Share and embed** a versioned URL containing a bounded custom game, annotation, persona, seed, continuation probability, or action noise; chromeless static embeds and per-game social cards need no server.
+- **Share and embed** a versioned URL containing a bounded custom game, annotation, persona, seed, continuation probability, or action noise; each Play surface also emits a chromeless `<iframe>` snippet, and `/embed/*` is the only path any `https:` page may frame. All of it is static — no server.
 
 ## Two-minute tour
 
@@ -84,4 +84,4 @@ MIT © Sidakpreet Singh — see [LICENSE](LICENSE).
 
 ---
 
-**Version:** v0.19.4
+**Version:** v0.19.5

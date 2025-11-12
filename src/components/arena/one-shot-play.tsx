@@ -383,6 +383,7 @@ export function OneShotPlayExperience({ slug }: { readonly slug: OneShotPlayable
       </section>
       <GameWorkbench
         defaultGame={game}
+        embedSlug={slug}
         extras={{ persona: state.persona, seed: state.seed }}
         variant="embedded"
       />

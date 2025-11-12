@@ -453,6 +453,7 @@ export function IpdPlayExperience() {
       </section>
       <GameWorkbench
         defaultGame={ipd.game}
+        embedSlug="ipd"
         extras={{
           continuationProbability: state.config.continuationProbability,
           noise: state.config.noise,
