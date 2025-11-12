@@ -351,7 +351,7 @@ test("the common-value auction surfaces the winner's curse", async ({ page }) =>
 
 test("the repeat surface shows the folk-theorem threshold and switches games", async ({ page }) => {
   await page.goto("/repeat/");
-  await expect(page.getByRole("heading", { name: "Iterate catalog games." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Iterate any 2×2." })).toBeVisible();
   await expect(page.getByText(/continuation probability is at least 1\/2/)).toBeVisible();
 
   await page.getByLabel("Stage game").selectOption("pennies");

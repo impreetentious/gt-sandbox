@@ -46,6 +46,24 @@ describe("P9 custom-game workbench", () => {
     expect(screen.getByRole("heading", { name: "This is a dilemma game." })).toBeVisible();
   });
 
+  it("hands a 2×2 build to the repeat surface and withholds the link above 2×2", async () => {
+    render(<GameWorkbench defaultGame={pd.game} variant="page" />);
+
+    const iterate = screen.getByRole("link", { name: "Play it iterated" });
+    expect(iterate).toHaveAttribute("href", expect.stringContaining("/repeat/?"));
+    // The link carries the built payoffs, so the folk-theorem region is computed on them.
+    expect(iterate.getAttribute("href")).toContain("v=1");
+
+    // Iterated play is defined for binary actions only; a 3×3 build must not offer it.
+    fireEvent.change(screen.getByLabelText("Number of row actions"), { target: { value: "3" } });
+    fireEvent.change(screen.getByLabelText("Number of column actions"), { target: { value: "3" } });
+    await waitFor(() =>
+      expect(screen.queryByRole("link", { name: "Play it iterated" })).not.toBeInTheDocument(),
+    );
+    // The quiz link is unaffected: it has no such restriction.
+    expect(screen.getByRole("link", { name: "Quiz this game" })).toBeInTheDocument();
+  });
+
   it("supports the bounded 4×4 editor and a manual-copy fallback", async () => {
     render(<GameWorkbench />);
 

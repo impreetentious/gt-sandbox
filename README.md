@@ -8,7 +8,7 @@ Game Theory Sandbox is a static, private interactive tool for strategy-curious p
 
 - **Play** six games against deterministic opponents: Prisoner's Dilemma, Stag Hunt, Battle of the Sexes, Chicken, Matching Pennies, and the Iterated Prisoner's Dilemma. Each has session scoring and a progressive analytical reveal.
 - **Hot-seat** the same games with two humans at one keyboard.
-- **Repeat** the five catalog 2×2 games with the full strategy roster and read the folk-theorem region: feasible and individually-rational payoffs, with the exact discount threshold that sustains cooperation.
+- **Repeat** any 2×2 — the five catalog games or one you built yourself — with the full strategy roster, and read the folk-theorem region: feasible and individually-rational payoffs, with the exact discount threshold that sustains cooperation. Which outcome counts as cooperative is your designation on a custom game, and the surface says so.
 - **Evolve** eight classic repeated-game strategies through a seeded round-robin and five replicator-dynamics stories, plus a spatial variant on a lattice where cooperator clusters survive a game that has no cooperative equilibrium when the population is well mixed.
 - **Step through extensive-form games** — entry deterrence, the ultimatum game, and the centipede game — on the game tree.
 - **Bid** in first-price, second-price, and common-value auctions.
@@ -84,4 +84,4 @@ MIT © Sidakpreet Singh — see [LICENSE](LICENSE).
 
 ---
 
-**Version:** v0.19.6
+**Version:** v0.20.0

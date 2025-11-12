@@ -588,6 +588,13 @@ export function GameWorkbench({
             Quiz this game
           </a>
         ) : null}
+        {/* Iterated play and the folk-theorem region are defined for binary actions only, so the
+            link appears exactly when the game the user built can actually be played that way. */}
+        {variant === "page" && game.rowActions.length === 2 && game.columnActions.length === 2 ? (
+          <a className="analysis-button" href={`/repeat/?${shareSearch}`}>
+            Play it iterated
+          </a>
+        ) : null}
         {copied ? (
           <p className="game-workbench__copied" role="status">
             Copied. The complete bounded state is in the link.

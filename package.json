@@ -1,6 +1,6 @@
 {
   "name": "game-theory-sandbox",
-  "version": "0.19.6",
+  "version": "0.20.0",
   "private": true,
   "packageManager": "pnpm@10.19.0",
   "engines": {
