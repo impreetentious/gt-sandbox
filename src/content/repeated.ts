@@ -1,16 +1,55 @@
 import type { GameSlug } from "@/engine/catalog/types";
+import type { NormalFormGame } from "@/engine/game";
 
 export type RepeatableSlug = Exclude<GameSlug, "ipd">;
 
-export interface RepeatableGameContent {
-  readonly slug: RepeatableSlug;
+/** The action index each player treats as "cooperate" in repeated play. */
+export interface CooperativeProfile {
+  readonly row: 0 | 1;
+  readonly column: 0 | 1;
+}
+
+/**
+ * Everything the Repeat surface needs to iterate a stage game. Catalog games carry an authored
+ * one; a Build-mode custom game gets one derived at read time, because the engine is generic
+ * over any 2×2 and only the framing was ever catalog-specific.
+ */
+export interface RepeatFraming {
   readonly framing: string;
-  /** The action index each player treats as "cooperate" in repeated play. */
-  readonly cooperate: { readonly row: 0 | 1; readonly column: 0 | 1 };
+  readonly cooperate: CooperativeProfile;
   readonly cooperateLabel: string;
   readonly defectLabel: string;
   /** An honesty note when "cooperation" is not the game's natural lesson. */
   readonly caveat?: string;
+}
+
+export interface RepeatableGameContent extends RepeatFraming {
+  readonly slug: RepeatableSlug;
+}
+
+/**
+ * Framing for a game the user built themselves.
+ *
+ * A catalog game arrives with an authored cooperative profile because somebody decided which
+ * action "holding price" is. A custom game has no such answer, so the caller supplies one and
+ * this labels it from the game's own action names. Nothing is guessed: designating the
+ * cooperative outcome is a modelling choice, and the surface makes the user make it.
+ */
+export function customRepeatFraming(
+  game: NormalFormGame,
+  cooperate: CooperativeProfile,
+): RepeatFraming {
+  const cooperateLabel = game.rowActions[cooperate.row] ?? "Cooperate";
+  const defectLabel = game.rowActions[cooperate.row === 0 ? 1 : 0] ?? "Defect";
+  return {
+    framing:
+      "Your own 2×2, played over an indefinite horizon. The folk-theorem region below is computed from the payoffs you entered; the discount threshold is exact.",
+    cooperate,
+    cooperateLabel,
+    defectLabel,
+    caveat:
+      "Which outcome counts as “cooperative” is your designation, not a property of the payoffs. The region and the threshold are exact given that choice — change it and both change.",
+  };
 }
 
 export const repeatableGameContent: Readonly<Record<RepeatableSlug, RepeatableGameContent>> = {

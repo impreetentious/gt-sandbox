@@ -1,9 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { GlossaryTerm } from "@/components/ui/glossary-term";
-import { repeatableGameContent, type RepeatableSlug } from "@/content/repeated";
+import {
+  customRepeatFraming,
+  repeatableGameContent,
+  type CooperativeProfile,
+  type RepeatableSlug,
+} from "@/content/repeated";
 import { catalogBySlug } from "@/engine/catalog";
+import type { NormalFormGame } from "@/engine/game";
 import { formatRational, type Rational } from "@/engine/rational";
 import {
   analyzeFolkTheorem,
@@ -12,8 +18,47 @@ import {
 } from "@/engine/repeated/folk-theorem";
 import { simulateIteratedMatch } from "@/engine/repeated/iterated-game";
 import { ipdStrategies, type IpdStrategyId } from "@/engine/repeated/strategies";
+import { decodeGameSearch } from "@/state/game-url";
 
 const REPEATABLE_SLUGS: readonly RepeatableSlug[] = ["pd", "stag", "chicken", "bos", "pennies"];
+
+const CUSTOM_STAGE = "custom" as const;
+type StageChoice = RepeatableSlug | typeof CUSTOM_STAGE;
+
+type CustomStage =
+  | { readonly kind: "none" }
+  | { readonly kind: "game"; readonly game: NormalFormGame }
+  | { readonly kind: "rejected"; readonly notice: string };
+
+function subscribeToLocation(onChange: () => void) {
+  window.addEventListener("popstate", onChange);
+  return () => window.removeEventListener("popstate", onChange);
+}
+
+function locationSnapshot() {
+  return window.location.search;
+}
+
+/**
+ * A Build-mode game arriving on the share link. Iterated play and the folk-theorem analysis are
+ * defined for binary actions only, so a 3×3 custom is refused with a reason rather than being
+ * silently truncated to its first two rows — a quietly cropped payoff matrix would produce an
+ * exact-looking threshold for a game the user never built.
+ */
+function customStageFromSearch(search: string): CustomStage {
+  const decoded = decodeGameSearch(search);
+  if (decoded.kind === "empty") return { kind: "none" };
+  if (decoded.kind === "invalid") return { kind: "rejected", notice: decoded.notice };
+
+  const game = decoded.state.game;
+  if (game.rowActions.length !== 2 || game.columnActions.length !== 2) {
+    return {
+      kind: "rejected",
+      notice: `Repeated play and the folk-theorem region are defined for 2×2 stage games. “${game.title}” is ${game.rowActions.length}×${game.columnActions.length}, so a catalog game was loaded instead.`,
+    };
+  }
+  return { kind: "game", game };
+}
 
 const SLUG_LABEL: Record<RepeatableSlug, string> = {
   pd: "Prisoner's Dilemma",
@@ -50,15 +95,31 @@ function sustainedAtDelta(threshold: DeltaThreshold, delta: number): boolean | n
 }
 
 export function RepeatedGameExperience() {
-  const [slug, setSlug] = useState<RepeatableSlug>("pd");
+  const search = useSyncExternalStore(subscribeToLocation, locationSnapshot, () => "");
+  const custom = useMemo(() => customStageFromSearch(search), [search]);
+  const customGame = custom.kind === "game" ? custom.game : null;
+
+  const [stageOverride, setStageOverride] = useState<StageChoice>();
+  const [customCooperate, setCustomCooperate] = useState<CooperativeProfile>({ row: 0, column: 0 });
   const [rowStrategy, setRowStrategy] = useState<IpdStrategyId>("tft");
   const [columnStrategy, setColumnStrategy] = useState<IpdStrategyId>("tft");
   const [delta, setDelta] = useState(0.95);
   const [noise, setNoise] = useState(0);
   const [seed, setSeed] = useState(406029);
 
-  const content = repeatableGameContent[slug];
-  const game = catalogBySlug[slug].game;
+  // A shared game opens on itself; the catalog stays one select away.
+  const defaultStage: StageChoice = customGame ? CUSTOM_STAGE : "pd";
+  const requested = stageOverride ?? defaultStage;
+  const stage: StageChoice = requested === CUSTOM_STAGE && !customGame ? "pd" : requested;
+  const isCustom = stage === CUSTOM_STAGE && customGame !== null;
+
+  const content =
+    isCustom && customGame
+      ? customRepeatFraming(customGame, customCooperate)
+      : repeatableGameContent[stage === CUSTOM_STAGE ? "pd" : stage];
+  const game =
+    isCustom && customGame ? customGame : catalogBySlug[stage === CUSTOM_STAGE ? "pd" : stage].game;
+  const matchId = isCustom ? `${game.id}-custom-repeat` : `${stage}-repeat`;
 
   const folk = useMemo(
     () => analyzeFolkTheorem(game, { cooperate: content.cooperate }),
@@ -73,12 +134,12 @@ export function RepeatedGameExperience() {
         rowStrategy,
         columnStrategy,
         masterSeed: seed,
-        matchId: `${slug}-repeat`,
+        matchId,
         continuationProbability: delta,
         noise,
         roundCap: 1000,
       }),
-    [game, content.cooperate, rowStrategy, columnStrategy, seed, delta, noise, slug],
+    [game, content.cooperate, rowStrategy, columnStrategy, seed, delta, noise, matchId],
   );
 
   const sustained = sustainedAtDelta(folk.threshold, delta);
@@ -116,9 +177,14 @@ export function RepeatedGameExperience() {
       <header className="repeat__header">
         <p className="eyebrow">Repeat / The shadow of the future</p>
         <h1 className="display" id="repeat-title">
-          Iterate catalog games.
+          Iterate any 2×2.
         </h1>
         <p className="lede">{content.framing}</p>
+        {custom.kind === "rejected" ? (
+          <p className="repeat__caveat" role="status">
+            {custom.notice}
+          </p>
+        ) : null}
       </header>
 
       <form
@@ -128,7 +194,11 @@ export function RepeatedGameExperience() {
       >
         <label>
           <span>Stage game</span>
-          <select onChange={(event) => setSlug(event.target.value as RepeatableSlug)} value={slug}>
+          <select
+            onChange={(event) => setStageOverride(event.target.value as StageChoice)}
+            value={stage}
+          >
+            {customGame ? <option value={CUSTOM_STAGE}>{customGame.title} (yours)</option> : null}
             {REPEATABLE_SLUGS.map((option) => (
               <option key={option} value={option}>
                 {SLUG_LABEL[option]}
@@ -136,6 +206,46 @@ export function RepeatedGameExperience() {
             ))}
           </select>
         </label>
+        {isCustom && customGame ? (
+          <>
+            <label>
+              <span>Row&apos;s cooperative action</span>
+              <select
+                onChange={(event) =>
+                  setCustomCooperate((current) => ({
+                    ...current,
+                    row: Number(event.target.value) === 1 ? 1 : 0,
+                  }))
+                }
+                value={customCooperate.row}
+              >
+                {customGame.rowActions.map((label, index) => (
+                  <option key={label} value={index}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <span>Column&apos;s cooperative action</span>
+              <select
+                onChange={(event) =>
+                  setCustomCooperate((current) => ({
+                    ...current,
+                    column: Number(event.target.value) === 1 ? 1 : 0,
+                  }))
+                }
+                value={customCooperate.column}
+              >
+                {customGame.columnActions.map((label, index) => (
+                  <option key={label} value={index}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </>
+        ) : null}
         <label>
           <span>Row strategy</span>
           <select

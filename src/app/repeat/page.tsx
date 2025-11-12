@@ -4,7 +4,7 @@ import { RepeatedGameExperience } from "@/components/repeat/repeated-experience"
 export const metadata: Metadata = {
   title: "Repeat",
   description:
-    "Iterate the five catalog 2×2 games with the full strategy roster and see the folk-theorem region: feasible and individually-rational payoffs, with the exact discount threshold that sustains cooperation.",
+    "Iterate any 2×2 — the five catalog games or one you built yourself — with the full strategy roster, and see the folk-theorem region: feasible and individually-rational payoffs, with the exact discount threshold that sustains cooperation.",
 };
 
 export default function RepeatPage() {
