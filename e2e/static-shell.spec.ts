@@ -800,9 +800,7 @@ test("the tournament heatmap re-anchors its scale in dark mode", async ({ page }
 
 test("the service worker registers and serves a later load offline", async ({ page, context }) => {
   await page.goto("/");
-  await expect
-    .poll(() => page.evaluate(() => navigator.serviceWorker.controller !== null))
-    .toBe(true);
+  await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
 
   const registration = await page.evaluate(async () => {
     const ready = await navigator.serviceWorker.ready;

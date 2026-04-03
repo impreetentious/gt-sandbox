@@ -3,7 +3,11 @@ import type { IpdEvolutionConfig } from "@/engine/repeated/replicator";
 import { ipdStrategyById, type IpdStrategyId } from "@/engine/repeated/strategies";
 
 export type EvolutionPresetId =
-  "exploitation" | "lone-invasion" | "reciprocity" | "noise" | "shadow-of-the-future";
+  | "exploitation"
+  | "lone-invasion"
+  | "reciprocity"
+  | "noise"
+  | "shadow-of-the-future";
 
 interface FrozenMetricPredicate {
   readonly strategy: IpdStrategyId;
