@@ -76,7 +76,9 @@ Runtime dependencies remain limited to `next`, `react`, and `react-dom`. The exa
 
 ## Deployment
 
-`pnpm build` emits a plain `out/` directory. Vercel Git integration is the intended production path, but the output also serves unchanged from a root-mounted static host.
+`pnpm build` emits a plain `out/` directory. Vercel Git integration is the intended production path, but the output also serves unchanged from a root-mounted static host. `vercel.json` and `serve.json` carry the response headers; `pnpm check:csp` fails if the two ever disagree.
+
+The GitHub remote is authoritative and carries the only pipeline; `.github/workflows/ci.yml` runs every gate. The GitLab remote is a backup mirror kept in sync, deliberately without a `.gitlab-ci.yml` — Vercel deploys from GitHub, so there is no second publication target to gate, and a mirrored pipeline would only create a second place for gate drift.
 
 ## License
 
@@ -84,4 +86,4 @@ MIT © Sidakpreet Singh — see [LICENSE](LICENSE).
 
 ---
 
-**Version:** v0.20.0
+**Version:** v0.20.1

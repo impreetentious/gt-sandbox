@@ -1,4 +1,11 @@
-onlyBuiltDependencies:
-  - esbuild
-  - sharp
-  - unrs-resolver
+# Next 16.1.x still pins an old `postcss` inside its own dependency range, so the
+# newer version has to be forced here. Scoped repo-wide because postcss only
+# ever reaches the tree through the framework's build pipeline.
+overrides:
+  postcss: ^8.5.8
+  sharp: ^0.34.5
+
+allowBuilds:
+  esbuild: true
+  sharp: true
+  unrs-resolver: true

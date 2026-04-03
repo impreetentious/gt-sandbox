@@ -14,11 +14,7 @@ import { buildSessionExport, type SessionExport } from "@/state/session-export";
 export type HotSeatPhase = "row-commit" | "handover" | "column-commit" | "reveal" | "complete";
 
 export type HotSeatFocusTarget =
-  | "row-choice-0"
-  | "column-choice-0"
-  | "handover"
-  | "advance"
-  | "restart";
+  "row-choice-0" | "column-choice-0" | "handover" | "advance" | "restart";
 
 export interface HotSeatRound {
   readonly number: number;

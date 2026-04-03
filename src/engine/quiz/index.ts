@@ -9,11 +9,7 @@ import { analyzeMixedEquilibria } from "@/engine/solve/mixed";
 import { pureNashEquilibria } from "@/engine/solve/pure";
 
 export type QuizQuestionKind =
-  | "nash-cell"
-  | "dominant-strategy"
-  | "mixed-probability"
-  | "classify"
-  | "backward-induction";
+  "nash-cell" | "dominant-strategy" | "mixed-probability" | "classify" | "backward-induction";
 
 export interface QuizChoice {
   readonly id: string;
