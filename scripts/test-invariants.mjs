@@ -2,8 +2,8 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 
-const engineFixture = resolve("src/engine/__p0-invariant-violation.ts");
-const decoyFixture = resolve("src/state/__p0-rng-invariant-violation.ts");
+const engineFixture = resolve("src/engine/__invariant-violation.ts");
+const decoyFixture = resolve("src/state/__rng-invariant-violation.ts");
 
 function expectInvariantFailure(fixture, contents, message) {
   mkdirSync(dirname(fixture), { recursive: true });
@@ -34,14 +34,6 @@ try {
 } finally {
   rmSync(engineFixture, { force: true });
   rmSync(decoyFixture, { force: true });
-}
-
-// Keep the engine directory in the intended shape even before P1 adds its files.
-const engineDirectory = dirname(engineFixture);
-try {
-  execFileSync("rmdir", [engineDirectory], { stdio: "ignore" });
-} catch {
-  // P1 may already have added engine files when this check is run in the future.
 }
 
 execFileSync("bash", ["scripts/check-invariants.sh"], { stdio: "inherit" });

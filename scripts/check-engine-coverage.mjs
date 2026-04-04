@@ -23,12 +23,16 @@ const enginePercent =
 const failures = [];
 
 if (enginePercent < 95) {
-  failures.push(`Engine line coverage is ${enginePercent.toFixed(2)}%; P1 requires at least 95%.`);
+  failures.push(
+    `Engine line coverage is ${enginePercent.toFixed(2)}%; the gate requires at least 95%.`,
+  );
 }
 
 for (const [file, report] of solveEntries) {
   if (report.lines.pct < 100) {
-    failures.push(`${file} has ${report.lines.pct}% line coverage; P1 requires 100% for solve/.`);
+    failures.push(
+      `${file} has ${report.lines.pct}% line coverage; the gate requires 100% for solve/.`,
+    );
   }
 }
 

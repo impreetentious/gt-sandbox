@@ -64,11 +64,13 @@ console.log(
 );
 
 if (oversizedRoutes.length > 0) {
-  console.warn(
-    `Bundle-budget warning: ${oversizedRoutes.length} route${oversizedRoutes.length === 1 ? "" : "s"} exceed${oversizedRoutes.length === 1 ? "s" : ""} the route budget. This is not a CI gate.`,
+  console.error(
+    `Bundle-budget failure: ${oversizedRoutes.length} route${oversizedRoutes.length === 1 ? "" : "s"} exceed${oversizedRoutes.length === 1 ? "s" : ""} the route budget.`,
   );
 
   for (const route of oversizedRoutes) {
-    console.warn(`- ${route.route}: ${(route.bytes / 1024).toFixed(1)} KiB gzip`);
+    console.error(`- ${route.route}: ${(route.bytes / 1024).toFixed(1)} KiB gzip`);
   }
+
+  process.exitCode = 1;
 }

@@ -11,15 +11,15 @@ const requiredDirectives = [
   "object-src 'none'",
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
-  // V2-P9 — the offline worker and the manifest are same-origin and must stay
-  // that way; pinning both directives here stops a future edit from widening
-  // them without the check noticing.
+  // The offline worker and the manifest are same-origin and must stay that way;
+  // pinning both directives here stops a future edit from widening them without
+  // the check noticing.
   "manifest-src 'self'",
   "worker-src 'self'",
 ];
 
-// V2-P13 — `/embed/*` is chromeless and exists to be framed by a third-party
-// page, so it is the one path that may relax `frame-ancestors`. Every other
+// `/embed/*` is chromeless and exists to be framed by a third-party page, so it
+// is the one path that may relax `frame-ancestors`. Every other
 // route stays unframeable. Blocks are keyed by role rather than by the
 // host-specific `source` string, because `serve` matches globs and Vercel
 // matches regexes; the policies must still be identical between the files.

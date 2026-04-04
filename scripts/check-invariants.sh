@@ -80,8 +80,8 @@ report_violation \
   'Next server actions are forbidden.' \
   has_matches "['\"]use server['\"]" src
 
-# V2-P9: the service worker is the one place in the product that legitimately
-# calls fetch, so the I4 boundary is checked there directly — it may never name
+# The service worker is the one place in the product that legitimately calls
+# fetch, so its network boundary is checked directly — it may never name
 # an off-origin URL, and it must keep its explicit same-origin guard.
 if [[ -e public/sw.js ]]; then
   report_violation \
