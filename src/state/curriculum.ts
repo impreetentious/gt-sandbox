@@ -1,5 +1,5 @@
 /**
- * V2-P10 — the guided path through the sandbox, and the only progression state
+ * The guided path through the sandbox, and the only progression state
  * the product keeps.
  *
  * The home arc has always been ungated on purpose (§5.1: respect adult users),
@@ -17,7 +17,7 @@
 /** The one and only storage key this feature uses. */
 export const CURRICULUM_KEY = "curriculum";
 
-export interface CurriculumStep {
+interface CurriculumStep {
   readonly id: string;
   readonly title: string;
   /** The single idea this stop exists to deliver. */

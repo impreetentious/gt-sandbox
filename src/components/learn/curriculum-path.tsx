@@ -17,7 +17,7 @@ import {
 } from "@/state/curriculum";
 
 /**
- * V2-P10 — the guided path.
+ * The guided curriculum path.
  *
  * Two things keep this from being condescending. The gate is opt-out from a
  * single checkbox at the top, stated plainly rather than buried; and turning it

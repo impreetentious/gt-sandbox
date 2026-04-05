@@ -44,7 +44,7 @@ export default function MethodsPage() {
         <p className="lede">
           The interface is allowed to be inviting because the claims underneath it are deliberately
           hard to fake: exact arithmetic, disjoint checks, frozen evidence, and an honest boundary
-          around what v1 can prove.
+          around what the app can prove.
         </p>
       </header>
 

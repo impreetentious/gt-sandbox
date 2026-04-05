@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
- * V2-P8 — every colour in the product resolves through these tokens, which is
+ * Every colour in the product resolves through these tokens, which is
  * what made a dark palette a palette swap rather than a rewrite. Two rules keep
  * it that way: no component may hardcode a colour, and any value a component
  * has to compute (a heat scale, a series colour) is emitted as a *fraction* or
@@ -170,7 +170,7 @@ a:hover {
   gap: 0.875rem 1.25rem;
 }
 
-/* V2-P8 — three-way theme control, drawn as a segmented set of real radios. */
+/* Three-way theme control, drawn as a segmented set of real radios. */
 .theme-toggle {
   display: flex;
   gap: 0;
@@ -625,7 +625,7 @@ main {
 }
 
 /*
- * V2-P9 — shown only when the browser has already judged the app installable,
+ * Shown only when the browser has already judged the app installable,
  * so it is a plain control in the footer rather than an interruption.
  */
 .install-app {
@@ -1358,7 +1358,7 @@ main {
   padding-left: 1.15rem;
 }
 
-/* V2-P7 — mixture-only dominance, set apart inside the dominance panel. */
+/* Mixture-only dominance, set apart inside the dominance panel. */
 .analysis-subheading {
   margin: 1.4rem 0 0;
   padding-top: 0.85rem;
@@ -1717,7 +1717,7 @@ main {
   /*
    * The component supplies `--heat` as a fraction of the payoff range; the
    * endpoints are palette tokens, so the scale re-anchors in dark mode and
-   * `--ink` clears 4.5:1 against both ends of it in either theme (V2-P8).
+   * `--ink` clears 4.5:1 against both ends of it in either theme.
    */
   background: color-mix(in srgb, var(--heat-high) calc(var(--heat, 0) * 100%), var(--heat-low));
   color: var(--ink);
@@ -2301,7 +2301,7 @@ main {
   font-weight: 700;
 }
 
-/* V2-P11 topology atlas, V2-P12 seeded quiz, and V2-P13 chromeless embeds. */
+/* Topology atlas, seeded quiz, and chromeless embeds. */
 .topology-atlas,
 .quiz-experience {
   display: grid;
@@ -3194,7 +3194,7 @@ body:has(.embed-game) main {
   }
 }
 
-/* --- V2-P1: extensive-form surface ------------------------------------- */
+/* --- Extensive-form surface --------------------------------------------- */
 
 .extensive-session {
   display: block;
@@ -3489,7 +3489,7 @@ body:has(.embed-game) main {
   }
 }
 
-/* --- V2-P3: n-player public goods -------------------------------------- */
+/* --- N-player public goods ----------------------------------------------- */
 
 .public-goods {
   display: block;
@@ -3723,7 +3723,7 @@ body:has(.embed-game) main {
   font-weight: 700;
 }
 
-/* --- V2-P4: finite-population dynamics --------------------------------- */
+/* --- Finite-population dynamics ------------------------------------------ */
 
 .finite__intro {
   margin-bottom: 1.5rem;
@@ -3953,7 +3953,7 @@ body:has(.embed-game) main {
   font-size: 0.78rem;
 }
 
-/* --- V2-P5: spatial evolution lattice ----------------------------------- */
+/* --- Spatial evolution lattice ------------------------------------------- */
 
 .spatial {
   display: block;
@@ -4199,7 +4199,7 @@ body:has(.embed-game) main {
   }
 }
 
-/* --- V2-P6: zero-determinant demo --------------------------------------- */
+/* --- Zero-determinant demo ----------------------------------------------- */
 
 .zd-demo {
   margin-top: 1.25rem;
@@ -4325,7 +4325,7 @@ body:has(.embed-game) main {
   font-size: 0.86rem;
 }
 
-/* --- V2-P10: learn curriculum -------------------------------------------- */
+/* --- Learn curriculum ---------------------------------------------------- */
 
 .learn__hero {
   max-width: 58rem;

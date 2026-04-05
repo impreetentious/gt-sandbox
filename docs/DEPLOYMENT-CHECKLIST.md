@@ -1,43 +1,37 @@
-# Deployment checklist
+# Deployment guide
 
-The repository is a static Next.js export. Deployment is intentionally an owner action; this file keeps the release steps short and reproducible.
+Game Theory Sandbox builds to a static `out/` directory. It requires Node 24.10.0 and pnpm 10.32.1, as pinned in `.nvmrc`, `package.json`, and CI.
 
-## Before connecting Vercel
+## Verify the production candidate
 
-1. Review the local commit series.
-2. Run `CI=true pnpm verify:full` on Node 24 with pnpm 10 in an environment that permits the local exported-site server.
-3. Confirm `out/` serves through `pnpm serve:export` and that direct requests for every exported route below behave correctly. The current static export contains 37 pages:
-   `/`, `/404/`, `/_not-found/`, `/auctions/common-value/`, `/auctions/first-price/`,
-   `/auctions/second-price/`, `/build/`, `/classroom/`, `/embed/bos/`,
-   `/embed/chicken/`, `/embed/ipd/`, `/embed/pd/`, `/embed/pennies/`, `/embed/stag/`,
-   `/evolve/`, `/evolve/spatial/`, `/extensive/centipede/`,
-   `/extensive/entry-deterrence/`, `/extensive/ultimatum/`,
-   `/hot-seat/battle-of-the-sexes/`, `/hot-seat/chicken/`,
-   `/hot-seat/matching-pennies/`, `/hot-seat/pd/`, `/hot-seat/stag-hunt/`, `/learn/`,
-   `/methods/`, `/nplayer/public-goods/`, `/offline/`, `/play/battle-of-the-sexes/`,
-   `/play/chicken/`, `/play/iterated-pd/`, `/play/matching-pennies/`, `/play/pd/`,
-   `/play/stag-hunt/`, `/quiz/`, `/repeat/`, `/topology/`.
-4. Complete the manual matrix in [ACCESSIBILITY-AUDIT.md](ACCESSIBILITY-AUDIT.md).
-5. Capture the final README screenshots/GIF from the reviewed production candidate and run Lighthouse; record scores of at least 95 in every category.
-6. Choose the release version and update every active version surface only in the owner-authorized commit.
+```bash
+corepack enable
+pnpm install --frozen-lockfile
+pnpm audit --audit-level high
+CI=true pnpm verify:full
+```
 
-## Vercel project
+The full suite builds the export, enforces the per-route JavaScript budget, discovers every exported route, and checks direct navigation, CSP headers, same-origin requests, keyboard behavior, and axe results. Complete the recommended assistive-technology checks in [ACCESSIBILITY-AUDIT.md](ACCESSIBILITY-AUDIT.md) separately.
+
+## Vercel
 
 - Import `ItsMonarch04/gt-sandbox` with the Next.js framework preset.
-- Build command: `pnpm build`.
-- Output is detected from the static export (`out/`).
-- Node major: 24.
-- Keep Vercel Analytics, Speed Insights, functions, and other runtime additions disabled.
-- `VERCEL_PROJECT_PRODUCTION_URL` is used automatically for metadata when available. Set `NEXT_PUBLIC_SITE_URL=https://your-final-domain.example` if a custom canonical origin should override it.
-- `vercel.json` supplies the CSP, no-referrer policy, and content-type protection. Do not replace those headers with a permissive dashboard rule.
+- Use `pnpm build` as the build command and `out/` as the output directory.
+- Select Node 24 and keep runtime functions, Analytics, and Speed Insights disabled; the application is intentionally static and telemetry-free.
+- Keep the response headers from `vercel.json`. Do not replace them with a permissive dashboard rule.
+- Vercel supplies `VERCEL_PROJECT_PRODUCTION_URL` for canonical metadata. Set `NEXT_PUBLIC_SITE_URL=https://your-domain.example` when a custom production origin should override it.
 
-## Production smoke
+## Other static hosts
 
-After the launch deploy:
+Serve the contents of `out/` at the origin root and reproduce the headers documented in [STATIC-HOST-HEADERS.md](STATIC-HOST-HEADERS.md). A host without path-specific headers can serve the application, but it cannot safely support the `/embed/*` framing exception.
 
-1. Visit every route listed in the preflight route list, plus one invalid play route such as `/play/unknown/`.
-2. Confirm the footer version matches the release tag and route titles/OG image resolve at the production origin.
-3. In browser developer tools, verify the CSP is present, there are no CSP errors, and a full browse makes no off-origin requests.
-4. Complete one PD round, one Evolution preset, one Build edit, one hot-seat handover, one auction bid, and one classroom JSON→CSV ingest.
-5. Open a copied Build URL in a clean private window and confirm its labels, payoffs, structure, and exact equilibria reproduce.
-6. Serve the same `out/` directory from a second root-mounted static server as the portability spot-check.
+## Production smoke test
+
+After deployment:
+
+1. Open the home page, one dynamic game path, one embed path, and an invalid game path directly rather than through client navigation.
+2. Confirm the footer version, route titles, manifest, icons, and social image resolve from the production origin.
+3. Verify that the CSP is present, the console has no CSP errors, and a representative browse makes no off-origin requests.
+4. Complete one game round, one Evolution preset, one Build edit, one hot-seat handover, one auction bid, and one classroom JSON-to-CSV ingest.
+5. Open a copied Build URL in a clean private window and confirm that labels, payoffs, structure, and exact equilibria reproduce.
+6. Test offline fallback after loading the application once, and confirm a new release replaces the old service-worker cache.

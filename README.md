@@ -2,7 +2,7 @@
 
 Game theory is usually taught statically: a payoff matrix in a PDF, an equilibrium circled, a definition memorized. Intuition forms in a loop instead—**act, observe, and only then reveal the theory underneath the outcome.**
 
-Game Theory Sandbox is a static, private interactive tool for strategy-curious professionals and students. It combines canonical games, seeded repeated-play simulations, evolutionary dynamics, and a bounded game builder with an exact analytical engine.
+Game Theory Sandbox is a static, privacy-preserving interactive tool for strategy-curious professionals and students. It combines canonical games, seeded repeated-play simulations, evolutionary dynamics, and a bounded game builder with an exact analytical engine.
 
 ## What is here
 
@@ -44,7 +44,7 @@ The app is installable and works offline: a version-keyed service worker precach
 
 ## Run locally
 
-Requirements: Node 24 and pnpm 10.
+Requirements: Node 24.10.0 and pnpm 10.32.1 (both are pinned by the repository).
 
 ```bash
 corepack enable
@@ -76,9 +76,7 @@ Runtime dependencies remain limited to `next`, `react`, and `react-dom`. The exa
 
 ## Deployment
 
-`pnpm build` emits a plain `out/` directory. Vercel Git integration is the intended production path, but the output also serves unchanged from a root-mounted static host. `vercel.json` and `serve.json` carry the response headers; `pnpm check:csp` fails if the two ever disagree.
-
-The GitHub remote is authoritative and carries the only pipeline; `.github/workflows/ci.yml` runs every gate. The GitLab remote is a backup mirror kept in sync, deliberately without a `.gitlab-ci.yml` — Vercel deploys from GitHub, so there is no second publication target to gate, and a mirrored pipeline would only create a second place for gate drift.
+`pnpm build` emits a plain `out/` directory. Vercel Git integration is the intended production path, but the output also serves unchanged from a root-mounted static host. `vercel.json` and `serve.json` carry the response headers; `pnpm check:csp` fails if the two ever disagree. The GitHub Actions workflow runs the frozen install, full dependency audit, and complete verification suite.
 
 ## License
 
@@ -86,4 +84,4 @@ MIT © Sidakpreet Singh — see [LICENSE](LICENSE).
 
 ---
 
-**Version:** v0.21.2
+**Version:** v0.21.3

@@ -1,37 +1,29 @@
-# Accessibility audit
+# Accessibility testing
 
-This is the v1 audit ledger. Automated checks are part of `pnpm verify:full`; assistive-technology checks remain explicit human release work and must not be inferred from axe. The current component/unit suite and exported-site Playwright suite pass in an unrestricted local browser run.
+Accessibility regressions are release gates, but automated checks are not a substitute for assistive-technology testing. `pnpm verify:full` builds the static export and exercises it in Chromium.
 
-## Automated acceptance
+## Automated coverage
 
-| Check          | Coverage                                                                                                                                                  | Status                                                                 |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| axe            | Every exported route; Play, Evolve, Build, and additional-feature interaction states                                                                      | Automated in Playwright (37/37 on v0.18.2 tree); owner AT pass pending |
-| Keyboard       | Primary navigation, full Play sessions, Analysis disclosure/stepper, Evolve tabs/scrubber/table, Build controls, hot-seat / repeat / auctions / classroom | Automated scenarios pass; owner spot-check pending                     |
-| Reduced motion | Outcome highlighting and Evolution scrubber path                                                                                                          | Automated scenario passes                                              |
-| Reflow         | Evolution and bounded 4×4 Build at 320px; wide data remains inside labelled scroll regions                                                                | Automated scenario passes                                              |
-| Forced colors  | Selected game outcome and core control outlines                                                                                                           | Automated scenario passes                                              |
-| Semantics      | Real tables and headers for payoff matrices/data; live regions for outcomes, validation, and settled generation changes                                   | Component suite and browser scan pass                                  |
+| Area            | Coverage                                                                                                                         |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| axe             | Every exported route discovered from `out/`, key interaction states, and both light and dark palettes                            |
+| Keyboard        | Primary navigation, complete game sessions, analysis controls, evolution, Build, hot-seat, Repeat, auctions, and classroom flows |
+| Reduced motion  | Outcome highlighting and the Evolution scrubber                                                                                  |
+| Reflow and zoom | Evolution and the bounded 4×4 editor at narrow width and 200% zoom                                                               |
+| Forced colors   | Selected outcomes, core controls, focus indicators, and key launch surfaces                                                      |
+| Semantics       | Payoff/data tables, headings, form labels, validation, live outcomes, and generation announcements                               |
 
-## Manual release matrix
+The browser suite also rejects off-origin requests, CSP errors, inaccessible deep links, and route-specific framing drift. Component tests cover state restoration and interaction details that are faster and more precise below the browser layer.
 
-These checks require the owner’s platform and physical review. They are not deployment code blockers, but v1.0.0 should not claim manual sign-off until they are completed.
+## Recommended manual checks
 
-| Environment                         | Script                                                                               | Status                                                   |
-| ----------------------------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------- |
-| VoiceOver + Safari                  | Complete a PD session; open Analysis; step dominance; replay                         | Pending owner release pass                               |
-| VoiceOver + Safari                  | Open Evolution; choose Noise; operate scrubber; open table                           | Pending owner release pass                               |
-| VoiceOver + Safari                  | Edit both PD temptation payoffs; hear the structure change; copy/fallback share link | Pending owner release pass                               |
-| Second screen reader when available | Repeat one Play flow and the Build validation failure                                | Pending owner release pass                               |
-| Keyboard only                       | Run all three surface scripts without pointer input                                  | Browser-automated; manual spot-check pending             |
-| Browser zoom 200%                   | Inspect Play, Evolve, Build 4×4, Methods, and 404                                    | Browser-automated Build path; manual visual pass pending |
-| Forced-colors mode                  | Confirm focus, selected tabs, matrix outcomes, and warnings remain distinguishable   | Browser-automated spot check; manual visual pass pending |
+Run these checks on the production candidate because browser automation cannot validate screen-reader speech, platform focus behavior, or visual clarity:
 
-## Manual scripts
+1. With VoiceOver and Safari, complete a Prisoner's Dilemma session, open Analysis, step through dominance, toggle Pareto highlighting, and replay.
+2. With VoiceOver and Safari, select the Noise evolution preset, operate the generation scrubber, isolate a strategy band, and inspect the table fallback.
+3. Edit both Prisoner's Dilemma temptation payoffs, confirm the announced structure change, correct an invalid payoff without losing focus, and exercise both share-link copy paths.
+4. Complete the core flows using only the keyboard, including hot-seat handover, Repeat, one auction, and classroom JSON-to-CSV ingest.
+5. At 200% zoom and at 320 CSS pixels, inspect Play, Evolve, the 4×4 editor, Methods, and the not-found page for clipping or lost controls.
+6. In forced-colors mode, confirm that focus, selected tabs, matrix outcomes, warnings, and chart selections remain distinguishable.
 
-1. **Play:** From `/play/pd/`, choose Copycat. Complete ten rounds with keys `1` and `2`, confirm each outcome is announced once, open Analysis, step through dominance, toggle Pareto dimming, and activate Play again.
-2. **Evolve:** From `/evolve/`, enter Evolution, select Noise, change action noise, move the generation scrubber with arrow keys and End, isolate a strategy band, and inspect the complete table.
-3. **Build:** From `/play/pd/`, edit both temptation payoffs from `5` to `2`, confirm the dilemma-to-assurance announcement and two NE badges, enter an invalid seven-decimal payoff, correct it without lost focus, then exercise copy and manual-copy paths.
-4. **Hot-seat / Repeat / Auctions / Classroom:** Spot-check `/hot-seat/pd/` (commit → handover → reveal), `/repeat/` (region + table), one auction format, and `/classroom/` JSON ingest → CSV. Keyboard-only and VoiceOver optional but recommended before v1.0.0.
-
-Record browser/OS/screen-reader versions and any findings below before tagging v1.0.0.
+Record the browser, operating system, screen reader, and any findings with the release evidence used by the project maintainers.
