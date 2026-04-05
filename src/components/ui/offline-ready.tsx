@@ -4,17 +4,16 @@ import { useEffect, useState } from "react";
 
 /**
  * The event Chromium fires when the app meets its install criteria. It is not
- * in the DOM lib because it is not standardized, so the two members actually
- * used are declared here rather than reached for through a cast.
+ * in the DOM lib because it is not standardized, so the member used here is
+ * declared rather than reached for through a cast.
  */
 interface InstallPromptEvent extends Event {
   prompt(): Promise<void>;
-  readonly userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
 /**
- * V2-P9 — registers the offline cache and, where the browser offers it, an
- * install affordance.
+ * Registers the offline cache and, where the browser offers it, an install
+ * affordance.
  *
  * Both halves are deliberately unobtrusive. The worker registers after load so
  * it never competes with first paint, and the install control appears only when

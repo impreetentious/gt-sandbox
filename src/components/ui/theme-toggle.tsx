@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 
-export const THEME_KEY = "theme";
+const THEME_KEY = "theme";
 
-export type ThemePreference = "system" | "light" | "dark";
+type ThemePreference = "system" | "light" | "dark";
 
 const options: readonly { value: ThemePreference; label: string }[] = [
   { value: "system", label: "System" },
@@ -12,7 +12,7 @@ const options: readonly { value: ThemePreference; label: string }[] = [
   { value: "dark", label: "Dark" },
 ];
 
-export function isThemePreference(value: unknown): value is ThemePreference {
+function isThemePreference(value: unknown): value is ThemePreference {
   return value === "system" || value === "light" || value === "dark";
 }
 
@@ -24,7 +24,7 @@ export function isThemePreference(value: unknown): value is ThemePreference {
  * is the whole contract between this file and the stylesheet, and it is also
  * what the inline bootstrap in `layout.tsx` reproduces.
  */
-export function applyTheme(preference: ThemePreference): void {
+function applyTheme(preference: ThemePreference): void {
   const root = document.documentElement;
 
   if (preference === "system") {

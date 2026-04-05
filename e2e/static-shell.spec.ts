@@ -1,38 +1,22 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { readdirSync } from "node:fs";
+import { dirname, join, relative, resolve, sep } from "node:path";
 
-const routes = [
-  "/",
-  "/learn/",
-  "/play/pd/",
-  "/play/stag-hunt/",
-  "/play/battle-of-the-sexes/",
-  "/play/chicken/",
-  "/play/matching-pennies/",
-  "/play/iterated-pd/",
-  "/hot-seat/pd/",
-  "/hot-seat/stag-hunt/",
-  "/hot-seat/battle-of-the-sexes/",
-  "/hot-seat/chicken/",
-  "/hot-seat/matching-pennies/",
-  "/repeat/",
-  "/auctions/first-price/",
-  "/auctions/second-price/",
-  "/auctions/common-value/",
-  "/classroom/",
-  "/evolve/",
-  "/build/",
-  "/methods/",
-  "/extensive/entry-deterrence/",
-  "/extensive/ultimatum/",
-  "/extensive/centipede/",
-  "/nplayer/public-goods/",
-  "/evolve/spatial/",
-  "/offline/",
-  "/topology/",
-  "/quiz/",
-  "/embed/pd/",
-];
+const exportDirectory = resolve("out");
+
+function indexFilesUnder(directory: string): string[] {
+  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) return indexFilesUnder(path);
+    return entry.name === "index.html" ? [path] : [];
+  });
+}
+
+const routes = indexFilesUnder(exportDirectory)
+  .map((file) => relative(exportDirectory, dirname(file)).split(sep).join("/"))
+  .map((route) => (route ? `/${route}/` : "/"))
+  .sort();
 
 test("every static route is same-origin, CSP-protected, and accessible", async ({
   page,
@@ -192,7 +176,7 @@ test("the PD analysis drawer is keyboard-operable and accessible", async ({ page
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
-test("each P5 one-shot game completes by keyboard and remains accessible", async ({ page }) => {
+test("each one-shot game completes by keyboard and remains accessible", async ({ page }) => {
   const games = [
     { route: "/play/stag-hunt/", button: "Stag (key 1)", rounds: 10 },
     {
@@ -828,6 +812,17 @@ test("the service worker registers and serves a later load offline", async ({ pa
   await expect(page.getByRole("heading", { name: "Not cached yet." })).toBeVisible();
 
   await context.setOffline(false);
+
+  // Activating a new app cache must not delete Cache Storage entries owned by
+  // another application on the same origin.
+  await page.evaluate(async () => {
+    await caches.open("unrelated-e2e-cache");
+    await navigator.serviceWorker.register("/sw.js?v=e2e-cache-rotation");
+  });
+  await page.waitForFunction(() =>
+    navigator.serviceWorker.controller?.scriptURL.includes("e2e-cache-rotation"),
+  );
+  expect(await page.evaluate(() => caches.has("unrelated-e2e-cache"))).toBe(true);
 });
 
 test("the manifest is same-origin, installable, and names only local icons", async ({

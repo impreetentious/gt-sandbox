@@ -1,12 +1,12 @@
 /*
- * V2-P9 — the offline cache.
+ * Offline cache for the static application.
  *
  * Scope is deliberately tiny. This worker does not push, does not sync, does
  * not talk to anything, and never sees a request the browser was not already
  * making. It answers same-origin GETs from a cache and refreshes that cache in
  * the background; every other request falls through untouched. The origin guard
- * below is the I4 boundary written into the one place in the product that could
- * plausibly violate it.
+ * below enforces the boundary in the one place in the product that could
+ * plausibly make a runtime request.
  *
  * Cache naming comes from the `?v=` on the registration URL, which the app fills
  * in from `package.json`. Changing the version changes the script URL, so the
@@ -16,7 +16,8 @@
  */
 
 const VERSION = new URL(self.location.href).searchParams.get("v") || "dev";
-const CACHE = `gts-${VERSION}`;
+const CACHE_PREFIX = "gts-";
+const CACHE = `${CACHE_PREFIX}${VERSION}`;
 
 /*
  * Only the entry point and the offline notice are precached. Everything else
@@ -40,7 +41,11 @@ self.addEventListener("activate", (event) => {
     caches
       .keys()
       .then((keys) =>
-        Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key))),
+        Promise.all(
+          keys
+            .filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE)
+            .map((key) => caches.delete(key)),
+        ),
       )
       .then(() => self.clients.claim()),
   );
@@ -53,13 +58,13 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // I4, enforced rather than assumed: anything not on this origin is none of
+  // Enforced rather than assumed: anything not on this origin is none of
   // this worker's business and is left to the network exactly as it was.
   if (new URL(request.url).origin !== self.location.origin) {
     return;
   }
 
-  event.respondWith(staleWhileRevalidate(request));
+  event.respondWith(staleWhileRevalidate(request, event));
 });
 
 /**
@@ -70,7 +75,7 @@ self.addEventListener("fetch", (event) => {
  * Stale-while-revalidate gets the instant paint and still converges on the
  * current deployment by the next visit.
  */
-async function staleWhileRevalidate(request) {
+async function staleWhileRevalidate(request, event) {
   const cache = await caches.open(CACHE);
   const cached = await cache.match(request);
   const network = self.navigator.onLine
@@ -86,6 +91,7 @@ async function staleWhileRevalidate(request) {
     : Promise.resolve(null);
 
   if (cached) {
+    event.waitUntil(network.then(() => undefined));
     return cached;
   }
 

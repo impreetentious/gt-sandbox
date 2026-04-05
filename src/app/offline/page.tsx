@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 /**
- * V2-P9 — shown when a navigation misses the offline cache and the network is
+ * Shown when a navigation misses the offline cache and the network is
  * gone.
  *
  * The obvious alternative is to serve the cached home document for any

@@ -7,14 +7,14 @@ import packageMetadata from "../../package.json";
 import "./globals.css";
 
 /**
- * V2-P8 — the stored theme has to reach the document before first paint, or a
+ * The stored theme has to reach the document before first paint, or a
  * dark-mode reader gets a full-page white flash on every navigation. React can
  * only apply it after hydration, so this runs synchronously in the head.
  *
  * It is inline out of necessity, not convenience: an external file would be a
  * second blocking request for eleven statements. The deployment CSP already
  * carries `script-src 'self' 'unsafe-inline'` for Next.js's own bootstrap
- * (documented under I4), so this adds no new allowance. It touches nothing but
+ * (documented in the static-host policy), so this adds no new allowance. It touches nothing but
  * one attribute on `<html>`, reads one localStorage key, and swallows its own
  * errors so a blocked storage API degrades to the system preference.
  */
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
 
 /**
  * The browser chrome around an installed window follows the palette too, so the
- * theme colour is declared per scheme rather than picked once (V2-P8 + V2-P9).
+ * theme colour is declared per scheme rather than picked once.
  */
 export const viewport: Viewport = {
   themeColor: [
