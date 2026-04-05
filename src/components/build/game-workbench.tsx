@@ -42,7 +42,7 @@ interface GameWorkbenchProps {
   readonly defaultGame?: NormalFormGame;
   readonly extras?: GameShareExtras;
   readonly variant?: "page" | "embedded";
-  // V2-P13 — set only where a chromeless `/embed/<slug>/` route exists, which
+  // Set only where a chromeless `/embed/<slug>/` route exists, which
   // is the six catalog games. A custom Build draft has no embed route, so the
   // snippet control stays hidden rather than emitting a dead iframe.
   readonly embedSlug?: GameSlug;

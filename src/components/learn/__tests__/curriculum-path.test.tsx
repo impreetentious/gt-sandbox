@@ -7,7 +7,7 @@ function stored() {
   return parseProgress(window.localStorage.getItem("curriculum"));
 }
 
-describe("V2-P10 curriculum path surface", () => {
+describe("curriculum path surface", () => {
   beforeEach(() => {
     window.localStorage.clear();
   });
@@ -51,7 +51,9 @@ describe("V2-P10 curriculum path surface", () => {
   it("counts following a stop's link as doing it", () => {
     render(<CurriculumPath />);
 
-    fireEvent.click(screen.getByRole("link", { name: curriculum[0].title }));
+    const firstStop = screen.getByRole("link", { name: curriculum[0].title });
+    firstStop.addEventListener("click", (event) => event.preventDefault(), { once: true });
+    fireEvent.click(firstStop);
 
     expect(stored().completed).toEqual([curriculum[0].id]);
   });

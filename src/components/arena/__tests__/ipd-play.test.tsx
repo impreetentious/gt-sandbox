@@ -8,7 +8,7 @@ function commitOutcome(): void {
   });
 }
 
-describe("P6 interactive IPD arena", () => {
+describe("interactive IPD arena", () => {
   afterEach(() => {
     cleanup();
     vi.useRealTimers();

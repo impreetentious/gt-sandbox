@@ -49,7 +49,7 @@ describe("F4 analysis drawer degenerate disclosure", () => {
   });
 });
 
-describe("V2-P7 mixture-only dominance in the drawer", () => {
+describe("mixture-only dominance in the drawer", () => {
   afterEach(() => {
     cleanup();
   });

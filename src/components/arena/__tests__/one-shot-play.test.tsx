@@ -8,7 +8,7 @@ function commitOutcome(): void {
   });
 }
 
-describe("P5 one-shot play arenas", () => {
+describe("one-shot play arenas", () => {
   afterEach(() => {
     cleanup();
     vi.useRealTimers();

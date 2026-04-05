@@ -51,7 +51,7 @@ function latestInsight(slug: OneShotPlayableSlug, state: OneShotSessionState) {
   return oneShotGameContent[slug].insights.find((insight) => insight.when(state.rounds));
 }
 
-/** The common P5 arena for the four remaining repeated one-shot sessions. */
+/** The shared arena for the four repeated one-shot sessions. */
 export function OneShotPlayExperience({ slug }: { readonly slug: OneShotPlayableSlug }) {
   const content = oneShotGameContent[slug];
   const catalogGame = catalogBySlug[slug];

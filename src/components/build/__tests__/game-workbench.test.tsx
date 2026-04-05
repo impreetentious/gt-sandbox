@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { GameWorkbench } from "@/components/build/game-workbench";
 import { pd } from "@/engine/catalog/pd";
 
-describe("P9 custom-game workbench", () => {
+describe("custom-game workbench", () => {
   afterEach(() => {
     cleanup();
     window.history.replaceState(null, "", "/build/");

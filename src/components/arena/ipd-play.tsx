@@ -95,7 +95,7 @@ function StrategyDiagram({ strategy }: { readonly strategy: IpdStrategy }) {
   );
 }
 
-/** P6's interactive finite IPD match, backed by the same engine as tournaments. */
+/** Interactive finite IPD match, backed by the same engine as tournaments. */
 export function IpdPlayExperience() {
   const [state, dispatch] = useReducer(reduceIpdSession, undefined, () => createIpdSession());
   const [paretoMode, setParetoMode] = useState(false);

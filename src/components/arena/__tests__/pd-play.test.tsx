@@ -8,7 +8,7 @@ function commitOutcome(): void {
   });
 }
 
-describe("Prisoner's Dilemma arena and P4 reveal", () => {
+describe("Prisoner's Dilemma arena and analytical reveal", () => {
   afterEach(() => {
     cleanup();
     vi.useRealTimers();
