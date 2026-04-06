@@ -12,7 +12,7 @@ import { add, compare, divide, rational, subtract, ZERO, type Rational } from "@
  */
 const NOISE = [-1, 0, 1] as const;
 
-export interface SignalRow {
+interface SignalRow {
   readonly signal: number;
   /** E[W | your signal = s] — the face-value (naive) estimate. */
   readonly naiveEstimate: Rational;
@@ -22,7 +22,7 @@ export interface SignalRow {
   readonly winProbability: Rational;
 }
 
-export interface CommonValueAnalysis {
+interface CommonValueAnalysis {
   readonly maxValue: number;
   readonly rows: readonly SignalRow[];
   /** Expected profit from naively bidding your own signal (first-price). */

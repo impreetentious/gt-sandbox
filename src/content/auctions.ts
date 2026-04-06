@@ -1,6 +1,6 @@
 import type { AuctionFormat } from "@/engine/auction/auction";
 
-export interface AuctionFormatContent {
+interface AuctionFormatContent {
   readonly format: AuctionFormat;
   readonly slug: string;
   readonly title: string;

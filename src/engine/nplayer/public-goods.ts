@@ -69,7 +69,7 @@ export function payoffFor(
   return add(kept, share);
 }
 
-export interface ProfileOutcome {
+interface ProfileOutcome {
   /** Contributions in player order, echoed back. */
   readonly contributions: readonly number[];
   /** Σ c_j. */
@@ -109,7 +109,7 @@ export function uniformProfile(config: PublicGoodsConfig, amount: number): numbe
  * The exact private return on one contributed token: `mpcr − 1`. Negative
  * whenever `mpcr < 1`, which is what makes zero strictly dominant.
  */
-export function privateMarginalReturn(config: PublicGoodsConfig): Rational {
+function privateMarginalReturn(config: PublicGoodsConfig): Rational {
   return subtract(config.mpcr, rational(1n));
 }
 
@@ -117,11 +117,11 @@ export function privateMarginalReturn(config: PublicGoodsConfig): Rational {
  * The exact social return on one contributed token: `mpcr · playerCount − 1`.
  * Positive whenever the pot multiplies faster than it is split.
  */
-export function socialMarginalReturn(config: PublicGoodsConfig): Rational {
+function socialMarginalReturn(config: PublicGoodsConfig): Rational {
   return subtract(multiply(config.mpcr, rational(BigInt(config.playerCount))), rational(1n));
 }
 
-export interface DilemmaVerdict {
+interface DilemmaVerdict {
   /** True when `mpcr < 1` — zero is strictly dominant for every player. */
   readonly freeRidingIsDominant: boolean;
   /** True when `mpcr · playerCount > 1` — full contribution maximises welfare. */
@@ -146,7 +146,7 @@ export function classifyDilemma(config: PublicGoodsConfig): DilemmaVerdict {
   };
 }
 
-export interface NashVerdict {
+interface NashVerdict {
   /** The unique equilibrium contribution when one exists analytically. */
   readonly equilibriumContribution: number | null;
   readonly outcome: ProfileOutcome | null;
@@ -193,7 +193,7 @@ export function welfareOptimum(config: PublicGoodsConfig): ProfileOutcome {
   return evaluateProfile(config, uniformProfile(config, amount));
 }
 
-export interface DeviationRow {
+interface DeviationRow {
   readonly contribution: number;
   readonly ownPayoff: Rational;
   /** Payoff to each of the other players at this contribution. */

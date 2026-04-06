@@ -3,13 +3,13 @@ import { add, compare, divide, rational, subtract, ZERO, type Rational } from "@
 /**
  * Exact two-bidder auction engine. Discretizing valuations, signals, and bids
  * turns a Bayesian auction into a finite object over which every claim can be
- * computed exactly in rationals — no floating point, no backend (I1–I4). Values
+ * computed exactly in rationals, with no floating point or backend. Values
  * and bids are non-negative integers on a shared grid `0..maxValue`.
  */
 export type PrivateValueFormat = "first-price" | "second-price";
 export type AuctionFormat = PrivateValueFormat | "common-value";
 
-export interface AuctionResolution {
+interface AuctionResolution {
   readonly youWin: boolean;
   readonly tie: boolean;
   /** The price the winner pays. Zero when you do not win. */
@@ -18,7 +18,7 @@ export interface AuctionResolution {
   readonly rivalPayoff: Rational;
 }
 
-export interface PrivateValueRoundInput {
+interface PrivateValueRoundInput {
   readonly format: PrivateValueFormat;
   readonly yourBid: number;
   readonly rivalBid: number;
@@ -73,7 +73,7 @@ export function resolvePrivateValueRound(input: PrivateValueRoundInput): Auction
 
 export type AuctionPersonaId = "truthful" | "shader" | "overbidder";
 
-export interface AuctionPersona {
+interface AuctionPersona {
   readonly id: AuctionPersonaId;
   readonly name: string;
   readonly description: string;
@@ -172,14 +172,4 @@ export function bestResponseBid(params: {
   }
 
   return { bid: bestBid, payoff: bestPayoff ?? ZERO };
-}
-
-export function averageRational(values: readonly Rational[]): Rational {
-  if (values.length === 0) {
-    return ZERO;
-  }
-  return divide(
-    values.reduce((sum, value) => add(sum, value), ZERO),
-    rational(BigInt(values.length)),
-  );
 }

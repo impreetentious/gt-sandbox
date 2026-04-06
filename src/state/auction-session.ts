@@ -11,15 +11,15 @@ import { buildSessionExport, type SessionExport } from "@/state/session-export";
 /**
  * A seeded, deterministic auction session. Each round draws private valuations
  * (or a common value plus noisy signals) from independently addressed streams,
- * so a session is exactly reproducible from its seed (I3). The player chooses a
+ * so a session is exactly reproducible from its seed. The player chooses a
  * bid; the rival bids via a fixed persona rule.
  */
-export const AUCTION_MAX_VALUE = 10;
+const AUCTION_MAX_VALUE = 10;
 
-export type AuctionSessionStatus = "bidding" | "revealed" | "complete";
-export type AuctionFocusTarget = "bid" | "continue" | "restart";
+type AuctionSessionStatus = "bidding" | "revealed" | "complete";
+type AuctionFocusTarget = "bid" | "continue" | "restart";
 
-export interface AuctionDraw {
+interface AuctionDraw {
   /** Your private valuation (private-value) or noisy signal (common-value). */
   readonly yourObservation: number;
   readonly rivalObservation: number;
@@ -28,7 +28,7 @@ export interface AuctionDraw {
   readonly tieWinner: "you" | "rival";
 }
 
-export interface AuctionRound {
+interface AuctionRound {
   readonly number: number;
   readonly yourObservation: number;
   readonly yourBid: number;
@@ -39,7 +39,7 @@ export interface AuctionRound {
   readonly commonValue?: number;
 }
 
-export interface AuctionSessionState {
+interface AuctionSessionState {
   readonly format: AuctionFormat;
   readonly persona: AuctionPersonaId;
   readonly maxValue: number;
@@ -53,7 +53,7 @@ export interface AuctionSessionState {
   readonly focusTarget: AuctionFocusTarget;
 }
 
-export type AuctionSessionAction =
+type AuctionSessionAction =
   | { readonly type: "select-persona"; readonly persona: AuctionPersonaId }
   | { readonly type: "submit-bid"; readonly bid: number }
   | { readonly type: "continue" }

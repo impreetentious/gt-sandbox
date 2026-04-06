@@ -6,7 +6,7 @@ import { rational, subtract, ZERO, type Rational } from "@/engine/rational";
  * verifies that truthful bidding never does worse than any alternative bid
  * against any rival bid, and records a witness where it does strictly better.
  */
-export interface SecondPriceWitness {
+interface SecondPriceWitness {
   readonly value: number;
   readonly alternativeBid: number;
   readonly rivalBid: number;
@@ -14,14 +14,14 @@ export interface SecondPriceWitness {
   readonly alternativePayoff: Rational;
 }
 
-export interface SecondPriceDominance {
+interface SecondPriceDominance {
   readonly weaklyDominant: boolean;
   readonly overbidWitness: SecondPriceWitness | null;
   readonly underbidWitness: SecondPriceWitness | null;
 }
 
 /** Payoff of bidding `bid` at valuation `value` against `rivalBid`; ties won. */
-export function secondPricePayoff(bid: number, value: number, rivalBid: number): Rational {
+function secondPricePayoff(bid: number, value: number, rivalBid: number): Rational {
   if (bid < rivalBid) {
     return ZERO; // lose, earn nothing
   }
