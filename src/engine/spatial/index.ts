@@ -12,9 +12,6 @@ export {
   type Boundary,
   type Neighborhood,
   type SpatialConfig,
-  type SpatialGeneration,
   type SpatialGrid,
-  type SpatialRun,
   type SpatialStrategy,
-  type SpatialTermination,
 } from "@/engine/spatial/lattice";

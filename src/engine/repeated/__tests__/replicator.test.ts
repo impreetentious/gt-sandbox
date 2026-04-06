@@ -27,7 +27,7 @@ function finalShares(result: ReturnType<typeof runIpdEvolution>): readonly numbe
   return final.shares;
 }
 
-describe("P8 replicator dynamics", () => {
+describe("replicator dynamics", () => {
   it("follows the known monotone AllC/AllD path from an equal population", () => {
     const result = runReplicatorDynamics(
       [

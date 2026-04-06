@@ -15,7 +15,7 @@ interface FrozenMetricPredicate {
   readonly threshold: number;
 }
 
-export interface EvolutionPreset {
+interface EvolutionPreset {
   readonly id: EvolutionPresetId;
   readonly label: string;
   readonly description: string;
@@ -90,7 +90,7 @@ function readPreset(source: (typeof presetFixture.presets)[number]): EvolutionPr
 }
 
 /**
- * P8's calibration records. The JSON is the reviewed source of numerical
+ * The JSON fixture is the reviewed source of numerical
  * truth; copy is intentionally authored only after those results were frozen.
  */
 export const evolutionPresets: readonly EvolutionPreset[] = presetFixture.presets.map(readPreset);

@@ -2,7 +2,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import { afterEach, describe, expect, it } from "vitest";
 import { TournamentExperience } from "@/components/evolve/tournament-experience";
 
-describe("P8 evolution surface", () => {
+describe("evolution surface", () => {
   afterEach(() => {
     cleanup();
     window.history.replaceState(null, "", "/evolve/");

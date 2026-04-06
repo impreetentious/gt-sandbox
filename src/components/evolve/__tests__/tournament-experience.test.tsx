@@ -2,7 +2,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { TournamentExperience } from "@/components/evolve/tournament-experience";
 
-describe("P7 tournament surface", () => {
+describe("tournament surface", () => {
   afterEach(cleanup);
 
   it("renders a ranked heatmap and exposes its exact table fallback", () => {

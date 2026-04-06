@@ -28,7 +28,7 @@ function payoffNumber(value: Rational): number {
  *
  * The component deliberately stops here rather than producing a colour. The
  * stylesheet mixes `--heat-low` towards `--heat-high` by this fraction, so the
- * scale re-anchors itself in the dark palette (V2-P8) without this file knowing
+ * scale re-anchors itself in the dark palette without this file knowing
  * a theme exists. Colour is never the only channel anyway — every cell prints
  * its own payoff, and the exact fraction is in the table fallback.
  */
@@ -39,7 +39,7 @@ function heatFraction(value: Rational, low: number, high: number): number {
   return Math.max(0, Math.min(1, relative));
 }
 
-/** P7's client surface for the pure, seeded IPD tournament engine. */
+/** Client surface for the pure, seeded IPD tournament engine. */
 export function TournamentExperience() {
   const [view, setView] = useState<"tournament" | "evolution" | "finite">("tournament");
   const [roster, setRoster] = useState<readonly IpdStrategyId[]>(defaultTournamentRoster);

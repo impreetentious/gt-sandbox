@@ -17,7 +17,7 @@ import { decodeEvolutionSearch, encodeEvolutionConfig } from "@/state/evolution-
 
 /**
  * Series colours live in `globals.css` as `--series-1` … `--series-8`, not as
- * literals here, so the dark palette can restate them (V2-P8). Eight is the
+ * literals here, so the dark palette can restate them. Eight is the
  * roster cap; a ninth strategy would need a ninth token rather than a wrap,
  * because two identical bands would be worse than an ugly one.
  */
@@ -169,7 +169,7 @@ function PopulationChart({ strategies, generations, isolated, onIsolate }: Popul
   );
 }
 
-/** P8's deterministic population-evolution surface. */
+/** Deterministic population-evolution surface. */
 export function EvolutionExperience() {
   const search = useSyncExternalStore(subscribeToBrowserHistory, browserSearch, () => "");
   const urlState = useMemo(() => decodeEvolutionSearch(search), [search]);

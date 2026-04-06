@@ -1,9 +1,9 @@
 import { rational, type Rational } from "@/engine/rational";
 import type { Boundary, Neighborhood } from "@/engine/spatial";
 
-export type SpatialOpening = "single-defector" | "seeded";
+type SpatialOpening = "single-defector" | "seeded";
 
-export interface SpatialPreset {
+interface SpatialPreset {
   readonly id: string;
   readonly label: string;
   readonly description: string;

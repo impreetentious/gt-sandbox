@@ -13,7 +13,7 @@ import { add, compare, rational, ONE, ZERO, type Rational } from "@/engine/ratio
  * interior: the boundary cells lose to defectors, the interior cells do not.
  * That is a structural result, so the model must be exactly reproducible or it
  * proves nothing — every quantity below is either an integer index or an exact
- * rational, and the only randomness is the seeded `createRng` (I2).
+ * rational, and the only randomness is the seeded `createRng`.
  *
  * Update rule (Nowak & May 1992): synchronously, every cell plays the stage
  * game against each neighbour, sums the payoffs, and then adopts the strategy
@@ -196,14 +196,14 @@ export function stepGrid(config: SpatialConfig, grid: SpatialGrid): SpatialGrid 
   });
 }
 
-export interface SpatialGeneration {
+interface SpatialGeneration {
   readonly generation: number;
   readonly grid: SpatialGrid;
   /** Exact share of the lattice playing strategy A. */
   readonly cooperatorShare: Rational;
 }
 
-export type SpatialTermination =
+type SpatialTermination =
   | { readonly kind: "generations-exhausted" }
   /** The grid stopped changing; every later generation is identical. */
   | { readonly kind: "fixed-point"; readonly generation: number }
@@ -214,7 +214,7 @@ export type SpatialTermination =
       readonly period: number;
     };
 
-export interface SpatialRun {
+interface SpatialRun {
   readonly config: SpatialConfig;
   readonly generations: readonly SpatialGeneration[];
   readonly termination: SpatialTermination;
@@ -312,7 +312,7 @@ export function singleDefectorGrid(config: SpatialConfig): SpatialGrid {
  * `share` is a rational so the caller's "40% cooperators" survives into the
  * comparison exactly; the draw itself compares against the RNG's float, which
  * is the one place a float is admissible because it selects a cell rather than
- * computing a payoff (I2's simulation boundary).
+ * computing a payoff at the simulation boundary.
  */
 export function seededGrid(config: SpatialConfig, seed: number, share: Rational): SpatialGrid {
   createSpatialConfig(config);
