@@ -1,7 +1,7 @@
 import { ipdStrategies } from "@/engine/repeated/strategies";
 import type { IpdOpponentChoice } from "@/state/ipd-session";
 
-export interface IpdOpponentOption {
+interface IpdOpponentOption {
   readonly id: IpdOpponentChoice;
   readonly label: string;
   readonly description: string;

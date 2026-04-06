@@ -1,6 +1,6 @@
 import { rational, type Rational } from "@/engine/rational";
 
-export interface FinitePopulationPreset {
+interface FinitePopulationPreset {
   readonly id: string;
   readonly label: string;
   /** Display names for the two competing strategies. */

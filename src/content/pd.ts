@@ -1,6 +1,6 @@
 import type { PdPersonaId } from "@/state/pd-session";
 
-export interface PdPersonaContent {
+interface PdPersonaContent {
   readonly id: PdPersonaId;
   readonly name: string;
   readonly description: string;

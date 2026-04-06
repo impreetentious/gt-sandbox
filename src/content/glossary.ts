@@ -25,7 +25,7 @@ export type GlossaryTermId =
   | "zero-determinant-strategy"
   | "zero-sum";
 
-export interface GlossaryTermDefinition {
+interface GlossaryTermDefinition {
   readonly label: string;
   readonly definition: string;
 }

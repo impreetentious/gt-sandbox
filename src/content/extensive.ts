@@ -1,6 +1,6 @@
 import type { ExtensiveSlug } from "@/engine/catalog/extensive";
 
-export interface ExtensiveContent {
+interface ExtensiveContent {
   /** Player id (matches `game.players`) that the human plays. */
   readonly userPlayer: string;
   /** Short label for the terminal payoff table (`(Row, Column)`). */

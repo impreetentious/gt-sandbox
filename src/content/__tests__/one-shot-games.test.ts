@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { oneShotGameContent } from "@/content/one-shot-games";
 
-describe("P5 authored one-shot copy", () => {
+describe("authored one-shot copy", () => {
   it("keeps the editorial voice and insight budget in bounds", () => {
     for (const content of Object.values(oneShotGameContent)) {
       expect(content.insights.length).toBeLessThanOrEqual(2);

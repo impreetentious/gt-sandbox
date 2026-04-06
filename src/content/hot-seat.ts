@@ -1,6 +1,6 @@
 export type HotSeatSlug = "pd" | "stag" | "bos" | "chicken" | "pennies";
 
-export interface HotSeatGameContent {
+interface HotSeatGameContent {
   readonly slug: HotSeatSlug;
   readonly eyebrow: string;
   /** A two-human framing: the lesson is bluffing or coordinating with a person. */

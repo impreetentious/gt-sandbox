@@ -14,7 +14,7 @@ export interface CooperativeProfile {
  * one; a Build-mode custom game gets one derived at read time, because the engine is generic
  * over any 2×2 and only the framing was ever catalog-specific.
  */
-export interface RepeatFraming {
+interface RepeatFraming {
   readonly framing: string;
   readonly cooperate: CooperativeProfile;
   readonly cooperateLabel: string;
@@ -23,7 +23,7 @@ export interface RepeatFraming {
   readonly caveat?: string;
 }
 
-export interface RepeatableGameContent extends RepeatFraming {
+interface RepeatableGameContent extends RepeatFraming {
   readonly slug: RepeatableSlug;
 }
 

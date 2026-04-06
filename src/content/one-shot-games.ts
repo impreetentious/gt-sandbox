@@ -4,26 +4,26 @@ import type { OneShotRound } from "@/state/one-shot-session";
 
 export type OneShotPlayableSlug = Exclude<GameSlug, "pd" | "ipd">;
 
-export interface OneShotPersonaContent {
+interface OneShotPersonaContent {
   readonly id: OneShotOpponentPolicy;
   readonly name: string;
   readonly description: string;
 }
 
-export interface InsightMoment {
+interface InsightMoment {
   readonly id: string;
   readonly message: string;
   readonly when: (rounds: readonly OneShotRound[]) => boolean;
 }
 
-export interface OneShotGameContent {
+interface OneShotGameContent {
   readonly slug: OneShotPlayableSlug;
   readonly eyebrow: string;
   /** A compact scenario, authored from the normative catalog framing in §4. */
   readonly framing: string;
   readonly roundLimit: number;
   readonly personas: readonly OneShotPersonaContent[];
-  /** P5 deliberately keeps every game to at most two quiet moments. */
+  /** Every game deliberately keeps the reveal to at most two quiet moments. */
   readonly insights: readonly InsightMoment[];
 }
 
