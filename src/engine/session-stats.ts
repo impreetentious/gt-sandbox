@@ -2,20 +2,20 @@ import { payoffFor, type NormalFormGame, type Player, type Profile } from "@/eng
 import { add, compare, divide, equals, subtract, ZERO, type Rational } from "@/engine/rational";
 import type { MixedNashEquilibrium, MixedStrategy } from "@/engine/solve/mixed";
 
-export interface ActionMix {
+interface ActionMix {
   readonly counts: readonly number[];
   readonly probabilities: readonly Rational[];
   readonly observations: number;
 }
 
-export interface FixedActionHindsight {
+interface FixedActionHindsight {
   readonly actualPayoff: Rational;
   readonly bestFixedPayoff: Rational;
   readonly gain: Rational;
   readonly bestActions: readonly number[];
 }
 
-export interface MixVersusNash {
+interface MixVersusNash {
   readonly empirical: ActionMix;
   readonly nash: readonly Rational[];
   readonly matchesNash: boolean;

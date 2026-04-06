@@ -3,12 +3,12 @@ import { payoffFor, type NormalFormGame, type Profile } from "@/engine/game";
 import { pureNashEquilibria } from "@/engine/solve/pure";
 import { paretoDominates } from "@/engine/solve/pareto";
 
-export type SelectionVerdict =
+type SelectionVerdict =
   | { readonly kind: "not-applicable" }
   | { readonly kind: "tie" }
   | { readonly kind: "equilibrium"; readonly profile: Profile };
 
-export interface EquilibriumSelection {
+interface EquilibriumSelection {
   readonly equilibria: readonly Profile[];
   readonly riskDominance: SelectionVerdict;
   readonly payoffDominance: SelectionVerdict;

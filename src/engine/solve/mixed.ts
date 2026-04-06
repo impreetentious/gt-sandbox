@@ -27,14 +27,14 @@ export interface MixedNashEquilibrium {
  * A formal degeneracy witness: player mixes positively on S while every action
  * in B is a best response for the opponent, with |B| = |S| + 1.
  */
-export interface DegeneracyWitness {
+interface DegeneracyWitness {
   readonly player: Player;
   readonly S: readonly number[];
   readonly B: readonly number[];
   readonly x: readonly Rational[];
 }
 
-export interface MixedEquilibriumAnalysis {
+interface MixedEquilibriumAnalysis {
   readonly equilibria: readonly MixedNashEquilibrium[];
   readonly degeneracyWitness: DegeneracyWitness | null;
 }

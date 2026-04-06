@@ -166,7 +166,7 @@ describe("exact mixed-equilibrium solver and verifier", () => {
     expect(() => twoByTwoMixedEquilibrium(threeByTwo)).toThrow(RangeError);
   });
 
-  it("enforces the 4×4 bound and logs bounded enumeration timing", () => {
+  it("enforces the 4×4 bound and bounded enumeration timing", () => {
     const fiveByTwo = createNormalFormGame({
       id: "five-by-two",
       title: "Five by two",
@@ -192,7 +192,6 @@ describe("exact mixed-equilibrium solver and verifier", () => {
     const startedAt = performance.now();
     mixedNashEquilibria(timingGame);
     const elapsedMilliseconds = performance.now() - startedAt;
-    console.info(`4×4 exact support enumeration: ${elapsedMilliseconds.toFixed(3)} ms`);
     expect(elapsedMilliseconds).toBeLessThan(16);
   });
 });

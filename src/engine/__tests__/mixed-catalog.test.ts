@@ -25,7 +25,7 @@ function nonPureEquilibria(game: (typeof catalog)[number]["game"]) {
   );
 }
 
-describe("P3 mixed-equilibrium catalog oracles", () => {
+describe("mixed-equilibrium catalog oracles", () => {
   for (const entry of catalog) {
     it(`${entry.game.title}: exact mixed equilibria and nondegeneracy`, () => {
       const equilibria = mixedNashEquilibria(entry.game);

@@ -2,14 +2,14 @@ import { add, compare, isZero, multiply, ONE, ZERO, type Rational } from "@/engi
 import { payoffFor, type NormalFormGame, type Player, type Profile } from "@/engine/game";
 import type { MixedNashEquilibrium, MixedStrategy } from "@/engine/solve/mixed";
 
-export interface PureProfileVerification {
+interface PureProfileVerification {
   readonly profile: Profile;
   readonly rowBestResponse: boolean;
   readonly columnBestResponse: boolean;
   readonly isNashEquilibrium: boolean;
 }
 
-export interface MixedEquilibriumVerification {
+interface MixedEquilibriumVerification {
   readonly rowStrategyValid: boolean;
   readonly columnStrategyValid: boolean;
   readonly rowBestResponds: boolean;

@@ -13,7 +13,7 @@ export interface AvailableStrategies {
   readonly column: readonly number[];
 }
 
-export interface DominanceRelation {
+interface DominanceRelation {
   readonly player: Player;
   readonly dominated: number;
   readonly dominator: number;
@@ -24,7 +24,7 @@ export interface EliminationStep extends DominanceRelation {
   readonly remainingBefore: AvailableStrategies;
 }
 
-export interface EliminationTrace {
+interface EliminationTrace {
   readonly steps: readonly EliminationStep[];
   readonly remaining: AvailableStrategies;
 }
@@ -56,16 +56,16 @@ export interface MixedDominanceRelation {
   readonly requiresMixing: boolean;
 }
 
-export interface MixedEliminationStep extends MixedDominanceRelation {
+interface MixedEliminationStep extends MixedDominanceRelation {
   readonly remainingBefore: AvailableStrategies;
 }
 
-export interface MixedEliminationTrace {
+interface MixedEliminationTrace {
   readonly steps: readonly MixedEliminationStep[];
   readonly remaining: AvailableStrategies;
 }
 
-export interface DominanceAnalysis {
+interface DominanceAnalysis {
   readonly strict: readonly DominanceRelation[];
   readonly weak: readonly DominanceRelation[];
   readonly strictTrace: EliminationTrace;
