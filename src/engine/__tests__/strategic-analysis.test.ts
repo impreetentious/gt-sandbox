@@ -32,7 +32,7 @@ function dominatedByPlayer(relations: readonly { player: "row" | "column"; domin
   };
 }
 
-describe("P1 strategic-analysis catalog oracles", () => {
+describe("strategic-analysis catalog oracles", () => {
   for (const entry of catalog) {
     it(`${entry.game.title}: dominance, Pareto, equilibrium selection, and structure`, () => {
       const dominance = analyzeDominance(entry.game);

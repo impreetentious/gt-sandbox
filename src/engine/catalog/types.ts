@@ -4,18 +4,18 @@ import type { NormalFormGame } from "@/engine/game";
 
 export type GameSlug = "pd" | "stag" | "bos" | "chicken" | "pennies" | "ipd";
 
-export interface DominatedActionOracle {
+interface DominatedActionOracle {
   readonly row: readonly number[];
   readonly column: readonly number[];
 }
 
-export type SelectionOracle =
+type SelectionOracle =
   | { readonly kind: "not-applicable" }
   | { readonly kind: "tie" }
   | { readonly kind: "equilibrium"; readonly profile: Profile };
 
 /** Hand-derived non-pure equilibrium probabilities from the game catalog's correctness oracle. */
-export interface MixedNashOracle {
+interface MixedNashOracle {
   readonly row: readonly RationalInput[];
   readonly column: readonly RationalInput[];
 }

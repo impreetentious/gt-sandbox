@@ -4,9 +4,9 @@ import type { Rational } from "@/engine/rational";
 export type PlayerId = string;
 
 /**
- * Information-set identifier. Unused in V2-P1 (all games are perfect-information;
- * every decision node has its own singleton set) but reserved on the node so an
- * imperfect-information game can land in a later V2 phase without a type change.
+ * Information-set identifier. All current games use perfect information, so
+ * every decision node has its own singleton set; retaining the identifier keeps
+ * that assumption explicit and permits imperfect-information games later.
  */
 export type InformationSetId = string;
 

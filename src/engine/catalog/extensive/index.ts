@@ -16,10 +16,5 @@ export const extensiveCatalogBySlug: Readonly<Record<ExtensiveSlug, ExtensiveCat
     centipede,
   });
 
-export type {
-  ExtensiveCatalogGame,
-  ExtensiveSlug,
-  ExtensiveOracle,
-  StrategyOracle,
-} from "@/engine/catalog/extensive/types";
+export type { ExtensiveSlug, ExtensiveOracle } from "@/engine/catalog/extensive/types";
 export { centipede, entryDeterrence, ultimatum };

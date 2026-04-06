@@ -4,7 +4,7 @@ import type { ExtensiveGame, GameNode } from "@/engine/extensive/tree";
 /** A pure strategy: for each decision-node id, the action index the player takes. */
 export type PureStrategy = ReadonlyMap<string, number>;
 
-export interface SPNEResult {
+interface SPNEResult {
   /** Payoffs at the SPNE outcome, indexed to match `game.players`. */
   readonly payoffs: readonly Rational[];
   /** Full pure strategy for every decision node in the tree. */

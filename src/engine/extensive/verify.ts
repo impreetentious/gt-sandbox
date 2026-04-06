@@ -2,7 +2,7 @@ import { compare, type Rational } from "@/engine/rational";
 import type { PureStrategy } from "@/engine/extensive/backward-induction";
 import type { ExtensiveGame, GameNode } from "@/engine/extensive/tree";
 
-export interface SPNEVerdict {
+interface SPNEVerdict {
   readonly isSubgamePerfect: boolean;
   /** First subgame at which the strategy is not a best response, if any. */
   readonly violation: {

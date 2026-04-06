@@ -8,7 +8,7 @@ export interface Profile {
 }
 
 export type Payoff = readonly [Rational, Rational];
-export type PayoffInput = readonly [RationalInput, RationalInput];
+type PayoffInput = readonly [RationalInput, RationalInput];
 export type RationalInput = Rational | bigint | number | string;
 
 export interface NormalFormGame {
@@ -19,7 +19,7 @@ export interface NormalFormGame {
   readonly payoffs: readonly (readonly Payoff[])[];
 }
 
-export interface NormalFormGameInput {
+interface NormalFormGameInput {
   readonly id: string;
   readonly title: string;
   readonly rowActions: readonly string[];
