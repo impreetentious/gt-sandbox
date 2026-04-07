@@ -19,9 +19,9 @@ import type { SymmetricPayoffs } from "@/engine/moran";
  * equilibrium, but a Nash equilibrium with E(S,S) = E(M,S) and E(S,M) ≤ E(M,M)
  * is invadable by drift.
  */
-export type ESSClause = "strict-advantage" | "tie-broken-on-mutant" | "none";
+type ESSClause = "strict-advantage" | "tie-broken-on-mutant" | "none";
 
-export interface PureESSVerdict {
+interface PureESSVerdict {
   readonly strategy: "A" | "B";
   readonly isESS: boolean;
   /** Which arm of the definition established stability, if either did. */
@@ -80,14 +80,14 @@ function checkPure(
   };
 }
 
-export interface MixedESS {
+interface MixedESS {
   /** Share of the population playing A at the interior rest point. */
   readonly shareOfA: Rational;
   /** True when the interior point is an attractor rather than a repellor. */
   readonly isStable: boolean;
 }
 
-export interface ESSReport {
+interface ESSReport {
   readonly a: PureESSVerdict;
   readonly b: PureESSVerdict;
   /** Present only when an interior rest point exists strictly between 0 and 1. */

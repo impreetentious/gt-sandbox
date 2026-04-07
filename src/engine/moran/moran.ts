@@ -78,7 +78,7 @@ function assertState(config: MoranConfig, i: number): void {
   }
 }
 
-export interface StatePayoffs {
+interface StatePayoffs {
   readonly payoffA: Rational;
   readonly payoffB: Rational;
 }
@@ -104,7 +104,7 @@ export function expectedPayoffs(config: MoranConfig, i: number): StatePayoffs {
   return { payoffA, payoffB };
 }
 
-export interface StateFitness {
+interface StateFitness {
   readonly fitnessA: Rational;
   readonly fitnessB: Rational;
 }
@@ -191,7 +191,7 @@ export function neutralFixation(config: MoranConfig): Rational {
   return divide(ONE, rational(BigInt(config.populationSize)));
 }
 
-export interface SelectionVerdict {
+interface SelectionVerdict {
   readonly fixationA: Rational;
   readonly fixationB: Rational;
   readonly neutral: Rational;
@@ -222,7 +222,7 @@ export function classifySelection(config: MoranConfig): SelectionVerdict {
   };
 }
 
-export interface FixationRow {
+interface FixationRow {
   readonly state: number;
   readonly fixation: Rational;
 }

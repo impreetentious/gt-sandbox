@@ -8,19 +8,15 @@ import { dominanceRelations } from "@/engine/solve/dominance";
 import { analyzeMixedEquilibria } from "@/engine/solve/mixed";
 import { pureNashEquilibria } from "@/engine/solve/pure";
 
-export type QuizQuestionKind =
-  | "nash-cell"
-  | "dominant-strategy"
-  | "mixed-probability"
-  | "classify"
-  | "backward-induction";
+type QuizQuestionKind =
+  "nash-cell" | "dominant-strategy" | "mixed-probability" | "classify" | "backward-induction";
 
-export interface QuizChoice {
+interface QuizChoice {
   readonly id: string;
   readonly label: string;
 }
 
-export interface QuizQuestion {
+interface QuizQuestion {
   readonly id: string;
   readonly kind: QuizQuestionKind;
   readonly source: string;

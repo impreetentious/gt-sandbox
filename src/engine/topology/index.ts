@@ -1,7 +1,7 @@
 import { createNormalFormGame, type NormalFormGame } from "@/engine/game";
 import { classifyTwoByTwo, type StrategicStructure } from "@/engine/solve/classify";
 
-export interface OrdinalTopologyGame {
+interface OrdinalTopologyGame {
   readonly id: string;
   readonly game: NormalFormGame;
   readonly structure: StrategicStructure;
@@ -82,7 +82,7 @@ function conceptTerms(structure: StrategicStructure): readonly string[] {
  * and column action relabelling. 4! rank orders per player give 576 labelled
  * strict games; quotienting the four row/column swaps leaves exactly 144.
  */
-export function enumerateOrdinalTopology(): readonly OrdinalTopologyGame[] {
+function enumerateOrdinalTopology(): readonly OrdinalTopologyGame[] {
   const canonical = new Set<string>();
   for (const rowRanks of RANKINGS) {
     for (const columnRanks of RANKINGS) canonical.add(canonicalKey(rowRanks, columnRanks));

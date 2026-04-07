@@ -9,10 +9,6 @@ export {
   fixationProbability,
   neutralFixation,
   transitionRatio,
-  type FixationRow,
   type MoranConfig,
-  type SelectionVerdict,
-  type StateFitness,
-  type StatePayoffs,
   type SymmetricPayoffs,
 } from "@/engine/moran/moran";

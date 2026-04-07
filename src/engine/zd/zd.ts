@@ -87,7 +87,7 @@ export const CANONICAL_PD: StageGame = createStageGame({
 });
 
 /** X's payoff in each of the four states: (R, S, T, P). */
-export function ownPayoffVector(game: StageGame): readonly Rational[] {
+function ownPayoffVector(game: StageGame): readonly Rational[] {
   return [game.r, game.s, game.t, game.p];
 }
 
@@ -95,7 +95,7 @@ export function ownPayoffVector(game: StageGame): readonly Rational[] {
  * Y's payoff in each of X's four states: (R, T, S, P). The middle two swap
  * because CD means X cooperated and Y defected, which pays Y the temptation.
  */
-export function opponentPayoffVector(game: StageGame): readonly Rational[] {
+function opponentPayoffVector(game: StageGame): readonly Rational[] {
   return [game.r, game.t, game.s, game.p];
 }
 
@@ -295,7 +295,7 @@ export function equalizerStrategy(
   return constructZdStrategy(game, { alpha: ZERO, beta: negate(ONE), gamma: target }, phi);
 }
 
-export type ZdVerdict =
+type ZdVerdict =
   | { readonly kind: "zero-determinant"; readonly relation: EnforcedRelation }
   | {
       readonly kind: "not-zero-determinant";
@@ -421,7 +421,7 @@ export function classifyZd(game: StageGame, strategy: MemoryOneStrategy): ZdVerd
   };
 }
 
-export interface StationaryOutcome {
+interface StationaryOutcome {
   /** Long-run probability of each state, in CC, CD, DC, DD order. */
   readonly distribution: readonly Rational[];
   readonly ownPayoff: Rational;
