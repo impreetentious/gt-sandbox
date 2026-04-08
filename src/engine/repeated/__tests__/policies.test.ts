@@ -8,7 +8,7 @@ import {
   predictMarkov2PlayerAction,
 } from "@/engine/repeated/policies";
 
-describe("P2 PD opponent policies", () => {
+describe("PD opponent policies", () => {
   it("plays the fixed action for Saint and Cynic", () => {
     expect(decidePdOpponentAction("always:C", [1, 1])).toBe(0);
     expect(decidePdOpponentAction("always:D", [0, 0])).toBe(1);
@@ -21,7 +21,7 @@ describe("P2 PD opponent policies", () => {
   });
 });
 
-describe("P5 one-shot opponent personas", () => {
+describe("one-shot opponent personas", () => {
   it("uses fixed actions and deterministic seeded random policies", () => {
     expect(
       decideOneShotOpponentAction({

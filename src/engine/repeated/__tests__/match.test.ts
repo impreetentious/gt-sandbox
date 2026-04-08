@@ -18,7 +18,7 @@ function fixedMatch(
     rowStrategy,
     columnStrategy,
     masterSeed: 4401,
-    matchId: "p6-test",
+    matchId: "match-test",
     continuationProbability: 1,
     noise: 0,
     roundCap: 5,
@@ -32,7 +32,7 @@ function actionPairs(
   return result.history.map((round) => [round.row.action, round.column.action]);
 }
 
-describe("P6 event-addressed IPD match engine", () => {
+describe("event-addressed IPD match engine", () => {
   it("defines all eight finite-state or seeded strategies", () => {
     const base = {
       ownActions: [],

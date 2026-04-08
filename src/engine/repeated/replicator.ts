@@ -8,7 +8,7 @@ import {
 import { ipdStrategyById, type IpdStrategyId } from "@/engine/repeated/strategies";
 import type { Rational } from "@/engine/rational";
 
-export const DEFAULT_EVOLUTION_GENERATIONS = 100;
+const DEFAULT_EVOLUTION_GENERATIONS = 100;
 
 export interface ReplicatorGeneration {
   readonly generation: number;
@@ -17,18 +17,18 @@ export interface ReplicatorGeneration {
   readonly meanFitness: number;
 }
 
-export interface ReplicatorComplete {
+interface ReplicatorComplete {
   readonly status: "complete";
   readonly generations: readonly ReplicatorGeneration[];
 }
 
-export interface ReplicatorZeroMeanFitness {
+interface ReplicatorZeroMeanFitness {
   readonly status: "zero-mean-fitness";
   readonly generation: number;
   readonly generations: readonly ReplicatorGeneration[];
 }
 
-export type ReplicatorResult = ReplicatorComplete | ReplicatorZeroMeanFitness;
+type ReplicatorResult = ReplicatorComplete | ReplicatorZeroMeanFitness;
 
 export interface IpdEvolutionConfig {
   readonly strategies: readonly IpdStrategyId[];
@@ -42,7 +42,7 @@ export interface IpdEvolutionConfig {
   readonly generations?: number;
 }
 
-export interface IpdEvolutionResult {
+interface IpdEvolutionResult {
   readonly config: Required<IpdEvolutionConfig>;
   /** Per-round tournament estimates converted to floats for simulation only. */
   readonly payoffMatrix: readonly (readonly number[])[];

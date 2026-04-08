@@ -10,13 +10,13 @@ import type { IpdStrategyId } from "@/engine/repeated/strategies";
  * separate module from the PD-specific match engine: Pavlov here uses a general
  * aspiration level (the mean of the player's own stage payoffs) rather than the
  * hardcoded PD reward/temptation, so the roster carries meaning on customs too.
- * Determinism (I3) reuses the same event-addressed stream scheme.
+ * Determinism reuses the same event-addressed stream scheme.
  */
-export const DEFAULT_ITERATED_ROUND_CAP = 5_000;
+const DEFAULT_ITERATED_ROUND_CAP = 5_000;
 
-export type CooperationSymbol = "C" | "D";
+type CooperationSymbol = "C" | "D";
 
-export interface IteratedGameConfig {
+interface IteratedGameConfig {
   readonly game: NormalFormGame;
   readonly cooperate: Profile;
   readonly rowStrategy: IpdStrategyId;
@@ -28,7 +28,7 @@ export interface IteratedGameConfig {
   readonly roundCap?: number;
 }
 
-export interface IteratedRound {
+interface IteratedRound {
   readonly number: number;
   readonly rowAction: BinaryAction;
   readonly columnAction: BinaryAction;
@@ -38,7 +38,7 @@ export interface IteratedRound {
   readonly columnPayoff: Rational;
 }
 
-export interface IteratedMatchResult {
+interface IteratedMatchResult {
   readonly config: Readonly<IteratedGameConfig>;
   readonly rounds: number;
   readonly truncatedAtCap: boolean;

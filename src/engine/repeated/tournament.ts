@@ -27,25 +27,25 @@ export interface IpdTournamentConfig {
   readonly roundCap?: number;
 }
 
-export interface TournamentPayoff {
+interface TournamentPayoff {
   readonly opponent: IpdStrategyId;
   /** Mean payoff per round across the pair's seeded repetitions. */
   readonly payoff: Rational;
 }
 
-export interface TournamentMatrixRow {
+interface TournamentMatrixRow {
   readonly strategy: IpdStrategyId;
   readonly payoffs: readonly TournamentPayoff[];
 }
 
-export interface TournamentRanking {
+interface TournamentRanking {
   readonly position: number;
   readonly strategy: IpdStrategyId;
   /** Mean of this strategy's pairwise per-round payoffs. */
   readonly payoff: Rational;
 }
 
-export interface IpdTournamentResult {
+interface IpdTournamentResult {
   readonly config: Required<IpdTournamentConfig>;
   readonly matrix: readonly TournamentMatrixRow[];
   readonly ranking: readonly TournamentRanking[];

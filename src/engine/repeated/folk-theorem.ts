@@ -33,7 +33,7 @@ export type DeltaThreshold =
   | { readonly kind: "threshold"; readonly value: Rational }
   | { readonly kind: "never"; readonly reason: string };
 
-export interface FolkTheoremAnalysis {
+interface FolkTheoremAnalysis {
   readonly cooperativeProfile: Profile;
   readonly punishmentProfile: Profile;
   readonly cooperativePayoff: PayoffPoint;
@@ -49,7 +49,7 @@ export interface FolkTheoremAnalysis {
   readonly threshold: DeltaThreshold;
 }
 
-export interface FolkTheoremConfig {
+interface FolkTheoremConfig {
   /** Action index each player treats as "cooperate". */
   readonly cooperate: Profile;
   /** Action index each player reverts to as punishment (defaults to the other). */

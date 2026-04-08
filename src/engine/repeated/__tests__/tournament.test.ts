@@ -41,7 +41,7 @@ function serialise(result: ReturnType<typeof runIpdTournament>) {
   };
 }
 
-describe("P7 deterministic IPD tournament", () => {
+describe("deterministic IPD tournament", () => {
   it("uses documented defaults when tournament controls omit optional values", () => {
     const result = runIpdTournament({
       strategies: ["allc", "alld"],

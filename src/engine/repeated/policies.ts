@@ -19,13 +19,13 @@ export type OneShotOpponentPolicy =
   | "random:1/3"
   | "random:9/10";
 
-export interface OneShotPolicyDecision {
+interface OneShotPolicyDecision {
   readonly action: BinaryAction;
   /** Present only when the policy makes a prediction that the UI can audit. */
   readonly predictedPlayerAction?: BinaryAction;
 }
 
-export interface OneShotPolicyInput {
+interface OneShotPolicyInput {
   readonly policy: OneShotOpponentPolicy;
   readonly game: NormalFormGame;
   readonly playerActions: readonly BinaryAction[];
