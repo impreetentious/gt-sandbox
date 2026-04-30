@@ -44,7 +44,7 @@ The app is installable and works offline: a version-keyed service worker precach
 
 ## Run locally
 
-Requirements: Node 24.10.0 and pnpm 10.33.0 (both are pinned by the repository).
+Requirements: Node 24.10.0 and pnpm 10.33.0. Both are pinned, and a preinstall guard fails the install on any other Node version rather than letting a build run against it. [ripgrep](https://github.com/BurntSushi/ripgrep) must also be on `PATH` — the invariant checks shell out to `rg`.
 
 ```bash
 corepack enable
@@ -63,6 +63,12 @@ pnpm serve:export
 
 ```bash
 pnpm verify       # invariants, CSP, types, lint, unit/property tests, coverage
+```
+
+The browser suite additionally needs a Chromium download, once per machine:
+
+```bash
+pnpm exec playwright install chromium
 pnpm verify:full  # verify + static export + bundle + invariant self-test + Playwright
 ```
 
@@ -78,10 +84,20 @@ Runtime dependencies remain limited to `next`, `react`, and `react-dom`. The exa
 
 `pnpm build` emits a plain `out/` directory. Vercel Git integration is the intended production path, but the output also serves unchanged from a root-mounted static host. `vercel.json` and `serve.json` carry the response headers; `pnpm check:csp` fails if the two ever disagree. The GitHub Actions workflow runs the frozen install, full dependency audit, and complete verification suite.
 
+Further detail lives in [`docs/`](docs):
+
+- [DEPLOYMENT-CHECKLIST.md](docs/DEPLOYMENT-CHECKLIST.md) — release verification, Vercel settings, and the production smoke test.
+- [STATIC-HOST-HEADERS.md](docs/STATIC-HOST-HEADERS.md) — the exact CSP and header policy, and the one path-scoped framing exception.
+- [ACCESSIBILITY-AUDIT.md](docs/ACCESSIBILITY-AUDIT.md) — what the automated gates cover and the manual assistive-technology checks they do not replace.
+
+## Status and contributing
+
+Feature-complete and maintained by one author. Bug reports and correctness challenges are welcome as [issues](https://github.com/ItsMonarch04/gt-sandbox/issues) — a reproducible case where the engine disagrees with the theory is the most useful thing you can send. Pull requests are accepted, but please open an issue first; anything touching the solvers needs a test that fails before the change and passes after, and `pnpm verify:full` must be green.
+
 ## License
 
 MIT © Sidakpreet Singh — see [LICENSE](LICENSE).
 
 ---
 
-**Version:** v0.21.13
+**Version:** v0.22.0

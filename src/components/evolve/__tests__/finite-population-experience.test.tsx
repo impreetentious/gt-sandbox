@@ -94,6 +94,27 @@ describe("finite-population surface", () => {
     expect(table.querySelectorAll("tbody tr")).toHaveLength(5);
   });
 
+  it("names the undefined region instead of failing when fitness stops being positive", () => {
+    render(<FinitePopulationExperience />);
+    // Linear fitness 1 − w + w·π hits zero at w = 1 for the Stag Hunt, because
+    // Stag earns 0 against Hare. Every slider position must stay renderable.
+    setSlider(/Selection intensity/, 20);
+    expect(screen.getByTestId("finite-undefined")).toHaveTextContent(
+      /no fixation probability to report/i,
+    );
+    expect(screen.queryByTestId("finite-fixation")).not.toBeInTheDocument();
+
+    // Hawk–Dove leaves the domain earlier still, from w = 11/20.
+    selectGame("hawk-dove");
+    setSlider(/Selection intensity/, 11);
+    expect(screen.getByTestId("finite-undefined")).toBeInTheDocument();
+
+    // And coming back down restores the exact results.
+    setSlider(/Selection intensity/, 10);
+    expect(screen.queryByTestId("finite-undefined")).not.toBeInTheDocument();
+    expect(screen.getByTestId("finite-fixation")).toBeInTheDocument();
+  });
+
   it("reports the exact margin over neutral drift", () => {
     render(<FinitePopulationExperience />);
     selectGame("neutral");

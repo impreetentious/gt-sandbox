@@ -2,8 +2,8 @@ import { formatRational, type Rational } from "@/engine/rational";
 
 /**
  * A versioned, JSON-serializable transcript of one completed session. This is
- * the single artifact the classroom aggregator (§ v2 kit) ingests, so it is a
- * pure, deterministic value: no timestamps, no environment, no I/O. Payoffs are
+ * the single artifact the classroom aggregator ingests, so it is a pure,
+ * deterministic value: no timestamps, no environment, no I/O. Payoffs are
  * exact rational strings (`formatRational`) so a total never drifts to a float.
  */
 export const SESSION_EXPORT_SCHEMA = "gt-sandbox/session";
@@ -91,6 +91,19 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 const KINDS: readonly SessionExportKind[] = ["one-shot", "hot-seat", "ipd", "iterated", "auction"];
 
+/**
+ * Exactly what `formatRational` emits: a signed integer, optionally over a
+ * positive denominator. Consumers parse these fields straight back into exact
+ * rationals, so a merely-a-string check would let `"abc"` or `"1/0"` through the
+ * boundary and throw later, inside the aggregator that promises to skip bad
+ * files rather than fail.
+ */
+const EXACT_RATIONAL = /^-?\d+(?:\/[1-9]\d*)?$/;
+
+function isExactRational(value: unknown): value is string {
+  return typeof value === "string" && EXACT_RATIONAL.test(value);
+}
+
 function parseRoundArray(value: unknown): SessionRoundExport[] | null {
   if (!Array.isArray(value)) {
     return null;
@@ -101,10 +114,11 @@ function parseRoundArray(value: unknown): SessionRoundExport[] | null {
     if (
       !isRecord(entry) ||
       typeof entry.round !== "number" ||
+      !Number.isSafeInteger(entry.round) ||
       typeof entry.rowAction !== "string" ||
       typeof entry.columnAction !== "string" ||
-      typeof entry.rowPayoff !== "string" ||
-      typeof entry.columnPayoff !== "string"
+      !isExactRational(entry.rowPayoff) ||
+      !isExactRational(entry.columnPayoff)
     ) {
       return null;
     }
@@ -159,6 +173,10 @@ export function parseSessionExport(text: string): ParseSessionExportResult {
     typeof value.columnTotal !== "string"
   ) {
     return { ok: false, notice: "This session is missing required fields." };
+  }
+
+  if (!isExactRational(value.rowTotal) || !isExactRational(value.columnTotal)) {
+    return { ok: false, notice: "This session has a total that is not an exact rational." };
   }
 
   const rounds = parseRoundArray(value.rounds);

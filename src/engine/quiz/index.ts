@@ -9,7 +9,11 @@ import { analyzeMixedEquilibria } from "@/engine/solve/mixed";
 import { pureNashEquilibria } from "@/engine/solve/pure";
 
 type QuizQuestionKind =
-  "nash-cell" | "dominant-strategy" | "mixed-probability" | "classify" | "backward-induction";
+  | "nash-cell"
+  | "dominant-strategy"
+  | "mixed-probability"
+  | "classify"
+  | "backward-induction";
 
 interface QuizChoice {
   readonly id: string;
@@ -55,16 +59,26 @@ function rotate<T>(values: readonly T[], seed: number): T[] {
   return [...values.slice(offset), ...values.slice(0, offset)];
 }
 
+/**
+ * Games such as Matching Pennies have no pure equilibrium at all, so the answer
+ * set always carries this option. Naming some cell anyway would teach a false
+ * equilibrium in the one place the reader is being graded on the definition.
+ */
+const NO_PURE_EQUILIBRIUM = "None — no pure-strategy equilibrium";
+
 function nashQuestion(seed: number, customGame?: NormalFormGame): QuizQuestion {
   const { game, source } = normalGameFor(seed, customGame);
-  const equilibrium = pureNashEquilibria(game)[0] ?? { row: 0, column: 0 };
+  const equilibrium = pureNashEquilibria(game)[0];
   const choices = rotate(
-    game.payoffs.flatMap((row, rowIndex) =>
-      row.map((_, columnIndex) => ({
-        id: `${rowIndex}-${columnIndex}`,
-        label: profileLabel(game, rowIndex, columnIndex),
-      })),
-    ),
+    [
+      ...game.payoffs.flatMap((row, rowIndex) =>
+        row.map((_, columnIndex) => ({
+          id: `${rowIndex}-${columnIndex}`,
+          label: profileLabel(game, rowIndex, columnIndex),
+        })),
+      ),
+      { id: NO_PURE_EQUILIBRIUM, label: NO_PURE_EQUILIBRIUM },
+    ],
     seed,
   );
   return {
@@ -73,8 +87,10 @@ function nashQuestion(seed: number, customGame?: NormalFormGame): QuizQuestion {
     source,
     prompt: `Which action pair is a Nash equilibrium in ${game.title}?`,
     choices,
-    correctChoiceId: `${equilibrium.row}-${equilibrium.column}`,
-    explanation: `At ${profileLabel(game, equilibrium.row, equilibrium.column)}, neither player can improve by changing action alone.`,
+    correctChoiceId: equilibrium ? `${equilibrium.row}-${equilibrium.column}` : NO_PURE_EQUILIBRIUM,
+    explanation: equilibrium
+      ? `At ${profileLabel(game, equilibrium.row, equilibrium.column)}, neither player can improve by changing action alone.`
+      : `${game.title} has no pure-strategy equilibrium: in every cell one player would rather switch. Its only equilibrium mixes both actions.`,
   };
 }
 

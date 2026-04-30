@@ -19,7 +19,7 @@ interface InsightMoment {
 interface OneShotGameContent {
   readonly slug: OneShotPlayableSlug;
   readonly eyebrow: string;
-  /** A compact scenario, authored from the normative catalog framing in §4. */
+  /** A compact scenario that states the game in concrete terms before any theory. */
   readonly framing: string;
   readonly roundLimit: number;
   readonly personas: readonly OneShotPersonaContent[];

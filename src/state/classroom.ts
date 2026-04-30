@@ -110,9 +110,21 @@ export function aggregateSubmissions(
   };
 }
 
+/**
+ * A leading `=`, `+`, `-`, `@`, tab, or carriage return makes Excel and Sheets
+ * evaluate a cell instead of displaying it. Filenames, titles, and player labels
+ * arrive in files the teacher did not write, so those cells get the standard
+ * apostrophe guard. Exact totals are exempted by shape — prefixing `-3` would
+ * turn a numeric column into text and defeat the point of the export.
+ */
+const FORMULA_LEAD = /^[=+\-@\t\r]/;
+const EXACT_NUMBER = /^-?\d+(?:\/\d+)?$/;
+
 function csvCell(value: string | number): string {
   const text = String(value);
-  return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+  const guarded = FORMULA_LEAD.test(text) && !EXACT_NUMBER.test(text) ? `'${text}` : text;
+
+  return /[",\r\n]/.test(guarded) ? `"${guarded.replace(/"/g, '""')}"` : guarded;
 }
 
 export function submissionsToCsv(submissions: readonly ClassroomSubmission[]): string {

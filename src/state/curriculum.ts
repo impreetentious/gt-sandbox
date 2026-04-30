@@ -2,8 +2,9 @@
  * The guided path through the sandbox, and the only progression state
  * the product keeps.
  *
- * The home arc has always been ungated on purpose (§5.1: respect adult users),
- * and that does not change. This adds a *second* door for readers who want an
+ * The home arc has always been ungated on purpose — an adult reader is trusted
+ * to pick their own entry point — and that does not change. This adds a
+ * *second* door for readers who want an
  * order imposed rather than offered, and it is gated only until they say
  * otherwise. Every lock in here can be removed by one control, and removing
  * them is not a penalty: the surfaces themselves are identical either way.

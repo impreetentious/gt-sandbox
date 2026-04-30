@@ -5,8 +5,8 @@
 // `engine-strict=true` in .npmrc it prints "[WARN] Unsupported engine" and
 // installs anyway (unlike npm, which errors EBADENGINE). That let a build run
 // on the wrong major silently. This guard makes the wrong major fail the
-// install loudly, giving pnpm the same guarantee npm's engine-strict gives the
-// sibling repos. The bound is read from package.json so it can never drift from
+// install loudly, giving pnpm the same guarantee npm's engine-strict gives.
+// The bound is read from package.json so it can never drift from
 // `engines` / `.nvmrc` / CI.
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";

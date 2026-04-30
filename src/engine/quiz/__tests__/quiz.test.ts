@@ -1,11 +1,19 @@
 import { describe, expect, it } from "vitest";
 
+import { catalog } from "@/engine/catalog";
+import type { NormalFormGame } from "@/engine/game";
 import {
   generateQuizQuestion,
   generateQuizRound,
   QUIZ_LENGTH,
   scoreQuizRound,
 } from "@/engine/quiz";
+import { pureNashEquilibria } from "@/engine/solve/pure";
+
+/** The catalog game a question was generated from, recovered from its prompt. */
+function sourceGame(prompt: string): NormalFormGame | undefined {
+  return catalog.find((entry) => prompt.includes(entry.game.title))?.game;
+}
 
 describe("seeded quiz generator", () => {
   it("is deterministic and cycles through all five question kinds", () => {
@@ -42,5 +50,48 @@ describe("seeded quiz generator", () => {
         perfectAnswers.map(() => null),
       ),
     ).toBe(0);
+  });
+
+  it("never marks a cell correct in a game with no pure equilibrium", () => {
+    const graded: string[] = [];
+
+    for (let seed = 0; seed < 200; seed += 1) {
+      for (const question of generateQuizRound(seed)) {
+        if (question.kind !== "nash-cell") continue;
+
+        const game = sourceGame(question.prompt);
+        expect(game).toBeDefined();
+        if (!game) continue;
+
+        const equilibria = pureNashEquilibria(game);
+        const cell = /^(\d+)-(\d+)$/.exec(question.correctChoiceId);
+
+        if (cell) {
+          expect(equilibria).toContainEqual({ row: Number(cell[1]), column: Number(cell[2]) });
+        } else {
+          // The only non-cell answer is the explicit "no pure equilibrium" one.
+          expect(equilibria).toHaveLength(0);
+        }
+
+        graded.push(`${game.title}:${cell ? "cell" : "none"}`);
+      }
+    }
+
+    // The sweep must actually reach a game of each shape, or it proves nothing.
+    expect(graded.some((entry) => entry.endsWith(":none"))).toBe(true);
+    expect(graded.some((entry) => entry.endsWith(":cell"))).toBe(true);
+  });
+
+  it("offers the no-equilibrium answer as a choice in every cell question", () => {
+    for (let seed = 0; seed < 50; seed += 1) {
+      for (const question of generateQuizRound(seed)) {
+        if (question.kind !== "nash-cell") continue;
+
+        const ids = question.choices.map((choice) => choice.id);
+        expect(new Set(ids).size).toBe(ids.length);
+        expect(ids.filter((id) => !/^\d+-\d+$/.test(id))).toHaveLength(1);
+        expect(ids).toContain(question.correctChoiceId);
+      }
+    }
   });
 });

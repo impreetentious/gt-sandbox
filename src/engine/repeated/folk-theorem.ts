@@ -14,14 +14,17 @@ import {
  * Exact folk-theorem analysis for a two-player game. Everything here is closed
  * form in rationals: the feasible payoff hull, each player's minimax (security)
  * value, and the discount-factor threshold at which grim-trigger sustains a
- * designated cooperative outcome by reverting to the stage Nash punishment.
+ * designated cooperative outcome.
  *
  * The threshold uses the one-shot-deviation principle. For player i, cooperation
  * is sustainable iff
  *   R_i / (1 - δ)  ≥  D_i + δ · P_i / (1 - δ)
  * which rearranges to δ ≥ (D_i − R_i) / (D_i − P_i), where R_i is the
  * cooperative payoff, D_i the best one-shot deviation against the cooperative
- * opponent action, and P_i the punishment (reversion) payoff.
+ * opponent action, and P_i the punishment payoff — here the player's mixed
+ * minimax value, which is the harshest level an opponent can credibly hold them
+ * to. See `analyzeFolkTheorem` for why that is used rather than a nominated
+ * reversion cell.
  */
 export interface PayoffPoint {
   readonly row: Rational;
@@ -35,9 +38,7 @@ export type DeltaThreshold =
 
 interface FolkTheoremAnalysis {
   readonly cooperativeProfile: Profile;
-  readonly punishmentProfile: Profile;
   readonly cooperativePayoff: PayoffPoint;
-  readonly punishmentPayoff: PayoffPoint;
   readonly rowMinimax: Rational;
   readonly columnMinimax: Rational;
   /** Convex-hull vertices of the pure-outcome payoff set, counter-clockwise. */
@@ -52,8 +53,6 @@ interface FolkTheoremAnalysis {
 interface FolkTheoremConfig {
   /** Action index each player treats as "cooperate". */
   readonly cooperate: Profile;
-  /** Action index each player reverts to as punishment (defaults to the other). */
-  readonly punish?: Profile;
 }
 
 function assertTwoPlayerBinary(game: NormalFormGame): void {
@@ -206,18 +205,10 @@ export function analyzeFolkTheorem(
   assertTwoPlayerBinary(game);
 
   const cooperativeProfile = config.cooperate;
-  const punishmentProfile: Profile = config.punish ?? {
-    row: cooperativeProfile.row === 0 ? 1 : 0,
-    column: cooperativeProfile.column === 0 ? 1 : 0,
-  };
 
   const cooperativePayoff: PayoffPoint = {
     row: payoffFor(game, cooperativeProfile, "row"),
     column: payoffFor(game, cooperativeProfile, "column"),
-  };
-  const punishmentPayoff: PayoffPoint = {
-    row: payoffFor(game, punishmentProfile, "row"),
-    column: payoffFor(game, punishmentProfile, "column"),
   };
 
   const rowMinimax = rowMinimaxValue(game);
@@ -260,9 +251,7 @@ export function analyzeFolkTheorem(
 
   return {
     cooperativeProfile,
-    punishmentProfile,
     cooperativePayoff,
-    punishmentPayoff,
     rowMinimax,
     columnMinimax,
     feasibleHull,

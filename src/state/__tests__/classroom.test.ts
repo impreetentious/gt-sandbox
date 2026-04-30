@@ -68,6 +68,66 @@ describe("classroom aggregation", () => {
     expect(lines).toHaveLength(2);
     expect(lines[1]).toContain("pd");
   });
+
+  it("rejects a total that cannot be parsed back into an exact rational", () => {
+    for (const total of ["abc", "1/0", "", "  ", "NaN", "1e5", "0.5"]) {
+      const session = JSON.parse(sessionFile("pd", 3));
+      const result = ingestSessionFile("bad.json", JSON.stringify({ ...session, rowTotal: total }));
+
+      expect(result.ok).toBe(false);
+    }
+  });
+
+  it("rejects a round whose payoff is not an exact rational", () => {
+    const session = JSON.parse(sessionFile("pd", 3));
+    const result = ingestSessionFile(
+      "bad.json",
+      JSON.stringify({
+        ...session,
+        rounds: [{ ...session.rounds[0], rowPayoff: "three" }],
+      }),
+    );
+
+    expect(result.ok).toBe(false);
+  });
+
+  it("keeps aggregation and CSV total on every file the ingest accepted", () => {
+    // The aggregator's contract is that a bad file is skipped, not that it takes
+    // the page down; anything ingest lets through must survive both consumers.
+    const accepted: ClassroomSubmission[] = [];
+    for (const total of ["abc", "1/0", "4"]) {
+      const session = JSON.parse(sessionFile("pd", 3));
+      const result = ingestSessionFile("f.json", JSON.stringify({ ...session, rowTotal: total }));
+      if (result.ok) accepted.push(result.submission);
+    }
+
+    expect(accepted).toHaveLength(1);
+    expect(() => aggregateSubmissions(accepted)).not.toThrow();
+    expect(() => submissionsToCsv(accepted)).not.toThrow();
+  });
+
+  it("neutralizes spreadsheet formulas coming from submitted files", () => {
+    const session = JSON.parse(sessionFile("pd", -3));
+    const submissions: ClassroomSubmission[] = [
+      {
+        filename: "=cmd|calc.json",
+        session: {
+          ...session,
+          title: '=HYPERLINK("http://example.test","click")',
+          rowLabel: "+1+1",
+          columnLabel: "@SUM(A1)",
+        },
+      },
+    ];
+    const row = submissionsToCsv(submissions).split("\n")[1];
+
+    expect(row).toContain("'=cmd|calc.json");
+    expect(row).toContain("'+1+1");
+    expect(row).toContain("'@SUM(A1)");
+    expect(row).toContain('"\'=HYPERLINK(""http://example.test"",""click"")"');
+    // A negative total is a number, not a formula, and stays usable as one.
+    expect(row.split(",")).toContain("-3");
+  });
 });
 
 describe("assignment link builder", () => {

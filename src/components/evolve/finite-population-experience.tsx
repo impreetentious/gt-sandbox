@@ -37,25 +37,45 @@ export function FinitePopulationExperience() {
   const preset =
     finitePopulationPresets.find((option) => option.id === presetId) ?? finitePopulationPresets[0];
 
-  const config = useMemo(
-    () =>
-      createMoranConfig({
-        populationSize,
-        payoffs: preset.payoffs,
-        selectionIntensity: rational(BigInt(selectionStep), SELECTION_DENOMINATOR),
-      }),
-    [populationSize, preset.payoffs, selectionStep],
-  );
+  /**
+   * `1 − w + w·π` goes non-positive for a high enough w whenever a payoff is low
+   * enough, and the Moran birth step is undefined there — the engine refuses the
+   * configuration rather than divide by zero. Both sliders can reach that region
+   * (Hawk–Dove from w = 11/20, the two dilemmas at w = 1), so the out-of-domain
+   * case is a state this surface has to render, not an error to crash on.
+   */
+  const configResult = useMemo(() => {
+    try {
+      return {
+        ok: true as const,
+        config: createMoranConfig({
+          populationSize,
+          payoffs: preset.payoffs,
+          selectionIntensity: rational(BigInt(selectionStep), SELECTION_DENOMINATOR),
+        }),
+      };
+    } catch {
+      return { ok: false as const };
+    }
+  }, [populationSize, preset.payoffs, selectionStep]);
 
-  const selection = useMemo(() => classifySelection(config), [config]);
+  const selection = useMemo(
+    () => (configResult.ok ? classifySelection(configResult.config) : null),
+    [configResult],
+  );
   const ess = useMemo(() => classifyESS(preset.payoffs), [preset.payoffs]);
-  const curve = useMemo(() => fixationCurve(config), [config]);
+  const curve = useMemo(
+    () => (configResult.ok ? fixationCurve(configResult.config) : []),
+    [configResult],
+  );
 
   const selectionLabel = formatRational(rational(BigInt(selectionStep), SELECTION_DENOMINATOR));
 
   // ESS says stable-or-not; the 1/N rule says favoured-or-not. Where a pure
   // strategy is an ESS yet still invadable in this population, say so out loud.
-  const disagreement = (ess.a.isESS && selection.favoursB) || (ess.b.isESS && selection.favoursA);
+  const disagreement =
+    selection !== null &&
+    ((ess.a.isESS && selection.favoursB) || (ess.b.isESS && selection.favoursA));
 
   const plotWidth = 320;
   const plotHeight = 180;
@@ -175,90 +195,102 @@ export function FinitePopulationExperience() {
         <section aria-labelledby="finite-results-title" className="finite__results">
           <h3 id="finite-results-title">Fixation from a single mutant</h3>
 
-          <table className="finite__fixation" data-testid="finite-fixation">
-            <caption>
-              Exact probability that one mutant takes over the whole population, against the neutral
-              benchmark 1/{populationSize}.
-            </caption>
-            <thead>
-              <tr>
-                <th scope="col">Mutant</th>
-                <th scope="col">Fixation probability</th>
-                <th scope="col">Approx.</th>
-                <th scope="col">Favoured?</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">{preset.strategyA}</th>
-                <td className="finite__exact">{formatRational(selection.fixationA)}</td>
-                <td>{percentLabel(selection.fixationA)}</td>
-                <td>{selection.favoursA ? "Yes" : "No"}</td>
-              </tr>
-              <tr>
-                <th scope="row">{preset.strategyB}</th>
-                <td className="finite__exact">{formatRational(selection.fixationB)}</td>
-                <td>{percentLabel(selection.fixationB)}</td>
-                <td>{selection.favoursB ? "Yes" : "No"}</td>
-              </tr>
-              <tr>
-                <th scope="row">Neutral drift</th>
-                <td className="finite__exact">{formatRational(selection.neutral)}</td>
-                <td>{percentLabel(selection.neutral)}</td>
-                <td>—</td>
-              </tr>
-            </tbody>
-          </table>
-          <p className="finite__rule">{finitePopulationContent.neutralRule}</p>
-
-          <figure className="finite__figure">
-            <svg
-              aria-label={`Fixation probability for ${preset.strategyA} against the number of ${preset.strategyA} individuals already present, with the neutral drift line for comparison.`}
-              className="finite__plot"
-              role="img"
-              viewBox={`0 0 ${plotWidth} ${plotHeight}`}
-            >
-              <line
-                className="finite__axis"
-                x1={12}
-                x2={plotWidth - 12}
-                y1={plotHeight - 20}
-                y2={plotHeight - 20}
-              />
-              <line className="finite__axis" x1={12} x2={12} y1={16} y2={plotHeight - 20} />
-              <path className="finite__neutral-line" d={neutralPath} />
-              <path className="finite__curve" d={curvePath} />
-            </svg>
-            <figcaption>
-              Solid: fixation probability for {preset.strategyA} from each starting count. Dashed:
-              the neutral drift line i/N. Curving above it means selection is helping.
-            </figcaption>
-          </figure>
-
-          <details className="finite__table-fallback">
-            <summary>View the fixation curve as an accessible data table</summary>
-            <div className="finite__table-scroll" tabIndex={0}>
-              <table>
+          {selection === null ? (
+            <p className="finite__undefined" data-testid="finite-undefined" role="status">
+              At w = {selectionLabel} the linear fitness 1 − w + w·π falls to zero or below
+              somewhere in this population, so the Moran birth step — reproduce with probability
+              proportional to fitness — has nothing to be proportional to. There is no fixation
+              probability to report, exactly or otherwise. Lower the selection intensity, or pick a
+              game whose payoffs stay above −(1 − w)/w.
+            </p>
+          ) : (
+            <>
+              <table className="finite__fixation" data-testid="finite-fixation">
                 <caption>
-                  Exact fixation probability for {preset.strategyA} from every starting count.
+                  Exact probability that one mutant takes over the whole population, against the
+                  neutral benchmark 1/{populationSize}.
                 </caption>
                 <thead>
                   <tr>
-                    <th scope="col">{preset.strategyA} present</th>
+                    <th scope="col">Mutant</th>
                     <th scope="col">Fixation probability</th>
+                    <th scope="col">Approx.</th>
+                    <th scope="col">Favoured?</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {curve.map((row) => (
-                    <tr key={row.state}>
-                      <th scope="row">{row.state}</th>
-                      <td>{formatRational(row.fixation)}</td>
-                    </tr>
-                  ))}
+                  <tr>
+                    <th scope="row">{preset.strategyA}</th>
+                    <td className="finite__exact">{formatRational(selection.fixationA)}</td>
+                    <td>{percentLabel(selection.fixationA)}</td>
+                    <td>{selection.favoursA ? "Yes" : "No"}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">{preset.strategyB}</th>
+                    <td className="finite__exact">{formatRational(selection.fixationB)}</td>
+                    <td>{percentLabel(selection.fixationB)}</td>
+                    <td>{selection.favoursB ? "Yes" : "No"}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Neutral drift</th>
+                    <td className="finite__exact">{formatRational(selection.neutral)}</td>
+                    <td>{percentLabel(selection.neutral)}</td>
+                    <td>—</td>
+                  </tr>
                 </tbody>
               </table>
-            </div>
-          </details>
+              <p className="finite__rule">{finitePopulationContent.neutralRule}</p>
+
+              <figure className="finite__figure">
+                <svg
+                  aria-label={`Fixation probability for ${preset.strategyA} against the number of ${preset.strategyA} individuals already present, with the neutral drift line for comparison.`}
+                  className="finite__plot"
+                  role="img"
+                  viewBox={`0 0 ${plotWidth} ${plotHeight}`}
+                >
+                  <line
+                    className="finite__axis"
+                    x1={12}
+                    x2={plotWidth - 12}
+                    y1={plotHeight - 20}
+                    y2={plotHeight - 20}
+                  />
+                  <line className="finite__axis" x1={12} x2={12} y1={16} y2={plotHeight - 20} />
+                  <path className="finite__neutral-line" d={neutralPath} />
+                  <path className="finite__curve" d={curvePath} />
+                </svg>
+                <figcaption>
+                  Solid: fixation probability for {preset.strategyA} from each starting count.
+                  Dashed: the neutral drift line i/N. Curving above it means selection is helping.
+                </figcaption>
+              </figure>
+
+              <details className="finite__table-fallback">
+                <summary>View the fixation curve as an accessible data table</summary>
+                <div className="finite__table-scroll" tabIndex={0}>
+                  <table>
+                    <caption>
+                      Exact fixation probability for {preset.strategyA} from every starting count.
+                    </caption>
+                    <thead>
+                      <tr>
+                        <th scope="col">{preset.strategyA} present</th>
+                        <th scope="col">Fixation probability</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {curve.map((row) => (
+                        <tr key={row.state}>
+                          <th scope="row">{row.state}</th>
+                          <td>{formatRational(row.fixation)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </details>
+            </>
+          )}
         </section>
       </div>
 
@@ -304,20 +336,22 @@ export function FinitePopulationExperience() {
       <details className="finite__exactness">
         <summary>Why these are fractions and not decimals</summary>
         <p>{finitePopulationContent.exactness}</p>
-        <p>
-          At N = {populationSize}, drift alone would fix a {preset.strategyA} mutant with
-          probability {formatRational(selection.neutral)}. Selection moves that to{" "}
-          {formatRational(selection.fixationA)} — a margin of exactly{" "}
-          <code data-testid="finite-margin">
-            {formatRational(subtract(selection.fixationA, selection.neutral))}
-          </code>
-          , which is{" "}
-          {compare(selection.fixationA, selection.neutral) === 1
-            ? "positive, so selection is helping."
-            : compare(selection.fixationA, selection.neutral) === -1
-              ? "negative, so selection is working against it."
-              : "exactly zero, so selection is doing nothing at all."}
-        </p>
+        {selection === null ? null : (
+          <p>
+            At N = {populationSize}, drift alone would fix a {preset.strategyA} mutant with
+            probability {formatRational(selection.neutral)}. Selection moves that to{" "}
+            {formatRational(selection.fixationA)} — a margin of exactly{" "}
+            <code data-testid="finite-margin">
+              {formatRational(subtract(selection.fixationA, selection.neutral))}
+            </code>
+            , which is{" "}
+            {compare(selection.fixationA, selection.neutral) === 1
+              ? "positive, so selection is helping."
+              : compare(selection.fixationA, selection.neutral) === -1
+                ? "negative, so selection is working against it."
+                : "exactly zero, so selection is doing nothing at all."}
+          </p>
+        )}
       </details>
     </div>
   );

@@ -3932,6 +3932,16 @@ body:has(.embed-game) main {
   font-size: 0.9rem;
 }
 
+/* Shown in place of the fixation results when the sliders reach a selection
+   intensity at which linear fitness stops being positive. */
+.finite__undefined {
+  margin: 0.5rem 0 0;
+  padding: 0.8rem 1rem;
+  border-left: 3px solid var(--accent-warm);
+  background: var(--paper);
+  font-size: 0.9rem;
+}
+
 .finite__exactness {
   margin-top: 1.25rem;
 }
