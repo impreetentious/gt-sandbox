@@ -10,13 +10,13 @@ import type { BinaryAction } from "@/engine/repeated/policies";
 import { add, type Rational, ZERO } from "@/engine/rational";
 
 export type IpdOpponentChoice = IpdStrategyId | "mystery";
-export type IpdSessionStatus = "playing" | "resolving" | "complete";
-export type IpdFocusTarget = "choice-0" | "choice-1" | "play-again";
+type IpdSessionStatus = "playing" | "resolving" | "complete";
+type IpdFocusTarget = "choice-0" | "choice-1" | "play-again";
 
 const DEFAULT_IPD_SESSION_SEED = 0x4950_4401;
 const IPD_MATCH_ID = "ipd-play";
 
-export interface IpdSessionState {
+interface IpdSessionState {
   readonly selectedOpponent: IpdOpponentChoice;
   readonly opponentStrategy: IpdStrategyId;
   readonly mystery: boolean;
@@ -30,7 +30,7 @@ export interface IpdSessionState {
   readonly focusTarget: IpdFocusTarget;
 }
 
-export type IpdSessionAction =
+type IpdSessionAction =
   | { readonly type: "select-opponent"; readonly opponent: IpdOpponentChoice }
   | {
       readonly type: "hydrate";
@@ -98,7 +98,7 @@ export function createIpdSession(
   };
 }
 
-export function nextIpdSessionSeed(seed: number): number {
+function nextIpdSessionSeed(seed: number): number {
   return (seed + 0x9e37_79b9) >>> 0;
 }
 

@@ -13,10 +13,10 @@ const DEFAULT_PD_SESSION_SEED = 0x5044_0001;
 
 export type PdAction = BinaryAction;
 export type PdPersonaId = PdOpponentPolicy;
-export type PdSessionStatus = "playing" | "resolving" | "complete";
-export type PdFocusTarget = "choice-0" | "choice-1" | "play-again";
+type PdSessionStatus = "playing" | "resolving" | "complete";
+type PdFocusTarget = "choice-0" | "choice-1" | "play-again";
 
-export interface PdRound {
+interface PdRound {
   readonly number: number;
   readonly playerAction: PdAction;
   readonly opponentAction: PdAction;
@@ -24,7 +24,7 @@ export interface PdRound {
   readonly opponentPayoff: Rational;
 }
 
-export interface PdSessionState {
+interface PdSessionState {
   readonly persona: PdPersonaId;
   readonly seed: number;
   readonly status: PdSessionStatus;
@@ -35,7 +35,7 @@ export interface PdSessionState {
   readonly focusTarget: PdFocusTarget;
 }
 
-export type PdSessionAction =
+type PdSessionAction =
   | { readonly type: "select-persona"; readonly persona: PdPersonaId }
   | {
       readonly type: "hydrate";
@@ -69,7 +69,7 @@ export function createPdSession(
 }
 
 /** Produces a new deterministic session seed without consulting wall-clock time. */
-export function nextPdSessionSeed(seed: number): number {
+function nextPdSessionSeed(seed: number): number {
   return (seed + 0x9e37_79b9) >>> 0;
 }
 

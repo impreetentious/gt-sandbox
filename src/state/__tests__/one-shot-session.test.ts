@@ -8,7 +8,7 @@ function commitChoice(state: ReturnType<typeof createOneShotSession>, action: 0 
   });
 }
 
-describe("P5 shared one-shot session reducer", () => {
+describe("shared one-shot session reducer", () => {
   it("uses the selected catalog game and rejects actions during a staged outcome", () => {
     const ready = createOneShotSession("chicken", "always:1", 9);
     const resolving = reduceOneShotSession(ready, {

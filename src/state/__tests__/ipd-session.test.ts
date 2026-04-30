@@ -7,7 +7,7 @@ function commitChoice(state: ReturnType<typeof createIpdSession>, action: 0 | 1)
   });
 }
 
-describe("P6 interactive IPD session reducer", () => {
+describe("interactive IPD session reducer", () => {
   it("stages a TFT response from realized history and rejects double submission", () => {
     const ready = createIpdSession("tft", 10);
     const resolving = reduceIpdSession(ready, {

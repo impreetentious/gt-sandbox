@@ -34,7 +34,7 @@ export interface OneShotSessionState {
   readonly focusTarget: OneShotFocusTarget;
 }
 
-export type OneShotSessionAction =
+type OneShotSessionAction =
   | { readonly type: "select-persona"; readonly persona: OneShotOpponentPolicy }
   | {
       readonly type: "hydrate";
@@ -63,7 +63,7 @@ export function createOneShotSession(
   };
 }
 
-export function nextOneShotSessionSeed(seed: number): number {
+function nextOneShotSessionSeed(seed: number): number {
   return (seed + 0x9e37_79b9) >>> 0;
 }
 
@@ -98,7 +98,7 @@ function stageRound(state: OneShotSessionState, playerAction: BinaryAction): One
   };
 }
 
-/** A reducer-shared semantic session loop for all P5 one-shot games. */
+/** A reducer-shared semantic session loop for all one-shot games. */
 export function reduceOneShotSession(
   state: OneShotSessionState,
   action: OneShotSessionAction,

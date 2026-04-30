@@ -8,7 +8,7 @@ function commitChoice(state: ReturnType<typeof createPdSession>, action: 0 | 1) 
   });
 }
 
-describe("P2 PD session reducer", () => {
+describe("PD session reducer", () => {
   it("stages the next payoff from the catalog and rejects a double-submit", () => {
     const ready = createPdSession("always:D");
     const resolving = reducePdSession(ready, {

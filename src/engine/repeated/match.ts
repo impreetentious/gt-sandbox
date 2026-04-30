@@ -43,7 +43,7 @@ export interface IpdMatchLength {
   readonly continuationDraws: readonly number[];
 }
 
-export interface IpdMatchResult extends IpdMatchLength {
+interface IpdMatchResult extends IpdMatchLength {
   readonly config: Readonly<IpdMatchConfig>;
   readonly history: readonly IpdMatchRound[];
   readonly rowTotal: Rational;

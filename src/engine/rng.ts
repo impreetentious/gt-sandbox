@@ -1,4 +1,4 @@
-export interface SeededRng {
+interface SeededRng {
   readonly next: () => number;
   readonly integer: (minimumInclusive: number, maximumExclusive: number) => number;
 }
