@@ -7,7 +7,7 @@ import {
   EVOLUTION_URL_MAX_LENGTH,
 } from "@/state/evolution-url";
 
-describe("P8 evolution URL state", () => {
+describe("evolution URL state", () => {
   it("round-trips a complete bounded configuration bit-for-bit", () => {
     const first = runIpdEvolution(defaultEvolutionPreset.config);
     const search = encodeEvolutionConfig(first.config);

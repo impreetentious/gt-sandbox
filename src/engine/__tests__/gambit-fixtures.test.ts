@@ -43,7 +43,7 @@ interface FixtureManifest {
   readonly sourceSeed: string;
 }
 
-const fixturePath = resolve(process.cwd(), "fixtures/gambit-16.3.0.json");
+const fixturePath = resolve(process.cwd(), "fixtures/gambit-16.6.0.json");
 const manifestPath = resolve(process.cwd(), "fixtures/manifest.json");
 const fixtureBytes = readFileSync(fixturePath);
 const fixture = JSON.parse(fixtureBytes.toString()) as FixtureCorpus;
@@ -72,11 +72,11 @@ function engineEquilibria(caseFixture: FixtureCase): string[] {
     .sort();
 }
 
-describe("Gambit 16.3.0 external fixture corpus", () => {
+describe("Gambit 16.6.0 external fixture corpus", () => {
   it("has an intact, pinned, no-network provenance manifest", () => {
-    expect(manifest.fixture).toBe("gambit-16.3.0.json");
+    expect(manifest.fixture).toBe("gambit-16.6.0.json");
     expect(manifest.caseCount).toBe(39);
-    expect(manifest.gambitVersion).toBe("16.3.0");
+    expect(manifest.gambitVersion).toBe("16.6.0");
     expect(manifest.sourceSeed).toBe("gt-sandbox-p3-gambit-fixtures-v1");
     expect(createHash("sha256").update(fixtureBytes).digest("hex")).toBe(manifest.sha256);
     expect(fixture.provenance).toMatchObject({

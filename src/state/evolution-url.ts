@@ -2,10 +2,10 @@ import { defaultEvolutionPreset } from "@/content/evolution-presets";
 import type { IpdEvolutionConfig } from "@/engine/repeated/replicator";
 import { ipdStrategyById, type IpdStrategyId } from "@/engine/repeated/strategies";
 
-export const EVOLUTION_URL_VERSION = "1";
+const EVOLUTION_URL_VERSION = "1";
 export const EVOLUTION_URL_MAX_LENGTH = 8 * 1024;
 
-export interface EvolutionUrlState {
+interface EvolutionUrlState {
   readonly config: IpdEvolutionConfig;
   readonly notice?: string;
 }
@@ -108,7 +108,7 @@ export function encodeEvolutionConfig(config: Required<IpdEvolutionConfig>): str
 }
 
 /**
- * Decodes a bounded P8 configuration without partially accepting malformed
+ * Decodes a bounded evolution configuration without partially accepting malformed
  * input. A bad link always returns the documented default and a plain notice.
  */
 export function decodeEvolutionSearch(search: string): EvolutionUrlState {

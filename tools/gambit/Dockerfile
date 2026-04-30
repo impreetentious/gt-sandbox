@@ -1,6 +1,6 @@
 FROM debian:bookworm-slim
 
-ARG GAMBIT_VERSION=16.3.0
+ARG GAMBIT_VERSION=16.6.0
 
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends \

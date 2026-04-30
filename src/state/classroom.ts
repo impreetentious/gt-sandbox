@@ -17,7 +17,7 @@ import {
  * Pure classroom aggregation. A teacher collects the JSON transcripts students
  * download and drops them in locally; this module folds them into exact summary
  * statistics and a CSV. No network, no upload — the files never leave the
- * device (I4). Totals are parsed back to exact rationals so class means do not
+ * device. Totals are parsed back to exact rationals so class means do not
  * drift to floats.
  */
 export interface ClassroomSubmission {
@@ -30,12 +30,7 @@ export interface ClassroomRejection {
   readonly notice: string;
 }
 
-export interface IngestResult {
-  readonly accepted: readonly ClassroomSubmission[];
-  readonly rejected: readonly ClassroomRejection[];
-}
-
-export interface GameSummary {
+interface GameSummary {
   readonly game: string;
   readonly title: string;
   readonly kind: SessionExportKind;
@@ -45,7 +40,7 @@ export interface GameSummary {
   readonly totalRounds: number;
 }
 
-export interface ClassroomAggregate {
+interface ClassroomAggregate {
   readonly count: number;
   readonly totalRounds: number;
   readonly byGame: readonly GameSummary[];

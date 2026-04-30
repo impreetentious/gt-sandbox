@@ -14,10 +14,10 @@ from typing import Final
 
 
 ROOT: Final = Path(__file__).resolve().parents[1]
-DEFAULT_IMAGE: Final = "gt-sandbox/gambit-enummixed:16.3.0"
-DEFAULT_OUTPUT: Final = ROOT / "fixtures" / "gambit-16.3.0.json"
+DEFAULT_IMAGE: Final = "gt-sandbox/gambit-enummixed:16.6.0"
+DEFAULT_OUTPUT: Final = ROOT / "fixtures" / "gambit-16.6.0.json"
 SOURCE_SEED: Final = "gt-sandbox-p3-gambit-fixtures-v1"
-GAMBIT_VERSION: Final = "16.3.0"
+GAMBIT_VERSION: Final = "16.6.0"
 
 
 @dataclass(frozen=True)

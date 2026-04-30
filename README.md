@@ -31,7 +31,7 @@ Game Theory Sandbox is a static, privacy-preserving interactive tool for strateg
 - Payoffs, best responses, dominance, and equilibrium probabilities use exact normalized bigint fractions. Floating point is excluded from solver correctness paths.
 - Dominance detection covers strict dominance by mixed strategies, decided by an exact-rational simplex — not only dominance by pure strategies.
 - Equal-size support enumeration finds every equilibrium of nondegenerate two-player games within the 4×4 bound. Degenerate games receive a formal exact witness and an explicit limitation: pure equilibria and verified mixed samples are shown, but the sample is not called complete.
-- Canonical claims are tested against hand-derived results from the theory, an independent verifier, a separate closed-form 2×2 implementation, and a committed Gambit 16.3.0 fixture corpus.
+- Canonical claims are tested against hand-derived results from the theory, an independent verifier, a separate closed-form 2×2 implementation, and a committed Gambit 16.6.0 fixture corpus.
 - Every random policy, match, tournament, and evolution fixture is seeded. Event-addressed streams keep match length, policy choices, and action noise comparable across counterfactuals.
 
 The app's own **Methods** page explains the verification layers, the simulation boundary, references, the privacy contract, and prior-art credit.
@@ -44,7 +44,7 @@ The app is installable and works offline: a version-keyed service worker precach
 
 ## Run locally
 
-Requirements: Node 24.10.0 and pnpm 10.32.1 (both are pinned by the repository).
+Requirements: Node 24.10.0 and pnpm 10.33.0 (both are pinned by the repository).
 
 ```bash
 corepack enable
@@ -84,4 +84,4 @@ MIT © Sidakpreet Singh — see [LICENSE](LICENSE).
 
 ---
 
-**Version:** v0.21.11
+**Version:** v0.21.12

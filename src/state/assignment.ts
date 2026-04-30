@@ -8,11 +8,11 @@ import { encodeGameSearch } from "@/state/game-url";
  * assignments pin the rival persona and seed through the existing versioned
  * game-URL codec, so every student faces the identical sequence; the other
  * surfaces are deep links to the exercise. Everything is a static path — the
- * link encodes the whole assignment, with no server to look anything up (I4).
+ * link encodes the whole assignment, with no server lookup.
  */
 export type AssignmentSurface = "play" | "hot-seat" | "auction";
 
-export interface AssignmentSpec {
+interface AssignmentSpec {
   readonly surface: AssignmentSurface;
   readonly target: string;
   readonly persona?: string;

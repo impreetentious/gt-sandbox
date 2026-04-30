@@ -1196,9 +1196,9 @@
   ],
   "provenance": {
     "command": "gambit-enummixed -q",
-    "containerImage": "gt-sandbox/gambit-enummixed:16.3.0",
-    "containerImageId": "sha256:b9a10a940cff72e10fa7ddc5e2fbd4daae5230ffc2b7e697ab16f3a8ff8423f9",
-    "gambitVersion": "16.3.0",
+    "containerImage": "gt-sandbox/gambit-enummixed:16.6.0",
+    "containerImageId": "sha256:5edca4c2f899b1c87d8d03257e52455ed17eb6a94e718629b693d080325ace56",
+    "gambitVersion": "16.6.0",
     "hostMounts": "none",
     "network": "none",
     "solver": "gambit-enummixed",

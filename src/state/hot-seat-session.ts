@@ -9,7 +9,7 @@ import { buildSessionExport, type SessionExport } from "@/state/session-export";
  * Two humans, one device. Simultaneity is preserved by commit-and-conceal: the
  * row player locks a hidden action, a handover screen hides it, then the column
  * player chooses. Neither engine nor persona machinery is involved — this is a
- * pure reducer over two human inputs, so it stays inside I4 with zero backend.
+ * pure reducer over two human inputs and requires no backend.
  */
 export type HotSeatPhase = "row-commit" | "handover" | "column-commit" | "reveal" | "complete";
 
@@ -38,7 +38,7 @@ export interface HotSeatState {
   readonly focusTarget: HotSeatFocusTarget;
 }
 
-export type HotSeatAction =
+type HotSeatAction =
   | { readonly type: "commit-row"; readonly action: BinaryAction }
   | { readonly type: "acknowledge-handover" }
   | { readonly type: "commit-column"; readonly action: BinaryAction }

@@ -1,4 +1,4 @@
-# Next 16.1.x still pins an old `postcss` inside its dependency tree, so the
+# Next 16.2.x still pins an old `postcss` inside its dependency tree, so the
 # newer version has to be forced across the build pipeline.
 overrides:
   postcss: ^8.5.8

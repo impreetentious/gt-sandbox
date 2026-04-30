@@ -19,7 +19,7 @@ const verificationLayers = [
   },
   {
     title: "External cross-oracle",
-    body: "A committed 39-case corpus was generated with Gambit 16.3.0 in an isolated, pinned environment. The repository verifies the corpus digest and exact equilibrium sets without requiring Gambit at runtime.",
+    body: "A committed 39-case corpus was generated with Gambit 16.6.0 in an isolated, pinned environment. The repository verifies the corpus digest and exact equilibrium sets without requiring Gambit at runtime.",
   },
   {
     title: "Closed-form cross-check",
@@ -193,7 +193,7 @@ export default function MethodsPage() {
           <section>
             <h3>Independent computation</h3>
             <p>
-              <a href="https://gambitproject.readthedocs.io/en/latest/">Gambit 16.3.0</a> provides
+              <a href="https://gambitproject.readthedocs.io/en/latest/">Gambit 16.6.0</a> provides
               the external equilibrium corpus. Its fixture inputs, output, manifest, and digest are
               committed in the repository.
             </p>

@@ -15,7 +15,7 @@ const firstId = curriculum[0].id;
 const secondId = curriculum[1].id;
 const lastId = curriculum[curriculum.length - 1].id;
 
-describe("V2-P10 curriculum progression", () => {
+describe("curriculum progression", () => {
   it("opens only the first stop on a fresh start", () => {
     expect(isUnlocked(initialProgress, firstId)).toBe(true);
     expect(isUnlocked(initialProgress, secondId)).toBe(false);

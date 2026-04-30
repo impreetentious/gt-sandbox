@@ -1,13 +1,13 @@
 import { createNormalFormGame, type NormalFormGame } from "@/engine/game";
 import { formatRational, parseRational, type Rational } from "@/engine/rational";
 
-export const GAME_URL_VERSION = "1";
+const GAME_URL_VERSION = "1";
 export const MAX_GAME_URL_BYTES = 8 * 1024;
 export const MIN_ACTIONS = 2;
 export const MAX_ACTIONS = 4;
-export const MAX_LABEL_CODE_POINTS = 40;
-export const MAX_TITLE_CODE_POINTS = 80;
-export const MAX_RATIONAL_COMPONENT = 1_000_000n;
+const MAX_LABEL_CODE_POINTS = 40;
+const MAX_TITLE_CODE_POINTS = 80;
+const MAX_RATIONAL_COMPONENT = 1_000_000n;
 
 export interface GameShareExtras {
   readonly persona?: string;
@@ -16,7 +16,7 @@ export interface GameShareExtras {
   readonly noise?: number;
 }
 
-export interface GameShareState {
+interface GameShareState {
   readonly game: NormalFormGame;
   readonly extras: GameShareExtras;
 }
@@ -28,11 +28,11 @@ export interface EditableGameDraft {
   readonly payoffs: readonly (readonly (readonly [string, string])[])[];
 }
 
-export type DraftGameResult =
+type DraftGameResult =
   | { readonly ok: true; readonly game: NormalFormGame }
   | { readonly ok: false; readonly notice: string };
 
-export type DecodeGameUrlResult =
+type DecodeGameUrlResult =
   | { readonly kind: "empty" }
   | { readonly kind: "valid"; readonly state: GameShareState }
   | { readonly kind: "invalid"; readonly notice: string };

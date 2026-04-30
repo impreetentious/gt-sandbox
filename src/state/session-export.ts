@@ -36,7 +36,7 @@ export interface SessionExport {
   readonly meta?: Readonly<Record<string, string | number>>;
 }
 
-export interface SessionExportInput {
+interface SessionExportInput {
   readonly kind: SessionExportKind;
   readonly game: string;
   readonly title: string;
@@ -81,7 +81,7 @@ export function serializeSessionExport(session: SessionExport): string {
   return JSON.stringify(session, null, 2);
 }
 
-export type ParseSessionExportResult =
+type ParseSessionExportResult =
   | { readonly ok: true; readonly session: SessionExport }
   | { readonly ok: false; readonly notice: string };
 
