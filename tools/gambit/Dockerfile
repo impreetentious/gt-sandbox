@@ -1,3 +1,5 @@
+# Disposable build image for the fixture generator. It never receives repository
+# content and runs with --network=none.
 FROM debian:bookworm-slim
 
 ARG GAMBIT_VERSION=16.6.0

@@ -147,7 +147,7 @@ export function TournamentExperience() {
           id="tournament-panel"
           role="tabpanel"
         >
-          <section className="tournament__method">
+          <aside className="tournament__method">
             <p className="eyebrow">Method</p>
             <p>
               Robert Axelrod&apos;s <cite>The Evolution of Cooperation</cite> (1984) used computer
@@ -161,7 +161,7 @@ export function TournamentExperience() {
               mean of each match&apos;s per-round payoff; the displayed decimal is rounded only for
               reading.
             </p>
-          </section>
+          </aside>
 
           <fieldset className="tournament__roster">
             <legend>Roster</legend>

@@ -1,3 +1,4 @@
+# Dependencies and package-manager state
 node_modules/
 .pnpm-store/
 .next/

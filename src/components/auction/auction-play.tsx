@@ -320,7 +320,7 @@ export function AuctionPlayExperience({ format }: { readonly format: AuctionForm
           ) : null}
         </section>
 
-        <section aria-labelledby="auction-analysis" className="auction__analysis">
+        <aside aria-labelledby="auction-analysis" className="auction__analysis">
           <h2 id="auction-analysis">Reveal</h2>
           <p className="auction__concept">
             Concept: <strong>{content.concept}</strong>.
@@ -333,7 +333,7 @@ export function AuctionPlayExperience({ format }: { readonly format: AuctionForm
           <p className="auction__personas">
             Rivals available: {personas.map((id) => auctionPersonas[id].name).join(", ")}.
           </p>
-        </section>
+        </aside>
       </div>
     </section>
   );

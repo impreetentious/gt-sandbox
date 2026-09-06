@@ -1,3 +1,4 @@
+// The shell spec is the canary: if the export stops booting, every other check here is noise.
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { readdirSync } from "node:fs";

@@ -167,8 +167,10 @@ export function scoreGrid(config: SpatialConfig, grid: SpatialGrid): readonly Ra
  * cell in its closed neighbourhood.
  *
  * Ties are resolved deterministically and in this order — the incumbent keeps
- * its own strategy when it is among the winners, otherwise the lowest neighbour
- * index wins. Preferring the incumbent is the substantive half: without it a
+ * its own strategy when it is among the winners, otherwise the first neighbour
+ * in the fixed offset order above wins. (That order is not ascending cell
+ * index: on a torus the wrapped offsets visit higher indices first.) Preferring
+ * the incumbent is the substantive half: without it a
  * cell tied with its neighbours would flip on every step, and the lattice would
  * blink forever instead of settling, turning a fixed point into a period-2
  * artefact of the tie-break.

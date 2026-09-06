@@ -48,6 +48,7 @@ hosts, so adding it globally would override the exception above.
 ```
 Referrer-Policy: no-referrer
 X-Content-Type-Options: nosniff
+Permissions-Policy: browsing-topics=(), camera=(), geolocation=(), microphone=(), payment=(), usb=()
 ```
 
 ### Generic static-server example
@@ -56,4 +57,5 @@ X-Content-Type-Options: nosniff
 add_header Content-Security-Policy "default-src 'self'; base-uri 'self'; child-src 'none'; connect-src 'self'; font-src 'self'; form-action 'self'; frame-ancestors 'none'; frame-src 'none'; img-src 'self' data:; manifest-src 'self'; media-src 'self'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; worker-src 'self'" always;
 add_header Referrer-Policy "no-referrer" always;
 add_header X-Content-Type-Options "nosniff" always;
+add_header Permissions-Policy "browsing-topics=(), camera=(), geolocation=(), microphone=(), payment=(), usb=()" always;
 ```

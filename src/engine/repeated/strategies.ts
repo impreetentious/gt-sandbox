@@ -2,14 +2,7 @@ import { equals, rational, type Rational } from "@/engine/rational";
 import type { BinaryAction } from "@/engine/repeated/policies";
 
 export type IpdStrategyId =
-  | "allc"
-  | "alld"
-  | "tft"
-  | "grim"
-  | "pavlov"
-  | "gtft"
-  | "joss"
-  | "random";
+  "allc" | "alld" | "tft" | "grim" | "pavlov" | "gtft" | "joss" | "random";
 
 export interface StrategyDiagram {
   readonly states: readonly string[];

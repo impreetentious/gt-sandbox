@@ -358,7 +358,7 @@ export function IpdPlayExperience() {
             ) : null}
           </section>
 
-          <section aria-labelledby="ipd-matrix-title" className="one-shot-analysis">
+          <aside aria-labelledby="ipd-matrix-title" className="one-shot-analysis">
             <div className="one-shot-analysis__heading">
               <p className="eyebrow">Stage-game matrix</p>
               <h2 id="ipd-matrix-title">The incentives persist</h2>
@@ -448,7 +448,7 @@ export function IpdPlayExperience() {
               }))}
               title="Iterated price war"
             />
-          </section>
+          </aside>
         </div>
       </section>
       <GameWorkbench

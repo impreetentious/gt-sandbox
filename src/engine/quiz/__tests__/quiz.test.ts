@@ -82,6 +82,37 @@ describe("seeded quiz generator", () => {
     expect(graded.some((entry) => entry.endsWith(":cell"))).toBe(true);
   });
 
+  it("never offers a second true equilibrium alongside the graded one", () => {
+    let multiEquilibriumQuestions = 0;
+
+    for (let seed = 0; seed < 200; seed += 1) {
+      for (const question of generateQuizRound(seed)) {
+        if (question.kind !== "nash-cell") continue;
+
+        const game = sourceGame(question.prompt);
+        expect(game).toBeDefined();
+        if (!game) continue;
+
+        const equilibria = pureNashEquilibria(game);
+        if (equilibria.length > 1) multiEquilibriumQuestions += 1;
+
+        const offeredEquilibria = question.choices.filter((choice) =>
+          equilibria.some((profile) => `${profile.row}-${profile.column}` === choice.id),
+        );
+
+        // Grading compares one id, so at most one choice may be a real
+        // equilibrium or a correct answer would be marked wrong.
+        expect(offeredEquilibria.map((choice) => choice.id)).toEqual(
+          equilibria.length === 0 ? [] : [question.correctChoiceId],
+        );
+      }
+    }
+
+    // Stag Hunt, Battle of the Sexes and Chicken each have two; if the sweep
+    // never reaches one the assertion above proves nothing.
+    expect(multiEquilibriumQuestions).toBeGreaterThan(0);
+  });
+
   it("offers the no-equilibrium answer as a choice in every cell question", () => {
     for (let seed = 0; seed < 50; seed += 1) {
       for (const question of generateQuizRound(seed)) {

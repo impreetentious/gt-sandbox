@@ -289,7 +289,7 @@ export function OneShotPlayExperience({ slug }: { readonly slug: OneShotPlayable
             ) : null}
           </section>
 
-          <section aria-labelledby={`${slug}-matrix-title`} className="one-shot-analysis">
+          <aside aria-labelledby={`${slug}-matrix-title`} className="one-shot-analysis">
             <div className="one-shot-analysis__heading">
               <p className="eyebrow">Matrix</p>
               <h2 id={`${slug}-matrix-title`}>The incentives on the table</h2>
@@ -378,7 +378,7 @@ export function OneShotPlayExperience({ slug }: { readonly slug: OneShotPlayable
               }))}
               title={game.title}
             />
-          </section>
+          </aside>
         </div>
       </section>
       <GameWorkbench

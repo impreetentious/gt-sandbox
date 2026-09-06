@@ -1,5 +1,6 @@
 /*
- * Offline cache for the static application.
+ * Offline cache for the static application. Registered from the app shell only;
+ * it is never installed by a page the visitor did not open.
  *
  * Scope is deliberately tiny. This worker does not push, does not sync, does
  * not talk to anything, and never sees a request the browser was not already

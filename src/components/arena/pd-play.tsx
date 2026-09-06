@@ -261,7 +261,7 @@ export function PdPlayExperience() {
             ) : null}
           </section>
 
-          <section aria-labelledby="matrix-title" className="pd-analysis">
+          <aside aria-labelledby="matrix-title" className="pd-analysis">
             <div className="pd-analysis__heading">
               <p className="eyebrow">Matrix</p>
               <h2 id="matrix-title">The incentives on the table</h2>
@@ -352,7 +352,7 @@ export function PdPlayExperience() {
               }))}
               title="Price war"
             />
-          </section>
+          </aside>
         </div>
       </section>
       <GameWorkbench

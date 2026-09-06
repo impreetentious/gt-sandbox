@@ -305,7 +305,7 @@ export function HotSeatPlayExperience({ slug }: { readonly slug: HotSeatSlug }) 
             ) : null}
           </section>
 
-          <section aria-labelledby={`${slug}-hotseat-matrix`} className="one-shot-analysis">
+          <aside aria-labelledby={`${slug}-hotseat-matrix`} className="one-shot-analysis">
             <div className="one-shot-analysis__heading">
               <p className="eyebrow">Matrix</p>
               <h2 id={`${slug}-hotseat-matrix`}>The incentives on the table</h2>
@@ -417,7 +417,7 @@ export function HotSeatPlayExperience({ slug }: { readonly slug: HotSeatSlug }) 
               }))}
               title={game.title}
             />
-          </section>
+          </aside>
         </div>
       </section>
     </>

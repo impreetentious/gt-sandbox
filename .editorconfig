@@ -1,3 +1,4 @@
+# Editor defaults that match .prettierrc.json and the .gitattributes LF policy.
 root = true
 
 [*]

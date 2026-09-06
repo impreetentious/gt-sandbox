@@ -15,7 +15,7 @@ The full suite builds the export, enforces the per-route JavaScript budget, disc
 
 ## Vercel
 
-- Import `ItsMonarch04/gt-sandbox` with the Next.js framework preset.
+- Import `impreetentious/gt-sandbox` with the Next.js framework preset.
 - Use `pnpm build` as the build command and `out/` as the output directory.
 - Select Node 24 and keep runtime functions, Analytics, and Speed Insights disabled; the application is intentionally static and telemetry-free.
 - Keep the response headers from `vercel.json`. Do not replace them with a permissive dashboard rule.

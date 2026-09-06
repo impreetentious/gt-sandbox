@@ -3,6 +3,8 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 import tseslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 
+// Flat config. Generated and build output are ignored here rather than in .eslintignore,
+// which flat config no longer reads.
 const config = [
   {
     ignores: [
