@@ -26,9 +26,6 @@ const config = [
         project: "./tsconfig.json",
       },
     },
-    plugins: {
-      "@typescript-eslint": tseslint,
-    },
     rules: {
       ...tseslint.configs.recommended.rules,
       "@typescript-eslint/no-explicit-any": "error",

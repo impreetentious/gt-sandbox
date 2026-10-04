@@ -1,6 +1,6 @@
 # Deployment guide
 
-Game Theory Sandbox builds to a static `out/` directory. It requires Node 24.10.0 and pnpm 10.33.0, as pinned in `.nvmrc`, `package.json`, and CI.
+Game Theory Sandbox builds to a static `out/` directory. It requires Node 24.21.0 and pnpm 11.28.3, as pinned in `.nvmrc`, `package.json`, and CI.
 
 ## Verify the production candidate
 

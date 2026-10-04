@@ -10,10 +10,10 @@ const pkg = JSON.parse(read("package.json"));
 const version = pkg.version;
 const errors = [];
 const EXPECTED = {
-  nvmrc: "24.10.0",
+  nvmrc: "24.21.0",
   engines: ">=24 <25",
   workflow: ".github/workflows/ci.yml",
-  ciNode: "24.10.0",
+  ciNode: "24.21.0",
 };
 
 function markerVersion(file) {

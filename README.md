@@ -44,7 +44,7 @@ The app is installable and works offline: a version-keyed service worker precach
 
 ## Run locally
 
-Requirements: Node 24.10.0 and pnpm 11.7.0. Both are pinned and a preinstall guard fails the install on any other Node version rather than letting a build run against it. [ripgrep](https://github.com/BurntSushi/ripgrep) must also be on `PATH` — the invariant checks shell out to `rg`.
+Requirements: Node 24.21.0 and pnpm 11.28.3. Both are pinned and a preinstall guard fails the install on any other Node version rather than letting a build run against it. [ripgrep](https://github.com/BurntSushi/ripgrep) must also be on `PATH` — the invariant checks shell out to `rg`.
 
 ```bash
 corepack enable
@@ -100,4 +100,4 @@ Apache-2.0 © 2025-2026 Sidakpreet Singh — see [LICENSE](LICENSE).
 
 ---
 
-**Version:** v0.22.1
+**Version:** v0.22.2
