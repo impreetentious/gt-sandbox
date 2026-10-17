@@ -95,7 +95,7 @@ describe("classroom aggregation", () => {
     // The aggregator's contract is that a bad file is skipped, not that it takes
     // the page down; anything ingest lets through must survive both consumers.
     const accepted: ClassroomSubmission[] = [];
-    for (const total of ["abc", "1/0", "4"]) {
+    for (const total of ["abc", "1/0", "3"]) {
       const session = JSON.parse(sessionFile("pd", 3));
       const result = ingestSessionFile("f.json", JSON.stringify({ ...session, rowTotal: total }));
       if (result.ok) accepted.push(result.submission);
@@ -154,5 +154,49 @@ describe("assignment link builder", () => {
 
   it("rejects unknown targets", () => {
     expect(() => buildAssignmentPath({ surface: "auction", target: "nope" })).toThrow();
+  });
+});
+
+describe("bounded classroom evidence", () => {
+  it("pools payoff over played rounds and discloses mixed lengths and metadata", () => {
+    const one = JSON.parse(sessionFile("pd", 3));
+    const two = {
+      ...one,
+      meta: { persona: "second" },
+      rowTotal: "6",
+      rounds: [one.rounds[0], { ...one.rounds[0], round: 2 }],
+    };
+    const zero = { ...one, rowTotal: "0", columnTotal: "0", rounds: [] };
+    const aggregate = aggregateSubmissions(
+      [one, two, zero].map((session, i) => ({ filename: `${i}.json`, session })),
+    );
+    expect(aggregate.byGame[0].meanRowPerRound).toEqual(rational(3n));
+    expect(aggregate.byGame[0].roundRange).toEqual([0, 2]);
+    expect(aggregate.byGame[0].metadata).toHaveLength(2);
+    expect(
+      aggregateSubmissions([{ filename: "0", session: zero }]).byGame[0].meanRowPerRound,
+    ).toBeNull();
+  });
+  it("retains all verified submissions if combined rational arithmetic exceeds its cap", () => {
+    const one = JSON.parse(sessionFile("pd", 0));
+    const base = 1n << 800n;
+    // Each 243-digit denominator is below the 256-character intake cap. The
+    // combined denominator requires more than 16,384 bits, so no subset mean is shown.
+    const accepted: ClassroomSubmission[] = [];
+    for (let i = 0; i < 24; i++) {
+      const denominator = base + BigInt(i);
+      const session = {
+        ...one,
+        rowTotal: `1/${denominator}`,
+        rounds: [{ ...one.rounds[0], rowPayoff: `1/${denominator}` }],
+      };
+      const intake = ingestSessionFile(`${i}.json`, JSON.stringify(session));
+      expect(intake.ok).toBe(true);
+      if (intake.ok) accepted.push(intake.submission);
+    }
+    const aggregate = aggregateSubmissions(accepted);
+    expect(aggregate.count).toBe(24);
+    expect(aggregate.byGame[0].meanRowTotal).toBeNull();
+    expect(aggregate.byGame[0].unavailable).toContain("16,384-bit");
   });
 });

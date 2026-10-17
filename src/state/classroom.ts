@@ -1,14 +1,8 @@
-import {
-  add,
-  divide,
-  formatRational,
-  parseRational,
-  rational,
-  ZERO,
-  type Rational,
-} from "@/engine/rational";
+import { formatRational, parseRational, ZERO, type Rational } from "@/engine/rational";
 import {
   parseSessionExport,
+  boundedSessionAdd,
+  boundedSessionDivide,
   type SessionExport,
   type SessionExportKind,
 } from "@/state/session-export";
@@ -35,9 +29,14 @@ interface GameSummary {
   readonly title: string;
   readonly kind: SessionExportKind;
   readonly count: number;
-  readonly meanRowTotal: Rational;
-  readonly meanColumnTotal: Rational;
+  readonly meanRowTotal: Rational | null;
+  readonly meanColumnTotal: Rational | null;
   readonly totalRounds: number;
+  readonly roundRange: readonly [number, number];
+  readonly metadata: readonly string[];
+  readonly meanRowPerRound: Rational | null;
+  readonly meanColumnPerRound: Rational | null;
+  readonly unavailable: string | null;
 }
 
 interface ClassroomAggregate {
@@ -62,16 +61,6 @@ export function ingestSessionFile(
   return { ok: true, submission: { filename, session: parsed.session } };
 }
 
-function mean(values: readonly Rational[]): Rational {
-  if (values.length === 0) {
-    return ZERO;
-  }
-  return divide(
-    values.reduce((sum, value) => add(sum, value), ZERO),
-    rational(BigInt(values.length)),
-  );
-}
-
 export function aggregateSubmissions(
   submissions: readonly ClassroomSubmission[],
 ): ClassroomAggregate {
@@ -90,14 +79,39 @@ export function aggregateSubmissions(
     const first = entries[0].session;
     const rowTotals = entries.map((entry) => parseRational(entry.session.rowTotal));
     const columnTotals = entries.map((entry) => parseRational(entry.session.columnTotal));
+    const totalRounds = entries.reduce((sum, entry) => sum + entry.session.rounds.length, 0);
+    let meanRowTotal: Rational | null = null;
+    let meanColumnTotal: Rational | null = null;
+    let meanRowPerRound: Rational | null = null;
+    let meanColumnPerRound: Rational | null = null;
+    let unavailable: string | null = null;
+    try {
+      const rowSum = rowTotals.reduce(boundedSessionAdd, ZERO);
+      const columnSum = columnTotals.reduce(boundedSessionAdd, ZERO);
+      meanRowTotal = boundedSessionDivide(rowSum, entries.length);
+      meanColumnTotal = boundedSessionDivide(columnSum, entries.length);
+      if (totalRounds > 0) {
+        meanRowPerRound = boundedSessionDivide(rowSum, totalRounds);
+        meanColumnPerRound = boundedSessionDivide(columnSum, totalRounds);
+      }
+    } catch (error) {
+      meanRowTotal = meanColumnTotal = meanRowPerRound = meanColumnPerRound = null;
+      unavailable = error instanceof Error ? error.message : "Aggregate unavailable.";
+    }
+    const lengths = entries.map((entry) => entry.session.rounds.length);
     return {
       game: first.game,
       title: first.title,
       kind: first.kind,
       count: entries.length,
-      meanRowTotal: mean(rowTotals),
-      meanColumnTotal: mean(columnTotals),
-      totalRounds: entries.reduce((sum, entry) => sum + entry.session.rounds.length, 0),
+      meanRowTotal,
+      meanColumnTotal,
+      totalRounds,
+      meanRowPerRound,
+      meanColumnPerRound,
+      unavailable,
+      roundRange: [Math.min(...lengths), Math.max(...lengths)],
+      metadata: [...new Set(entries.map((entry) => JSON.stringify(entry.session.meta ?? {})))],
     };
   });
 

@@ -4,7 +4,7 @@ Game theory is usually taught statically: a payoff matrix in a PDF, an equilibri
 
 Game Theory Sandbox is a static, privacy-preserving interactive tool for strategy-curious professionals and students. It combines canonical games, seeded repeated-play simulations, evolutionary dynamics and a bounded game builder with an exact analytical engine.
 
-## What is here
+## What's Included
 
 - **Play** six games against deterministic opponents: Prisoner's Dilemma, Stag Hunt, Battle of the Sexes, Chicken, Matching Pennies and the Iterated Prisoner's Dilemma. Each has session scoring and a progressive analytical reveal.
 - **Hot-seat** the same games with two humans at one keyboard.
@@ -20,13 +20,13 @@ Game Theory Sandbox is a static, privacy-preserving interactive tool for strateg
 - **Teach** with the classroom kit: build an assignment link that pins one exercise for a whole class, then aggregate the sessions students download — entirely on your device, with nothing uploaded.
 - **Share and embed** a versioned URL containing a bounded custom game, annotation, persona, seed, continuation probability, or action noise; each Play surface also emits a chromeless `<iframe>` snippet and `/embed/*` is the only path any `https:` page may frame. All of it is static — no server.
 
-## Two-minute tour
+## Two-minute Tour
 
 1. Open **Matching Pennies**, choose the Shark and repeat a visible pattern. The reveal connects the exploiter's prediction accuracy to why an equilibrium mix must be unpredictable.
 2. Open **Prisoner's Dilemma** and scroll to the payoff editor. Change both temptation payoffs from `5` to `2`; the engine changes the verdict from a dilemma to an assurance game and adds the second Nash equilibrium.
 3. Open **Evolve → Evolution** and choose **Noise**. Scrub from generation 0 to 100, isolate a population band, then open the table fallback to inspect the same frozen run numerically.
 
-## Correctness boundary
+## Correctness Boundary
 
 - Payoffs, best responses, dominance and equilibrium probabilities use exact normalized bigint fractions. Floating point is excluded from solver correctness paths.
 - Dominance detection covers strict dominance by mixed strategies, decided by an exact-rational simplex — not only dominance by pure strategies.
@@ -36,13 +36,13 @@ Game Theory Sandbox is a static, privacy-preserving interactive tool for strateg
 
 The app's own **Methods** page explains the verification layers, the simulation boundary, references, the privacy contract and prior-art credit.
 
-## Static and private
+## Static and Private
 
 There is no backend, account, analytics, cookie, telemetry, or runtime API. Initial loads and client navigation use same-origin static build artifacts only. Three local-storage keys exist: `seenOnboarding` (hides the first-visit hint), `theme` (system / light / dark) and `curriculum` (Learn progress). Share links contain their state in the URL, so inspect labels before sharing sensitive wording.
 
 The app is installable and works offline: a version-keyed service worker precaches the shell and a real `/offline` route explains what is and is not available when the network is gone.
 
-## Run locally
+## Run Locally
 
 Requirements: Node 24.21.0 and pnpm 11.28.3. Both are pinned and a preinstall guard fails the install on any other Node version rather than letting a build run against it. [ripgrep](https://github.com/BurntSushi/ripgrep) must also be on `PATH` — the invariant checks shell out to `rg`.
 
@@ -100,4 +100,4 @@ Apache-2.0 © 2025-2026 Sidakpreet Singh — see [LICENSE](LICENSE).
 
 ---
 
-**Version:** v0.22.2
+**Version:** v0.22.3

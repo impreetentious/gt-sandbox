@@ -1,10 +1,15 @@
+import { webcrypto } from "node:crypto";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ClassroomExperience } from "@/components/classroom/classroom-experience";
 import { rational } from "@/engine/rational";
 import { buildSessionExport, serializeSessionExport } from "@/state/session-export";
 
-afterEach(cleanup);
+beforeEach(() => vi.stubGlobal("crypto", webcrypto));
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
 
 describe("classroom experience", () => {
   it("builds a Play assignment link that pins a rival and seed", () => {
@@ -54,4 +59,56 @@ describe("classroom experience", () => {
     await waitFor(() => expect(screen.getByTestId("classroom-aggregate")).toBeInTheDocument());
     expect(screen.getByText(/1 session loaded/)).toBeInTheDocument();
   });
+});
+
+it("skips exact original bytes by default and permits an explicit separate submission", async () => {
+  render(<ClassroomExperience />);
+  const json = serializeSessionExport(
+    buildSessionExport({
+      kind: "ipd",
+      game: "pd",
+      title: "PD",
+      rowLabel: "A",
+      columnLabel: "B",
+      rounds: [],
+      rowTotal: rational(0n),
+      columnTotal: rational(0n),
+    }),
+  );
+  const files = [
+    new File([json], "a.json"),
+    new File([json], "b.json"),
+    new File([json + " "], "c.json"),
+  ];
+  fireEvent.change(screen.getByLabelText("Add session files"), { target: { files } });
+  await waitFor(() => expect(screen.getByText(/2 sessions loaded/)).toBeInTheDocument());
+  expect(screen.getByText(/1 exact duplicate file/)).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Keep duplicate 1" }));
+  expect(screen.getByText(/3 sessions loaded/)).toBeInTheDocument();
+  expect(screen.getByText(/Arithmetic is verified/)).toBeInTheDocument();
+});
+
+it("rejects an oversized selection before reading and preserves valid files beside failures", async () => {
+  render(<ClassroomExperience />);
+  fireEvent.change(screen.getByLabelText("Add session files"), {
+    target: { files: Array.from({ length: 101 }, () => new File(["{}"], "bad.json")) },
+  });
+  expect(screen.getByText(/none were read/)).toBeInTheDocument();
+  const json = serializeSessionExport(
+    buildSessionExport({
+      kind: "auction",
+      game: "first-price",
+      title: "Auction",
+      rowLabel: "A",
+      columnLabel: "B",
+      rounds: [],
+      rowTotal: rational(0n),
+      columnTotal: rational(0n),
+    }),
+  );
+  fireEvent.change(screen.getByLabelText("Add session files"), {
+    target: { files: [new File(["{"], "broken.json"), new File([json], "valid.json")] },
+  });
+  await waitFor(() => expect(screen.getByText(/1 session loaded/)).toBeInTheDocument());
+  expect(screen.getByText(/broken.json/)).toBeInTheDocument();
 });

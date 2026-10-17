@@ -1,5 +1,6 @@
+import * as rationalModule from "@/engine/rational";
 import fc from "fast-check";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   classifySelection,
   createMoranConfig,
@@ -299,5 +300,39 @@ describe("cross-check against a direct Markov-chain solve", () => {
       ),
       { numRuns: 40 },
     );
+  });
+});
+
+describe("one-pass fixation curve", () => {
+  it("matches independently derived constant-fitness curves", () => {
+    for (const [N, expected] of [
+      [2, ["0", "2/3", "1"]],
+      [3, ["0", "4/7", "6/7", "1"]],
+    ] as const) {
+      const config = createMoranConfig({
+        populationSize: N,
+        payoffs: payoffs(2, 2, 1, 1),
+        selectionIntensity: ONE,
+      });
+      expect(fixationCurve(config).map((row) => formatRational(row.fixation))).toEqual(expected);
+    }
+  });
+  it("evaluates N-1 transition ratios rather than repeating the prefix pass", () => {
+    const N = 12;
+    const config = createMoranConfig({
+      populationSize: N,
+      payoffs: payoffs(1, 1, 1, 1),
+      selectionIntensity: ONE,
+    });
+    const divide = vi.spyOn(rationalModule, "divide");
+    try {
+      const rows = fixationCurve(config);
+      // Two payoff divisions plus one fitness-ratio division per interior state,
+      // then one shared-denominator division per interior output.
+      expect(divide).toHaveBeenCalledTimes(4 * (N - 1));
+      rows.forEach((row) => expect(row.fixation).toEqual(rational(BigInt(row.state), BigInt(N))));
+    } finally {
+      divide.mockRestore();
+    }
   });
 });

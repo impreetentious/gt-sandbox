@@ -229,9 +229,16 @@ interface FixationRow {
 
 /** ρ_i across every starting state — the curve the surface plots. */
 export function fixationCurve(config: MoranConfig): FixationRow[] {
-  const rows: FixationRow[] = [];
-  for (let state = 0; state <= config.populationSize; state += 1) {
-    rows.push({ state, fixation: fixationProbability(config, state) });
+  const prefixes: Rational[] = [ZERO, ONE];
+  let product = ONE;
+  let sum = ONE;
+  for (let k = 1; k < config.populationSize; k += 1) {
+    product = multiply(product, transitionRatio(config, k));
+    sum = add(sum, product);
+    prefixes.push(sum);
   }
-  return rows;
+  return prefixes.map((prefix, state) => ({
+    state,
+    fixation: state === 0 ? ZERO : state === config.populationSize ? ONE : divide(prefix, sum),
+  }));
 }
